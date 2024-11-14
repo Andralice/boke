@@ -1,7 +1,7 @@
 <template>
 <div class="boke">
   <navber/>
-  <router-view></router-view>
+    <router-view></router-view>
 </div>
 </template>
 <script setup lang="ts" name="boke">
