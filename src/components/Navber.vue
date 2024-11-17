@@ -12,7 +12,7 @@
           <router-link to="/about">关于我们</router-link>
         </li>
         <li class="navbar-item">
-          <router-link to="/login" @click.native="hideNavbar">登录</router-link>
+          <router-link to="/login" @click="hideNavbar">登录</router-link>
         </li>
       </ul>
     </nav>
