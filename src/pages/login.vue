@@ -17,7 +17,7 @@
                 <div class="key">
                     <input type="password" v-model="password" placeholder="密码" />
                 </div>
-                <div class="signin">
+                <div class="signin" @click="closeLoginForm">
                     <input type="submit" value="登录" />
                 </div>
             </form>
@@ -25,7 +25,13 @@
     </div>
 </template>
 
-<script>
+<script setup lang="js" name="login">
+import { useRouter } from 'vue-router'; // 引入 useRouter
+const router = useRouter(); // 获取 router 实例
+
+function closeLoginForm(){
+    router.push('/'); // 跳转到首页
+}
 
 </script>
 
