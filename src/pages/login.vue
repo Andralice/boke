@@ -12,26 +12,51 @@
             <div class="avtar">
                 <img src="@/assets/images/avtar.png" /> <!-- 假设图片放在src/assets/images目录下 -->
             </div>
-            <form @submit.prevent="handleSubmit">
-                <input type="text" class="text" v-model="username" placeholder="账号" />
+            <form @submit.prevent="handleLogin">
+                <input type="text" class="text" v-model="username" required placeholder="账号" />
                 <div class="key">
-                    <input type="password" v-model="password" placeholder="密码" />
+                    <input type="password" v-model="password" required placeholder="密码" />
                 </div>
-                <div class="signin" @click="closeLoginForm">
+                <div class="signin">
                     <input type="submit" value="登录" />
                 </div>
             </form>
+            <p v-if="isLoggedIn">已登录</p>
+            <p v-else>未登录</p>
+            <button @click="logout" v-if="isLoggedIn">注销</button>
         </div>
     </div>
 </template>
 
 <script setup lang="js" name="login">
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'; // 引入 useRouter
 const router = useRouter(); // 获取 router 实例
 
-function closeLoginForm(){
+function closeLoginForm() {
     router.push('/'); // 跳转到首页
 }
+const store = useStore();
+const username = ref('');
+const password = ref('');
+
+const isLoggedIn = computed(() => store.getters.isLoggedIn);
+
+const handleLogin = async () => {
+    try {
+        await store.dispatch('login', { username: username.value, password: password.value });
+        username.value = '';
+        password.value = '';
+        router.push('/');
+    } catch (error) {
+        console.error('Login failed:', error);
+    }
+};
+
+const logout = () => {
+    store.dispatch('logout');
+};
 
 </script>
 

@@ -13,7 +13,7 @@
         </li>
 
         <li class="navbar-item user-item">
-          <router-link to="/login" @click.native="hideNavbarOnLogin">
+          <router-link to="/login" @click="hideNavbarOnLogin">
             <img class="user-img" src="@/assets/images/avtar.png" alt="">
           </router-link>
 
