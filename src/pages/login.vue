@@ -21,9 +21,8 @@
                     <input type="submit" value="登录" />
                 </div>
             </form>
-            <p v-if="isLoggedIn">已登录</p>
-            <p v-else>未登录</p>
-            <button @click="logout" v-if="isLoggedIn">注销</button>
+            
+            
         </div>
     </div>
 </template>
