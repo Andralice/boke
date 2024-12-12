@@ -3,13 +3,13 @@
     <nav>
       <ul class="navbar-list">
         <li class="navbar-item">
-          <router-link to="/">首页</router-link>
+          <router-link to="/">仓库信息概览</router-link>
         </li>
         <li class="navbar-item">
-          <router-link to="/products">商品</router-link>
+          <router-link to="/products">仓库管理</router-link>
         </li>
         <li class="navbar-item">
-          <router-link to="/about">关于我们</router-link>
+          <router-link to="/about">辅助管理</router-link>
         </li>
 
         <li class="navbar-item user-item" @mouseover="showDropdown" @mouseleave="hideDropdown">
@@ -18,10 +18,10 @@
           </router-link>
           <ul class="dropdown-menu" :class="{ 'show': isDropdownVisible }">
             <li class="navbar-item" v-if="isLoggedIn">
-              <RouterLink to="/profile">个人资料</RouterLink>
+              <router-link to="/PersonCenter">个人资料</router-link>
             </li>
             <li class="navbar-item" v-if="!isLoggedIn">
-              <RouterLink to="/login">登录</RouterLink>
+              <router-link to="/login">登录</router-link>
             </li>
             <li class="navbar-item" v-if="isLoggedIn">
               <a href="#" @click.prevent="logout">退出</a>
@@ -35,34 +35,37 @@
 </template>
  
 <script lang="ts" setup name='Navbar'>
-import { RouterLink,useRouter,useRoute } from 'vue-router';
-import { ref, onMounted ,computed} from 'vue';
+import { RouterLink, useRouter, useRoute } from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
+
 const store = useStore();
 const isLoggedIn = computed(() => store.getters.isLoggedIn);
 const showNavbar = ref(false);
 const route = useRoute();
 const router = useRouter();
+
 const logout = () => {
-    store.dispatch('logout');
-    router.push('/login')
+  store.dispatch('logout');
+  router.push('/login');
 };
+
 // 判断当前路由是否不是登录页面，并设置 showNavbar 的值
 function updateNavbarVisibility() {
   showNavbar.value = route.path !== '/login';
 }
- 
+
 // 在组件挂载时更新导航栏的可见性
 onMounted(() => {
   updateNavbarVisibility();
 });
- 
+
 // 监听路由变化以更新导航栏的可见性
 router.afterEach(() => {
   updateNavbarVisibility();
 });
- 
-// 在点击登录链接时隐藏导航栏（其实现在不需要了，因为上面的逻辑已经处理）
+
+// 控制下拉菜单的显示和隐藏
 const isDropdownVisible = ref(false);
 let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -132,6 +135,7 @@ const hideNavbarOnLogin = () => {
   margin-left: auto; /* 将这个元素推到右边 */
   display: flex;
   align-items: center; /* 垂直居中对齐 */
+  position: relative; /* 设置相对定位以便绝对定位下拉菜单 */
 }
 
 .user-img {
@@ -141,18 +145,24 @@ const hideNavbarOnLogin = () => {
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px; /* 图片和文字之间的间距 */
+
 }
 
 .dropdown-menu {
   display: none; /* 默认隐藏下拉菜单 */
   position: absolute;
   top: 100%; /* 下拉菜单位于主导航项下方 */
-  right: 0;
+  right: 0; /* 距离右侧边框0px */
+  transform: translateX(-50px); /* 向左偏移50px */
   background-color: #333;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  min-width: 160px; /* 设置最小宽度 */
+  min-width: max-content; /* 根据内容自动调整宽度 */
   z-index: 1001; /* 确保下拉菜单在导航栏上方 */
   padding: 0.5rem 0; /* 内边距 */
+}
+
+.dropdown-menu.show {
+  display: block; /* 显示下拉菜单 */
 }
 
 .dropdown-menu li {
@@ -172,40 +182,7 @@ const hideNavbarOnLogin = () => {
 .dropdown-menu a:hover {
   background-color: #555; /* 悬停时背景颜色变化 */
 }
-
-.navbar-item:hover .dropdown-menu {
-  display: block; /* 鼠标悬停时显示下拉菜单 */
-}
-
-/* 下拉菜单内容块状排列 */
-.dropdown-column {
-  display: block; /* 块级元素 */
-  margin: 0 1rem; /* 左右边距 */
-}
-
-.dropdown-column h3 {
-  color: #ffcc00;
-  margin-bottom: 0.5rem;
-}
-
-.dropdown-column ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.dropdown-column li {
-  margin-bottom: 0.5rem;
-}
-
-.dropdown-column a {
-  color: #fff;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.dropdown-column a:hover {
-  color: #ffcc00;
-}
-
 </style>
+
+
+

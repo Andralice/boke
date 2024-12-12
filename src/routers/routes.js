@@ -4,6 +4,7 @@ import about from '@/pages/about.vue'
 import products from '@/pages/products.vue'
 import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
+import PersonCenter from '@/pages/User/PersonCenter.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -24,6 +25,10 @@ const router=createRouter({history:createWebHistory(),
             path:'/login',
             component:login,
             meta:{ requiresAuth: false }
+        },
+        {
+            path:'/PersonCenter',
+            component:PersonCenter,
         }
 
     ]
