@@ -8,7 +8,7 @@ import PersonCenter from '@/pages/User/PersonCenter.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
-            path:'/',
+            path:'/index',
             component:home,
             meta:{ requiresAuth: true }
         },

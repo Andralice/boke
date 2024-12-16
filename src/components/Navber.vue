@@ -3,7 +3,7 @@
     <nav>
       <ul class="navbar-list">
         <li class="navbar-item">
-          <router-link to="/">仓库信息概览</router-link>
+          <router-link to="/index">仓库信息概览</router-link>
         </li>
         <li class="navbar-item">
           <router-link to="/products">仓库管理</router-link>
@@ -13,7 +13,7 @@
         </li>
 
         <li class="navbar-item user-item" @mouseover="showDropdown" @mouseleave="hideDropdown">
-          <router-link to="/login" @click="hideNavbarOnLogin">
+          <router-link to="/login" @click.prevent="hideNavbarOnLogin">
             <img class="user-img" src="@/assets/images/avtar.png" alt="">
           </router-link>
           <ul class="dropdown-menu" :class="{ 'show': isDropdownVisible }">
@@ -30,11 +30,11 @@
         </li>
       </ul>
     </nav>
-    <router-view></router-view>
   </div>
+  <router-view></router-view>
 </template>
- 
-<script lang="ts" setup name='Navbar'>
+
+<script lang="ts" setup name='App'>
 import { RouterLink, useRouter, useRoute } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
@@ -90,8 +90,8 @@ const hideNavbarOnLogin = () => {
   console.log('Hide navbar on login');
 };
 </script>
- 
-<style>
+
+<style scoped>
 .navbar {
   background-color: #f9fcfc;
   padding: 1rem 0;
@@ -99,7 +99,7 @@ const hideNavbarOnLogin = () => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 30px;
+  height: 60px; /* 调整高度以便内容完全显示 */
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* 底部阴影效果 */
   border-bottom: 2px solid transparent; /* 透明底边 */
@@ -111,6 +111,8 @@ const hideNavbarOnLogin = () => {
   justify-content: center;
   padding: 0;
   margin: 0;
+  height: 100%; /* 确保列表占满整个导航栏高度 */
+  align-items: center; /* 垂直居中对齐 */
 }
 
 .navbar-item {
@@ -145,7 +147,6 @@ const hideNavbarOnLogin = () => {
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px; /* 图片和文字之间的间距 */
-
 }
 
 .dropdown-menu {
@@ -153,7 +154,6 @@ const hideNavbarOnLogin = () => {
   position: absolute;
   top: 100%; /* 下拉菜单位于主导航项下方 */
   right: 0; /* 距离右侧边框0px */
-  transform: translateX(-50px); /* 向左偏移50px */
   background-color: #333;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   min-width: max-content; /* 根据内容自动调整宽度 */
