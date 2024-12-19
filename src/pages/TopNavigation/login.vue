@@ -10,7 +10,7 @@
             </div>
             <div class="clear"></div>
             <div class="avtar">
-                <img src="@/assets/images/avtar.png" /> <!-- 假设图片放在src/assets/images目录下 -->
+                <img src="@/assets/images/avatar.jpg"a /> <!-- 假设图片放在src/assets/images目录下 -->
             </div>
             <form @submit.prevent="handleLogin">
                 <input type="text" class="text" v-model="username" required placeholder="账号" />
@@ -47,7 +47,7 @@ const handleLogin = async () => {
         await store.dispatch('login', { username: username.value, password: password.value });
         username.value = '';
         password.value = '';
-        router.push('/');
+        router.push('/index');
     } catch (error) {
         console.error('Login failed:', error);
     }
@@ -113,6 +113,7 @@ h1 {
 
 .avtar img {
     margin: 2em 0 0;
+    height: 100px;
 }
 
 .head-info {

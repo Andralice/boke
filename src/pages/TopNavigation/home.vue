@@ -50,10 +50,6 @@
             <!-- 区域3 -->
             区域3内容
           </div>
-          <div class="region region4">
-            <!-- 区域4 -->
-            区域4内容
-          </div>
         </div>
       </div>
       <aside class="notifications">
@@ -84,7 +80,7 @@ const badgeTexts = ref({
 .container {
   padding-top: 70px;
   display: flex;
-  height: 100vh;
+  height: 830px;
 }
 
 .sidebar {
@@ -167,7 +163,7 @@ const badgeTexts = ref({
 }
 
 .row1 .region1 {
-  flex: 0.5;
+  flex: 0.4;
   height: 260px;
   background-color: #fff;
   display: flex;
@@ -261,17 +257,11 @@ const badgeTexts = ref({
 
 .row2 .region3 {
   flex: 0.6;
-  height: 500px;
+  height: 445px;
   flex-grow: 1;
   background-color: #ced4da;
 }
 
-.row2 .region4 {
-  flex: 0.4;
-  height: 500px;
-  flex-grow: 1;
-  background-color: #adb5bd;
-}
 </style>
 
 

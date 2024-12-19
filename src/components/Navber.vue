@@ -14,7 +14,7 @@
 
         <li class="navbar-item user-item" @mouseover="showDropdown" @mouseleave="hideDropdown">
           <router-link to="/login" @click.prevent="hideNavbarOnLogin">
-            <img class="user-img" src="@/assets/images/avtar.png" alt="">
+            <img class="user-img" src="@/assets/images/avatar.jpg" alt="">
           </router-link>
           <ul class="dropdown-menu" :class="{ 'show': isDropdownVisible }">
             <li class="navbar-item" v-if="isLoggedIn">
@@ -99,7 +99,7 @@ const hideNavbarOnLogin = () => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px; /* 调整高度以便内容完全显示 */
+  height:0px; /* 调整高度以便内容完全显示 */
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* 底部阴影效果 */
   border-bottom: 2px solid transparent; /* 透明底边 */
@@ -135,6 +135,7 @@ const hideNavbarOnLogin = () => {
 /* 为包含用户图片的 li 元素添加样式 */
 .user-item {
   margin-left: auto; /* 将这个元素推到右边 */
+  margin-right: 50px;
   display: flex;
   align-items: center; /* 垂直居中对齐 */
   position: relative; /* 设置相对定位以便绝对定位下拉菜单 */
@@ -153,10 +154,11 @@ const hideNavbarOnLogin = () => {
   display: none; /* 默认隐藏下拉菜单 */
   position: absolute;
   top: 100%; /* 下拉菜单位于主导航项下方 */
-  right: 0; /* 距离右侧边框0px */
+  left: -25px; /* 向左偏移40px */
   background-color: #333;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   min-width: max-content; /* 根据内容自动调整宽度 */
+  max-width: 200px; /* 设置最大宽度以防止内容溢出 */
   z-index: 1001; /* 确保下拉菜单在导航栏上方 */
   padding: 0.5rem 0; /* 内边距 */
 }
