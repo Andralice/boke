@@ -3,7 +3,7 @@
     <nav>
       <ul class="navbar-list">
         <li class="navbar-item">
-          <router-link to="/index">仓库信息概览</router-link>
+          <router-link to="/">仓库信息概览</router-link>
         </li>
         <li class="navbar-item">
           <router-link to="/products">仓库管理</router-link>
@@ -99,7 +99,7 @@ const hideNavbarOnLogin = () => {
   top: 0;
   left: 0;
   width: 100%;
-  height:0px; /* 调整高度以便内容完全显示 */
+  height:60px; /* 调整高度以便内容完全显示 */
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* 底部阴影效果 */
   border-bottom: 2px solid transparent; /* 透明底边 */
