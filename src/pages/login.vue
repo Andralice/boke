@@ -10,7 +10,11 @@
             </div>
             <div class="clear"></div>
             <div class="avtar">
-                <img src="@/assets/images/avatar.jpg"a /> <!-- 假设图片放在src/assets/images目录下 -->
+                <img src="@/assets/images/avatar.jpg" alt="avatar" />
+                <div class="action-buttons">
+                    <div class="forget-password">忘记密码？</div>
+                    <div class="register" @click="navigateToRegister">注册</div>
+                </div>
             </div>
             <form @submit.prevent="handleLogin">
                 <input type="text" class="text" v-model="username" required placeholder="账号" />
@@ -21,8 +25,6 @@
                     <input type="submit" value="登录" />
                 </div>
             </form>
-            
-            
         </div>
     </div>
 </template>
@@ -36,6 +38,7 @@ const router = useRouter(); // 获取 router 实例
 function closeLoginForm() {
     router.push('/'); // 跳转到首页
 }
+
 const store = useStore();
 const username = ref('');
 const password = ref('');
@@ -57,6 +60,10 @@ const logout = () => {
     store.dispatch('logout');
 };
 
+// 新增的注册按钮点击方法
+const navigateToRegister = () => {
+    router.push('/sign'); // 跳转到注册页面
+};
 </script>
 
 <style scoped>
@@ -116,6 +123,40 @@ h1 {
     height: 100px;
 }
 
+.avtar .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.avtar .action-buttons div {
+    cursor: pointer;
+}
+
+.avtar .action-buttons .forget-password {
+    color: white;
+    margin-left: 40px;
+    transition: color 0.3s;
+}
+
+.avtar .action-buttons .forget-password:hover {
+    color: #dd3e3e;
+    text-decoration: underline;
+}
+
+.avtar .action-buttons .register {
+    color: white;
+    margin-right: 40px;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.avtar .action-buttons .register:hover {
+    color: #dd3e3e;
+    text-decoration: underline;
+}
+
 .head-info {
     padding: 5px 0;
     text-align: center;
@@ -131,7 +172,7 @@ h1 {
     border-top-right-radius: 10px;
     -webkit-border-top-right-radius: 10px;
     -moz-border-top-right-radius: 10px;
-    -o-border-top-right-radius: 10p
+    -o-border-top-right-radius: 10px;
 }
 
 input[type="text"] {
@@ -143,7 +184,7 @@ input[type="text"] {
     background: url('@/assets/images/adm.png') no-repeat 10px 15px;
     border: none;
     font-weight: 100;
-    border-bottom: 1px solid#484856;
+    border-bottom: 1px solid #484856;
     margin-top: 2em;
 }
 
@@ -156,7 +197,7 @@ input[type="password"] {
     background: url('@/assets/images/key.png') no-repeat 10px 23px;
     border: none;
     font-weight: 100;
-    border-bottom: 1px solid#484856;
+    border-bottom: 1px solid #484856;
     margin-bottom: 3em;
 }
 

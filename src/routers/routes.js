@@ -5,6 +5,8 @@ import products from '@/pages/products.vue'
 import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
 import PersonCenter from '@/pages/User/PersonCenter.vue'
+import sign from '@/pages/User/sign.vue'
+import forgotpassword from '@/pages/User/ForgotPassword.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -25,6 +27,16 @@ const router=createRouter({history:createWebHistory(),
             path:'/login',
             component:login,
             meta:{ requiresAuth: false }
+        },
+        {
+            name: 'zhuce',
+            path:'/sign',
+            component:sign,
+        },
+        {
+            name: 'forgot-password',
+            path:'/forgotpassword',
+            component:forgotpassword,
         },
         {
             path:'/PersonCenter',
