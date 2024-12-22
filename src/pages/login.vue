@@ -47,7 +47,7 @@ const handleLogin = async () => {
         await store.dispatch('login', { username: username.value, password: password.value });
         username.value = '';
         password.value = '';
-        router.push('/index');
+        router.push('/');
     } catch (error) {
         console.error('Login failed:', error);
     }

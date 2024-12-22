@@ -1,8 +1,8 @@
 import {createRouter,createWebHistory} from 'vue-router'
-import home from '@/pages/TopNavigation/home.vue'
-import about from '@/pages/TopNavigation/about.vue'
-import products from '@/pages/TopNavigation/products.vue'
-import login from '@/pages/TopNavigation/login.vue'
+import home from '@/pages/home.vue'
+import about from '@/pages/about.vue'
+import products from '@/pages/products.vue'
+import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
 import PersonCenter from '@/pages/User/PersonCenter.vue'
 const router=createRouter({history:createWebHistory(),
