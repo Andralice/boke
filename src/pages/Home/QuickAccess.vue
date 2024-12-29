@@ -31,8 +31,8 @@
 
 <style scoped>
 .region.region2 {
-  flex: 0.6;
-  height: 260px;
+  height: 100%;
+  width: 100%;
   background-color: #dee2e6;
   display: flex;
   flex-direction: column;

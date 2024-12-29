@@ -7,20 +7,24 @@ import  store  from '@/store/index.js'
 import PersonCenter from '@/pages/User/PersonCenter.vue'
 import sign from '@/pages/User/sign.vue'
 import forgotpassword from '@/pages/User/ForgotPassword.vue'
+import home_index  from '@/pages/Home/index.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
             path:'/',
-            component:home,
-            meta:{ requiresAuth: true }
-        },
-        {
-            path:'/about',
-            component:about,
-        },
-        {
-            path:'/products',
-            component:products,
+            name:'home',
+            meta:{ requiresAuth: true },
+            component: home,
+            children: [
+                {
+                    path: '/',
+                    component: home_index,
+                },
+                {
+                    path:'/home_index',
+                    component:home_index,
+                },
+            ]
         },
         {
             name: 'denglu',
@@ -32,15 +36,6 @@ const router=createRouter({history:createWebHistory(),
             name: 'zhuce',
             path:'/sign',
             component:sign,
-        },
-        {
-            name: 'forgot-password',
-            path:'/forgotpassword',
-            component:forgotpassword,
-        },
-        {
-            path:'/PersonCenter',
-            component:PersonCenter,
         }
 
     ]
