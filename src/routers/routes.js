@@ -1,13 +1,11 @@
 import {createRouter,createWebHistory} from 'vue-router'
 import home from '@/pages/home.vue'
-import about from '@/pages/about.vue'
-import products from '@/pages/products.vue'
 import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
-import PersonCenter from '@/pages/User/PersonCenter.vue'
+import PersonCenter from  '@/pages/User/PersonCenter.vue'
 import sign from '@/pages/User/sign.vue'
-import forgotpassword from '@/pages/User/ForgotPassword.vue'
 import home_index  from '@/pages/Home/index.vue'
+import stroe_index from '@/pages/Store/index.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -24,7 +22,17 @@ const router=createRouter({history:createWebHistory(),
                     path:'/home_index',
                     component:home_index,
                 },
+                {
+                    path:'/stroe_index',
+                    component:stroe_index
+                }
             ]
+        },
+        {
+            name: 'PersonCenter',
+            path:'/PersonCenter',
+            component:PersonCenter,
+            meta:{ requiresAuth: true }
         },
         {
             name: 'denglu',
