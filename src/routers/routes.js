@@ -5,7 +5,9 @@ import  store  from '@/store/index.js'
 import PersonCenter from  '@/pages/User/PersonCenter.vue'
 import sign from '@/pages/User/sign.vue'
 import home_index  from '@/pages/Home/index.vue'
-import stroe_index from '@/pages/Store/index.vue'
+import addStore from '@/pages/Store/addStore.vue'
+import overview from '@/pages/Store/overview.vue'
+import reports from '@/pages/Store/reports.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -23,8 +25,16 @@ const router=createRouter({history:createWebHistory(),
                     component:home_index,
                 },
                 {
-                    path:'/stroe_index',
-                    component:stroe_index
+                    path:'/addStore',
+                    component:addStore
+                },
+                {
+                    path:'/overview',
+                    component:overview
+                },
+                {
+                    path:'/reports',
+                    component:reports
                 }
             ]
         },

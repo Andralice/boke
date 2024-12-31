@@ -7,9 +7,9 @@
         <li @click.prevent="toggleInventoryDropdown" :class="{ 'active': isInventoryDropdownVisible }">
           <span>库存管理</span>
           <ul ref="inventoryDropdown" class="dropdown-menu" v-if="isInventoryDropdownVisible">
-            <li><router-link to="/inventory/overview">库存概览</router-link></li>
-            <li><router-link to="/inventory/add">新增库存</router-link></li>
-            <li><router-link to="/inventory/reports">库存报表</router-link></li>
+            <li><router-link to="/overview" @click="toggleInventoryDropdown">库存概览</router-link></li>
+            <li><router-link to="/addStore" @click="toggleInventoryDropdown">新增库存</router-link></li>
+            <li><router-link to="/reports" @click="toggleInventoryDropdown">库存报表</router-link></li>
           </ul>
         </li>
         <li :style="{ marginTop: inventoryDropdownHeight + 'px' }"><router-link to="/orders">转移申请</router-link></li>
@@ -18,21 +18,21 @@
       </ul>
       <div class="user-item-img">
         <div class="user-item" @mouseover="showDropdown" @mouseleave="hideDropdown">
-        <router-link to="/login" @click.prevent="hideNavbarOnLogin">
-          <img class="user-img" src="@/assets/images/avatar.jpg" alt="">
-        </router-link>
-        <ul class="user-dropdown-menu" :class="{ 'show': isDropdownVisible }">
-          <li v-if="isLoggedIn">
-            <router-link to="/PersonCenter">个人资料</router-link>
-          </li>
-          <li v-if="!isLoggedIn">
-            <router-link to="/login">登录</router-link>
-          </li>
-          <li v-if="isLoggedIn">
-            <a href="#" @click.prevent="logout">退出</a>
-          </li>
-        </ul>
-      </div>
+          <router-link to="/login" @click.prevent="hideNavbarOnLogin">
+            <img class="user-img" src="@/assets/images/avatar.jpg" alt="">
+          </router-link>
+          <ul class="user-dropdown-menu" :class="{ 'show': isDropdownVisible }">
+            <li v-if="isLoggedIn">
+              <router-link to="/PersonCenter">个人资料</router-link>
+            </li>
+            <li v-if="!isLoggedIn">
+              <router-link to="/login">登录</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+              <a href="#" @click.prevent="logout">退出</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="content">
