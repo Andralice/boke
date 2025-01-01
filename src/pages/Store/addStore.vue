@@ -251,24 +251,23 @@ select, input {
 }
 
 .preview-image {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border: 1px solid #ccc;
 }
 .note-container {
     height: 100px;
-    padding: 20px;
+    width: 80%;
     border-radius: 8px;
 }
 .header {
     display: flex;
     justify-content: flex-start;    
-    margin-bottom: 10px;
 }
 textarea {
     width: 100%;
-    height: 80px;
+    height: 140px;
     resize: vertical;
     padding: 10px;
     margin-bottom: 10px;

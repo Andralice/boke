@@ -6,7 +6,7 @@ import PersonCenter from  '@/pages/User/PersonCenter.vue'
 import sign from '@/pages/User/sign.vue'
 import home_index  from '@/pages/Home/index.vue'
 import addStore from '@/pages/Store/addStore.vue'
-import overview from '@/pages/Store/overview.vue'
+import showStore from '@/pages/Store/showStore.vue'
 import reports from '@/pages/Store/reports.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
@@ -29,8 +29,8 @@ const router=createRouter({history:createWebHistory(),
                     component:addStore
                 },
                 {
-                    path:'/overview',
-                    component:overview
+                    path:'/showStore',
+                    component:showStore
                 },
                 {
                     path:'/reports',

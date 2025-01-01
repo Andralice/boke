@@ -7,7 +7,7 @@
         <li @click.prevent="toggleInventoryDropdown" :class="{ 'active': isInventoryDropdownVisible }">
           <span>库存管理</span>
           <ul ref="inventoryDropdown" class="dropdown-menu" v-if="isInventoryDropdownVisible">
-            <li><router-link to="/overview" @click="toggleInventoryDropdown">库存概览</router-link></li>
+            <li><router-link to="/showStore" @click="toggleInventoryDropdown">库存概览</router-link></li>
             <li><router-link to="/addStore" @click="toggleInventoryDropdown">新增库存</router-link></li>
             <li><router-link to="/reports" @click="toggleInventoryDropdown">库存报表</router-link></li>
           </ul>
