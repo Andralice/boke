@@ -1,24 +1,48 @@
 import {createRouter,createWebHistory} from 'vue-router'
 import home from '@/pages/home.vue'
-import about from '@/pages/about.vue'
-import products from '@/pages/products.vue'
 import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
-import PersonCenter from '@/pages/User/PersonCenter.vue'
+import PersonCenter from  '@/pages/User/PersonCenter.vue'
+import sign from '@/pages/User/sign.vue'
+import home_index  from '@/pages/Home/index.vue'
+import addStore from '@/pages/Store/addStore.vue'
+import showStore from '@/pages/Store/showStore.vue'
+import reports from '@/pages/Store/reports.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
             path:'/',
-            component:home,
+            name:'home',
+            meta:{ requiresAuth: true },
+            component: home,
+            children: [
+                {
+                    path: '/',
+                    component: home_index,
+                },
+                {
+                    path:'/home_index',
+                    component:home_index,
+                },
+                {
+                    path:'/addStore',
+                    component:addStore
+                },
+                {
+                    path:'/showStore',
+                    component:showStore
+                },
+                {
+                    path:'/reports',
+                    component:reports
+                }
+            ]
+        },
+        {
+            name: 'PersonCenter',
+            path:'/PersonCenter',
+            component:PersonCenter,
             meta:{ requiresAuth: true }
-        },
-        {
-            path:'/about',
-            component:about,
-        },
-        {
-            path:'/products',
-            component:products,
         },
         {
             name: 'denglu',
@@ -27,8 +51,9 @@ const router=createRouter({history:createWebHistory(),
             meta:{ requiresAuth: false }
         },
         {
-            path:'/PersonCenter',
-            component:PersonCenter,
+            name: 'zhuce',
+            path:'/sign',
+            component:sign,
         }
 
     ]

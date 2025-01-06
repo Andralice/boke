@@ -46,8 +46,8 @@ const badgeTexts = ref({
 
 <style scoped>
 .region.region1 {
-  flex: 0.4;
-  height: 260px;
+  width: 100%;
+  height: 100%;
   background-color: #fff;
   display: flex;
   flex-direction: column;

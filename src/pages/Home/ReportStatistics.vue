@@ -156,8 +156,7 @@ function getInboundQuantities(): number[] {
 
 <style scoped>
 .region.region3 {
-  flex: 0.6;
-  height: 520px;
+  height: 100%;
   flex-grow: 1;
   background-color: #ced4da;
   border: 1px solid #ddd;
