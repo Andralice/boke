@@ -1,8 +1,5 @@
 <template>
     <div class="profile-container">
-      <div class="sidebar">
-        <button class="sidebar-button" @click="navigateTo('edit')">个人中心</button>
-      </div>
       <div class="profile-content">
         <div class="profile-header">
           <h1>你好{{ name }}</h1>
@@ -99,34 +96,11 @@
   <style scoped>
   .profile-container {
     display: flex;
-    height: 100vh;
+    height: 920px;
     background-color: #f4f4f9;
   }
   
-  .sidebar {
-    width: 200px;
-    background-color: #ffffff;
-    padding: 20px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .sidebar-button {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: #6200ea;
-    color: white;
-    cursor: pointer;
-    text-align: left;
-  }
-  
-  .sidebar-button:hover {
-    background-color: #3700b3;
-  }
-  
+
   .profile-content {
     flex-grow: 1;
     display: flex;

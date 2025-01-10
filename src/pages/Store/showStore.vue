@@ -96,12 +96,18 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="pagination">
+                <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
+                <span>{{ currentPage }} / {{ totalPages }}</span>
+                <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup name='showStore'>
 import { ref, onMounted, computed } from 'vue';
+import dataJson from '@/pages/Store/showStore.json';
 
 interface FormData {
     仓库名称: string;
@@ -145,20 +151,7 @@ const currentPage = ref(1);
 const rowsPerPage = 10;
 
 const fetchData = async () => {
-    // 模拟API请求
-    setTimeout(() => {
-        data.value = [
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品A", goodsQuantity: 100, storageTemperature: "冷藏：-20°~0°", inboundTime: "2023-01-01", storageTime: "1年", remainingTime: "6个月", warehouseAddress: "地址A", contactPerson: "联系人A", contactPhone: "1234567890" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-            { goodsImage: "https://via.placeholder.com/50", goodsName: "商品B", goodsQuantity: 150, storageTemperature: "阴凉： 0°~20°", inboundTime: "2023-02-01", storageTime: "1年", remainingTime: "5个月", warehouseAddress: "地址B", contactPerson: "联系人B", contactPhone: "0987654321" },
-        ];
-    }, 1000);
+    data.value = dataJson.data as Item[];
 };
 
 const paginatedData = computed(() => {
@@ -244,7 +237,7 @@ table {
 }
 
 th, td {
-    padding: 8px;
+    padding: 4px;
     text-align: center;
     border: 1px solid #ddd;
 }
@@ -260,6 +253,23 @@ tr:hover {
 .no-data {
     text-align: center;
     padding: 20px;
+}
+
+.pagination {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.pagination span {
+    margin: 0 10px;
 }
 </style>
 
