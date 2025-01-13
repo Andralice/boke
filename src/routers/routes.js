@@ -8,6 +8,7 @@ import home_index  from '@/pages/Home/index.vue'
 import addStore from '@/pages/Store/addStore.vue'
 import showStore from '@/pages/Store/showStore.vue'
 import reports from '@/pages/Store/reports.vue'
+import CreateWarehouse from '@/pages/Store/CreateWarehouse.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -35,14 +36,16 @@ const router=createRouter({history:createWebHistory(),
                 {
                     path:'/reports',
                     component:reports
+                },
+                {
+                    path:'/CreateWarehouse',
+                    component:CreateWarehouse
+                },
+                {
+                    path:'/PersonCenter',
+                    component:PersonCenter
                 }
             ]
-        },
-        {
-            name: 'PersonCenter',
-            path:'/PersonCenter',
-            component:PersonCenter,
-            meta:{ requiresAuth: true }
         },
         {
             name: 'denglu',

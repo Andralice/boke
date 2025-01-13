@@ -15,6 +15,7 @@
         <li :style="{ marginTop: inventoryDropdownHeight + 'px' }"><router-link to="/orders">转移申请</router-link></li>
         <li :style="{ marginTop: inventoryDropdownHeight + '' }"><router-link to="/suppliers">供应商管理</router-link></li>
         <li :style="{ marginTop: inventoryDropdownHeight + '' }"><router-link to="/reports">报表分析</router-link></li>
+        <li :style="{ marginTop: inventoryDropdownHeight + '' }"><router-link to="/CreateWarehouse">添加仓库</router-link></li>
       </ul>
       <div class="user-item-img">
         <div class="user-item" @mouseover="showDropdown" @mouseleave="hideDropdown">
