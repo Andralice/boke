@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="home">
 import { ref, computed, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';

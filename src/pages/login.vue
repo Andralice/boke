@@ -29,7 +29,7 @@
     </div>
 </template>
 
-<script setup lang="js" name="login">
+<script setup lang="ts" name="login">
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'; // 引入 useRouter
