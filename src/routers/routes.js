@@ -6,7 +6,8 @@ import PersonCenter from  '@/pages/User/PersonCenter.vue'
 import sign from '@/pages/User/sign.vue'
 import home_index  from '@/pages/Home/index.vue'
 import addStore from '@/pages/Store/addStore.vue'
-import showStore from '@/pages/Store/showStore.vue'
+import showStore from '@/pages/Store/ShowStore/showStore.vue'
+import editStore from '@/pages/Store/EditStore/editStore.vue'
 import reports from '@/pages/Store/reports.vue'
 import CreateWarehouse from '@/pages/Store/CreateWarehouse.vue'
 const router=createRouter({history:createWebHistory(),
@@ -32,6 +33,10 @@ const router=createRouter({history:createWebHistory(),
                 {
                     path:'/showStore',
                     component:showStore
+                },
+                {
+                    path:'/editStore',
+                    component:editStore
                 },
                 {
                     path:'/reports',

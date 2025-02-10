@@ -54,6 +54,9 @@
                         <option value="20°~40°">常温： 20°~40°</option>
                     </select>
                 </div>
+                <div class="showSotre-group">
+                    <button for="存储温度" class="showStore-group-label-right" @click="navigateToAddPage">新增</button>
+                </div>
             </div>
         </div>
 
@@ -107,7 +110,11 @@
 
 <script lang="ts" setup name='showStore'>
 import { ref, onMounted, computed } from 'vue';
-import dataJson from '@/pages/Store/showStore.json';
+import { useRouter } from 'vue-router';
+import dataJson from '@/pages/Store/ShowStore/showStore.json';
+
+
+const router = useRouter(); // 初始化router
 
 interface FormData {
     仓库名称: string;
@@ -179,8 +186,14 @@ const nextPage = () => {
 };
 
 const editItem = (item: Item) => {
+    router.push('/editStore'); // 跳转到指定页面
     console.log("Edit item:", item);
 };
+
+const navigateToAddPage = () => {
+    router.push('/addStore'); // 跳转到指定页面
+};
+
 
 onMounted(() => {
     fetchData();
@@ -214,7 +227,17 @@ onMounted(() => {
 .showStore-group-label {
     padding-right: 10px;
 }
-
+.showStore-group-label-right {
+    position:absolute;
+    right: 30px;
+    width: 120px;
+    height: 30px;
+    top: 120px;
+}
+.showStore-group-label-right:hover{
+    color: #FFFFFF;
+    background-color: #004df2;
+}
 /* 添加或修改以下规则 */
 .showStore-group select,
 .showStore-group input {
