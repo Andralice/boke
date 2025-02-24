@@ -43,22 +43,21 @@ const store = useStore();
 const username = ref('');
 const password = ref('');
 
-const isLoggedIn = computed(() => store.getters.isLoggedIn);
+// const isLoggedIn = computed(() => store.getters.isLoggedIn);
 
 const handleLogin = async () => {
     try {
         await store.dispatch('login', { username: username.value, password: password.value });
-        username.value = '';
-        password.value = '';
         router.push('/');
+        console.log("login successful");
     } catch (error) {
         console.error('Login failed:', error);
     }
 };
 
-const logout = () => {
-    store.dispatch('logout');
-};
+// const logout = () => {
+//     store.dispatch('logout');
+// };
 
 // 新增的注册按钮点击方法
 const navigateToRegister = () => {
