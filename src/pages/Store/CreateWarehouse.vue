@@ -58,7 +58,7 @@
         <div class="note-container">
         <div class="header">
             <h2>添加备注</h2>
-            <button class="note-button" onclick="clearNote()">清除备注</button>
+            <button class="note-button" @click="clearNote()">清除备注</button>
         </div>
         <textarea id="note-input" placeholder="在这里输入您的备注..."></textarea>
     </div>
