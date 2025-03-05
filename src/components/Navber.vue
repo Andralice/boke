@@ -1,12 +1,12 @@
 <template>
-  <div class="navbar">
+  <div class="NavBer">
     <router-link to="/"></router-link>
   </div>
   <router-view></router-view>
 </template>
 
-<script lang="ts" setup name='App'>
-
+<script lang="ts" name="NavBer" setup >
+import { RouterLink,RouterView} from 'vue-router';
 </script>
 
 <style scoped>

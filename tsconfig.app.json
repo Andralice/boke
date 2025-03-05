@@ -9,6 +9,17 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    // 添加 JSX 支持相关的配置
+    "jsx": "preserve",  // 或者 "react-jsx" 如果你使用 React JSX 语法
+    "jsxFactory": "h",  // 如果你使用 Vue 的 JSX 语法
+    "jsxFragmentFactory": "Fragment",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "isolatedModules": true,
+    "types": ["vite/client", "element-plus/global"]
   }
 }

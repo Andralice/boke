@@ -1,5 +1,5 @@
 import {createRouter,createWebHistory} from 'vue-router'
-import home from '@/pages/home.vue'
+import home from '@/pages/homePage.vue'
 import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
 import PersonCenter from  '@/pages/User/PersonCenter.vue'
@@ -49,6 +49,14 @@ const router=createRouter({history:createWebHistory(),
                 {
                     path:'/PersonCenter',
                     component:PersonCenter
+                },
+                {
+                    path:'/orders',
+                    component:reports
+                },
+                {
+                    path:'/suppliers',
+                    component:reports
                 }
             ]
         },
