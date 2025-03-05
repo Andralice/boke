@@ -112,10 +112,10 @@
   import { ref } from 'vue';
   
   interface FormData {
-    仓库名称: string;
-    仓库地址: string;
-    仓库联系人: string;
-    货物名称: string;
+    仓库名称: string; 
+    仓库地址: string; 
+    仓库联系人: string; 
+    货物名称: string; 
     货物数量: string;
     入库时间: string;
     供货商: string;

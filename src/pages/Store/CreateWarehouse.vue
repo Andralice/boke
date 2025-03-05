@@ -6,22 +6,15 @@
       <div class="addsotre_container">
         <div class="addsotre-group">
           <label for="仓库名称">仓库名称</label>
-          <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.仓库名称">
+          <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
         </div>
         <div class="addsotre-group">
           <label for="仓库地址">仓库地址</label>
-          <input type="text" id="仓库地址" placeholder="请输入仓库地址" v-model="formData.仓库地址">
-        </div>
-        <div class="addsotre-group">
-          <label for="开放时间">开放时间</label>
-          <div class="time-input-container">
-            <input type="text" id="开放时间" placeholder="请输入开放时间" v-model="formData.开放时间">
-            <button @click="setCurrentTime">现在</button>
-          </div>
+          <input type="text" id="仓库地址" placeholder="请输入仓库地址" v-model="formData.stashAddress">
         </div>
         <div class="addsotre-group">
           <label for="仓库联系人">仓库联系人</label>
-          <input type="text" id="仓库联系人" placeholder="请输入仓库联系人" v-model="formData.仓库联系人">
+          <input type="text" id="仓库联系人" placeholder="请输入仓库联系人" v-model="formData.managerName">
         </div>
       </div>
   
@@ -29,7 +22,7 @@
       <div class="addsotre_container">
         <div class="addsotre-group">
           <label for="存储温度">存储温度</label>
-          <select id="存储温度" v-model="formData.存储温度">
+          <select id="存储温度" v-model="formData.storageTemperature">
             <option value="">请选择存储温度</option>
             <option value="-20°~0°">冷藏：-20°~0°</option>
             <option value="0°~20°">阴凉： 0°~20°</option>
@@ -38,11 +31,7 @@
         </div>
         <div class="addsotre-group">
           <label for="仓库面积">仓库面积</label>
-          <input type="text" id="仓库面积" placeholder="请输入仓库面积" v-model="formData.仓库面积">
-        </div>
-        <div class="addsotre-group">
-          <label for="货架数量">货架数量</label>
-          <input type="text" id="货架数量" placeholder="请输入货架数量" v-model="formData.货架数量">
+          <input type="text" id="仓库面积" placeholder="请输入仓库面积" v-model="formData.stashArea">
         </div>
       </div>
   
@@ -66,48 +55,53 @@
           <h2>添加备注</h2>
           <button class="note-button" @click="clearNote()">清除备注</button>
         </div>
-        <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.备注"></textarea>
-      </div>
-  
-      <!-- 提交按钮 -->
-      <div class="addstore-button">
-        <button @click="submitForm">提交</button>
+        <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
       </div>
     </div>
+          <!-- 提交按钮 -->
+          <div class="addstore-button">
+        <button @click="submitForm">提交</button>
+      </div>
   </template>
   
   <script lang="ts" setup name='CreateWarehouse'>
-  import { ref, } from 'vue';
+  import { ref } from 'vue';
+  import {createStash} from '@/api/stash/stash';
   
   interface FormData {
-    仓库名称: string;
-    仓库地址: string;
-    仓库联系人: string;
-    开放时间: string;
-    仓库面积: string;
-    货架数量: string;
-    存储温度: string;
-    备注: string;
+    stashName: string; // stashName
+    stashAddress: string; //stashAddress
+    managerName: string; // managerName
+    stashArea: string; // stashArea
+    storageTemperature: string; // storageTemperature
+    remark: string; // remark
   }
   
   const formData = ref<FormData>({
-    仓库名称: '',
-    仓库地址: '',
-    仓库联系人: '',
-    开放时间: '',
-    仓库面积: '',
-    货架数量: '',
-    存储温度: '',
-    备注: ''
+    stashName: '',
+    stashAddress: '',
+    managerName: '',
+    stashArea: '',
+    storageTemperature: '',
+    remark: ''
   });
   
+  console.log('66666666FormData:', formData.value);
+  
+  const submitForm = async () => {
+  try {
+    // 发送请求
+    const response = await createStash( formData.value);
+
+    // alert(`创建成功！仓库ID: ${response.data.id}`);
+  } catch (error) {
+    console.error('Error:', error);
+    alert('提交失败，请检查网络或联系管理员');
+  }
+};
+
   const previews = ref<string[]>([]);
   
-  function setCurrentTime() {
-    const now = new Date();
-    const formattedTime = now.toLocaleString(); // 获取当前时间并格式化
-    formData.value.开放时间 = formattedTime;
-  }
   
   function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -127,19 +121,15 @@
   }
   
   function clearNote() {
-    formData.value.备注 = '';
+    formData.value.remark  = '';
   }
   
-  function submitForm() {
-    console.log('Form submitted:', formData.value);
-    // 在这里可以进行表单验证和提交逻辑
-  }
   </script>
   
   <style scoped>
   .addstore-body {
     width: 100%;
-    height: 95%;
+    height: 80%;
     background-color: white;
     padding: 20px;
     box-sizing: border-box;
@@ -209,6 +199,9 @@
   }
   
   .addstore-button {
+    position: fixed; /* 作为定位基准 */
+    right: 80px;
+    bottom: 20px;
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
