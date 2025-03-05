@@ -6,68 +6,90 @@
           <router-link to="/login" @click.prevent="hideNavbarOnLogin">
             <img class="user-img" src="@/assets/images/avatar.jpg" alt="">
           </router-link>
-          <div  :class="['user-dropdown-menu', {'show': isDropdownVisible }]" ref="dropdownMenu">
-          <ul>
-            <li v-if="isLoggedIn">
-              <router-link to="/PersonCenter">个人资料</router-link>
-            </li>
-            <li v-if="!isLoggedIn">
-              <router-link to="/login">登录</router-link>
-            </li>
-            <li v-if="isLoggedIn">
-              <a href="#" @click.prevent="logout">退出</a>
-            </li>
-          </ul>
-        </div>
+          <div :class="['user-dropdown-menu', { 'show': isDropdownVisible }]" ref="dropdownMenu">
+            <ul>
+              <li v-if="isLoggedIn">
+                <router-link to="/PersonCenter">个人资料</router-link>
+              </li>
+              <li v-if="!isLoggedIn">
+                <router-link to="/login">登录</router-link>
+              </li>
+              <li v-if="isLoggedIn">
+                <a href="#" @click.prevent="logout">退出</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <h2>食品仓库管理系统</h2>
       <ul class="nav-links">
         <li>
           <router-link to="/home_index">
-            <el-icon class="icon"><HomeFilled /></el-icon> 概览
+            <el-icon class="icon">
+              <HomeFilled />
+            </el-icon> 概览
           </router-link>
         </li>
-        <li @click.prevent="toggleInventoryDropdown" :class="{ 'active': isInventoryDropdownVisible }">
-          <span>
-            <el-icon class="icon"><Box /></el-icon> 库存管理
-          </span>
-          <ul ref="inventoryDropdown" class="dropdown-menu" v-if="isInventoryDropdownVisible">
-            <li>
-              <router-link to="/showStore" @click="toggleInventoryDropdown">
-                <el-icon class="icon"><Box /></el-icon> 库存概览
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/addStore" @click="toggleInventoryDropdown">
-                <el-icon class="icon"><Plus /></el-icon> 新增库存
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/reports" @click="toggleInventoryDropdown">
-                <el-icon class="icon"><Document /></el-icon> 库存报表
-              </router-link>
-            </li>
-          </ul>
-        </li>
+        <div @click.prevent="toggleInventoryDropdown" :class="{ 'active': isInventoryDropdownVisible }">
+          <li>
+            <span>
+              <el-icon class="icon">
+                <Box />
+              </el-icon> 库存管理
+            </span>
+            <div class="dropdown-menu2">
+              <ul ref="inventoryDropdown" class="dropdown-menu" v-if="isInventoryDropdownVisible">
+                <li>
+                  <router-link to="/showStore" @click="toggleInventoryDropdown">
+                    <el-icon class="icon">
+                      <Box />
+                    </el-icon> 库存概览
+                  </router-link>
+                </li>
+                <li>
+                  <router-link to="/addStore" @click="toggleInventoryDropdown">
+                    <el-icon class="icon">
+                      <Plus />
+                    </el-icon> 新增库存
+                  </router-link>
+                </li>
+                <li>
+                  <router-link to="/reports" @click="toggleInventoryDropdown">
+                    <el-icon class="icon">
+                      <Document />
+                    </el-icon> 库存报表
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </div>
         <li :style="isInventoryDropdownVisible ? { marginTop: inventoryDropdownHeight + 'px' } : {}">
           <router-link to="/orders">
-            <el-icon class="icon"><Box /></el-icon> 转移申请
+            <el-icon class="icon">
+              <Box />
+            </el-icon> 转移申请
           </router-link>
         </li>
         <li>
           <router-link to="/suppliers">
-            <el-icon class="icon"><Box /></el-icon> 供应商管理
+            <el-icon class="icon">
+              <Box />
+            </el-icon> 供应商管理
           </router-link>
         </li>
         <li>
           <router-link to="/reports">
-            <el-icon class="icon"><Histogram /></el-icon> 报表分析
+            <el-icon class="icon">
+              <Histogram />
+            </el-icon> 报表分析
           </router-link>
         </li>
         <li>
           <router-link to="/CreateWarehouse">
-            <el-icon class="icon"><Plus /></el-icon> 添加仓库
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 添加仓库
           </router-link>
         </li>
       </ul>
@@ -93,81 +115,79 @@ import {
 import { ElIcon } from 'element-plus';
 
 const store = useStore();
-    const router = useRouter();
-    const route = useRoute();
+const router = useRouter();
+const route = useRoute();
+// 响应式引用
+const isLoggedIn = computed(() => store.getters.isLoggedIn);
+const isDropdownVisible = ref(false);
+const isInventoryDropdownVisible = ref(false);
+const inventoryDropdown = ref<HTMLElement | null>(null);
+const inventoryDropdownHeight = ref(0);
 
-    // 响应式引用
-    const isLoggedIn = computed(() => store.getters.isLoggedIn);
-    const isDropdownVisible = ref(false);
-    const isInventoryDropdownVisible = ref(false);
-    const inventoryDropdown = ref<HTMLElement | null>(null);
-    const inventoryDropdownHeight = ref(0);
+// 定时器变量
+let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    // 定时器变量
-    let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+// 导航方法
+// const navigateTo = (path: string) => {
+//   router.push(path);
+// };
 
-    // 导航方法
-    // const navigateTo = (path: string) => {
-    //   router.push(path);
-    // };
+// 登出方法
+const logout = () => {
+  store.dispatch('logout');
+  router.push('/login');
+};
 
-    // 登出方法
-    const logout = () => {
-      store.dispatch('logout');
-      router.push('/login');
-    };
+// 显示下拉菜单
+const showDropdown = () => {
+  isDropdownVisible.value = true;
+  if (hideTimeout !== null) {
+    clearTimeout(hideTimeout);
+  }
+};
 
-    // 显示下拉菜单
-    const showDropdown = () => {
-      isDropdownVisible.value = true;
-      if (hideTimeout !== null) {
-        clearTimeout(hideTimeout);
-      }
-    };
+// 隐藏下拉菜单
+const hideDropdown = () => {
+  if (hideTimeout !== null) {
+    clearTimeout(hideTimeout);
+  }
+  hideTimeout = setTimeout(() => {
+    isDropdownVisible.value = false;
+  }, 300); // 延迟 300 毫秒后隐藏下拉菜单
+};
 
-    // 隐藏下拉菜单
-    const hideDropdown = () => {
-      if (hideTimeout !== null) {
-        clearTimeout(hideTimeout);
-      }
-      hideTimeout = setTimeout(() => {
-        isDropdownVisible.value = false;
-      }, 300); // 延迟 300 毫秒后隐藏下拉菜单
-    };
+// 切换库存下拉菜单
+const toggleInventoryDropdown = () => {
+  isInventoryDropdownVisible.value = !isInventoryDropdownVisible.value;
 
-    // 切换库存下拉菜单
-    const toggleInventoryDropdown = () => {
-      isInventoryDropdownVisible.value = !isInventoryDropdownVisible.value;
+  nextTick(() => {
+    if (isInventoryDropdownVisible.value && inventoryDropdown.value) {
+      inventoryDropdownHeight.value = inventoryDropdown.value.offsetHeight;
+    } else {
+      inventoryDropdownHeight.value = 0;
+    }
+  });
+};
 
-      nextTick(() => {
-        if (isInventoryDropdownVisible.value && inventoryDropdown.value) {
-          inventoryDropdownHeight.value = inventoryDropdown.value.offsetHeight;
-        } else {
-          inventoryDropdownHeight.value = 0;
-        }
-      });
-    };
+// 隐藏导航栏（登录时）
+const hideNavbarOnLogin = () => {
+  console.log('Hide navbar on login');
+  // 这里可以添加更多的逻辑来隐藏导航栏
+};
 
-    // 隐藏导航栏（登录时）
-    const hideNavbarOnLogin = () => {
-      console.log('Hide navbar on login');
-      // 这里可以添加更多的逻辑来隐藏导航栏
-    };
+// 生命周期钩子
+onMounted(() => {
+  // 初始化逻辑（如果需要）
+});
 
-    // 生命周期钩子
-    onMounted(() => {
-      // 初始化逻辑（如果需要）
-    });
-
-    onUnmounted(() => {
-      if (hideTimeout !== null) {
-        clearTimeout(hideTimeout);
-      }
-    });
+onUnmounted(() => {
+  if (hideTimeout !== null) {
+    clearTimeout(hideTimeout);
+  }
+});
 </script>
 <style scoped>
-body,
-html {
+body, html {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -220,11 +240,41 @@ html {
   padding-left: 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  position: relative; /* 添加相对定位 */
+  position: relative; /* 确保伪元素正确位置 */
 }
 
-.sidebar li:hover {
-  background-color: #2980b9;
+.sidebar li:before {
+  content: "";
+  width: 4px;
+  height: 100%;
+  background-color: transparent;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: background-color 0.3s ease;
+}
+
+/* 鼠标悬停时改变背景色并放大字体 */
+.sidebar li:hover > a {
+  transform: scale(1.2); /* 字体放大 */
+  color: #fff; /* 可选：更改颜色 */
+}
+.sidebar span:hover {
+  transform: scale(1.2);
+  /* 字体放大 */
+  color: #fff;
+  /* 可选：更改颜色 */
+}
+.sidebar span {
+  padding-right: 50px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  /* 添加变换过渡 */
+  transform-origin: left center;
+  /* 控制缩放中心 */
+}
+
+.sidebar li:hover:before {
+  background-color: #2980b9; /* 改变标识颜色 */
 }
 
 .sidebar a {
@@ -235,11 +285,8 @@ html {
   align-items: center;
   width: 100%;
   height: 100%;
-  transition: color 0.3s ease;
-}
-
-.sidebar a:hover {
-  color: #fff;
+  transition: transform 0.3s ease, color 0.3s ease; /* 添加变换过渡 */
+  transform-origin: left center; /* 控制缩放中心 */
 }
 
 .sidebar i {
@@ -282,6 +329,18 @@ html {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  position: relative; /* 确保伪元素正确位置 */
+}
+
+.dropdown-menu li:before {
+  content: "";
+  width: 4px;
+  height: 100%;
+  background-color: transparent;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: background-color 0.3s ease;
 }
 
 .dropdown-menu a {
@@ -291,14 +350,21 @@ html {
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  height:100%;
+  height: 100%;
   padding: 0 1rem;
   padding-left: 1.5rem;
-  transition: background-color 0.3s;
+  transition: transform 0.3s ease, color 0.3s ease; /* 添加变换过渡 */
+  transform-origin: left center; /* 控制缩放中心 */
 }
 
-.dropdown-menu a:hover {
-  background-color: #1e2a36;
+/* 悬停时分别对每个子导航项进行缩放和标识变化 */
+.dropdown-menu li:hover > a {
+  transform: scale(1.2); /* 字体放大 */
+  color: #fff; /* 可选：更改颜色 */
+}
+
+.dropdown-menu li:hover:before {
+  background-color: #2980b9; /* 改变标识颜色 */
 }
 
 .content {

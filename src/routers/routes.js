@@ -44,6 +44,14 @@ const router=createRouter({history:createWebHistory(),
                 {
                     path:'/PersonCenter',
                     component:PersonCenter
+                },
+                {
+                    path:'/orders',
+                    component:reports
+                },
+                {
+                    path:'/suppliers',
+                    component:reports
                 }
             ]
         },
