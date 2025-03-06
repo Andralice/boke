@@ -86,10 +86,17 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/CreateWarehouse">
+          <router-link to="/createStash">
             <el-icon class="icon">
               <Plus />
             </el-icon> 添加仓库
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/showAllStash">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 仓库概览
           </router-link>
         </li>
       </ul>

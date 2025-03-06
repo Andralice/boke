@@ -9,7 +9,8 @@ import addStore from '@/pages/Store/addStore.vue'
 import showStore from '@/pages/Store/ShowStore/showStore.vue'
 import editStore from '@/pages/Store/EditStore/editStore.vue'
 import reports from '@/pages/Store/reports.vue'
-import CreateWarehouse from '@/pages/Store/CreateWarehouse.vue'
+import createStash from '@/pages/stash/createStash.vue'
+import showAllStash from '@/pages/stash/showAllStash.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -43,8 +44,12 @@ const router=createRouter({history:createWebHistory(),
                     component:reports
                 },
                 {
-                    path:'/CreateWarehouse',
-                    component:CreateWarehouse
+                    path:'/createStash',
+                    component:createStash
+                },
+                {
+                    path:'/showALLStash',
+                    component:showAllStash
                 },
                 {
                     path:'/PersonCenter',

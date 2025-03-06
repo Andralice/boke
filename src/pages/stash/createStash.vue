@@ -86,21 +86,21 @@
     remark: ''
   });
   
-  console.log('66666666FormData:', formData.value);
+  // console.log('66666666FormData:', formData.value);
   
   const submitForm = async () => {
-  try {
-    // 发送请求
-    const response = await createStash( formData.value);
+    try {
+      // 发送请求
+      const response = await createStash( formData.value);
 
-    // alert(`创建成功！仓库ID: ${response.data.id}`);
-  } catch (error) {
-    console.error('Error:', error);
-    alert('提交失败，请检查网络或联系管理员');
-  }
+      // alert(`创建成功！仓库ID: ${response.data.id}`);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('提交失败，请检查网络或联系管理员');
+    }
 };
 
-  const previews = ref<string[]>([]);
+const previews = ref<string[]>([]);
   
   
   function handleFileChange(event: Event) {
