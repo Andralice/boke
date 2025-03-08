@@ -64,6 +64,9 @@
                         <td>
                             <button @click="editItem(item)">编辑</button>
                         </td>
+                        <td>
+                            <button @click="deleteItem(item)">删除</button>
+                        </td>
                     </tr>
                     <tr v-if="paginatedData.length === 0">
                         <td colspan="9" class="no-data">暂无数据</td>
@@ -84,7 +87,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import {selectAllStash} from '@/api/stash/stash';
+import {selectAllStash,deleteStash} from '@/api/stash/stash';
 
 interface StashItem {
   stashId: number;
@@ -160,11 +163,26 @@ const formatDate = (timestamp: string) => {
 
 // 页面跳转
 const navigateToAddPage = () => {
-  router.push('/stash/add');
+  router.push('/createStash');
 };
 
 const editItem = (item: StashItem) => {
-  router.push(`/stash/edit/${item.stashId}`);
+  router.push(`/updateStash/${item.stashId}`);
+  
+};
+const deleteItem = async (item: StashItem) => {
+  if (item.stashId !== undefined) {
+    try {
+      const response = await deleteStash(item.stashId); // 调用删除接口
+      alert('删除成功！');
+      // 可以选择重定向到其他页面或刷新列表
+    } catch (error) {
+      console.error('Error deleting stash', error);
+      alert('删除失败，请检查网络或联系管理员');
+    }
+  } else {
+    alert('未找到仓库ID');
+  }
 };
 </script>
 

@@ -61,7 +61,7 @@
   </div>
 </template>
   
-  <script lang="ts" setup name='CreateWarehouse'>
+  <script lang="ts" setup name='createStash'>
   import { ref } from 'vue';
   import {createStash} from '@/api/stash/stash';
   
