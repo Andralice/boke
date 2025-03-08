@@ -12,6 +12,8 @@ import reports from '@/pages/Store/reports.vue'
 import createStash from '@/pages/stash/createStash.vue'
 import showAllStash from '@/pages/stash/showAllStash.vue'
 import suppliers from '@/pages/stash/Suppliers.vue'
+import updateStash from '@/pages/stash/updateStash.vue'
+
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -51,6 +53,11 @@ const router=createRouter({history:createWebHistory(),
                 {
                     path:'/showALLStash',
                     component:showAllStash
+                },
+                {
+                    path:'/updateStash/:id',
+                    name:'updateStash',
+                    component:updateStash
                 },
                 {
                     path:'/PersonCenter',
