@@ -68,7 +68,7 @@ const router=createRouter({history:createWebHistory(),
                 },
                 {
                     path:'/suppliers',
-                    component:reports
+                    component:suppliers
                 }
             ]
         },
