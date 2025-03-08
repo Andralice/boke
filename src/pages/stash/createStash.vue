@@ -61,9 +61,10 @@
   </div>
 </template>
 
-<script lang="ts" setup name='CreateWarehouse'>
+<script lang="ts" setup name='createStash'>
 import { ref } from 'vue';
 import { createStash } from '@/api/stash/stash';
+import { useRouter, useRoute } from 'vue-router'; // 新增路由依赖
 
 interface FormData {
   stashName: string; // stashName
@@ -85,12 +86,12 @@ const formData = ref<FormData>({
 
 // console.log('66666666FormData:', formData.value);
 
+const router = useRouter();
 const submitForm = async () => {
   try {
     // 发送请求
     const response = await createStash(formData.value);
-    alert("提交成功！"+response.message)
-    // alert(`创建成功！仓库ID: ${response.data.id}`);
+    router.push('/showALLStash');
   } catch (error) {
     console.error('Error:', error);
     alert('提交失败，请检查网络或联系管理员');

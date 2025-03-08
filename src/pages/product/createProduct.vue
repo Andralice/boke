@@ -1,42 +1,38 @@
 <template>
     <div class="addstore-body">
-      <h1>新增供应商</h1>
+      <h1>新增商品</h1>
   
       <!-- 新增仓库输入框模块 -->
       <div class="new-stash-container">
-        <h2>新增供应商信息</h2>
+        <h2>新增商品信息</h2>
         <div class="stash-input-row">
           <div class="stash-input-group">
-            <label for="供应商名称">供应商名称</label>
-            <input type="text" id="供应商名称" placeholder="请输入供应商名称" v-model="formData.supplierName">
+            <label for="商品名称">商品名称</label>
+            <input type="text" id="商品名称" placeholder="请输入商品名称" v-model="formData.productName">
           </div>
           <div class="stash-input-group">
-            <label for="供应商联系人">供应商联系人</label>
-            <input type="text" id="供应商联系人" placeholder="请输入供应商联系人" v-model="formData.contactName">
+            <label for="商品类别">商品类别</label>
+            <input type="text" id="商品类别" placeholder="请输入商品类别" v-model="formData.category">
           </div>
           <div class="stash-input-group">
-            <label for="供应商联系人电话">供应商联系人电话</label>
-            <input type="text" id="供应商联系人电话" placeholder="请输入供应商联系人电话" v-model="formData.contactPhone">
+            <label for="仓库名称">仓库名称</label>
+            <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
           </div>
         </div>
         <div class="stash-input-row">
           <div class="stash-input-group">
-            <label for="供应商地址">供应商地址</label>
-            <input type="text" id="供应商地址" placeholder="请输入供应商地址" v-model="formData.address">
-          </div>
-          <div class="stash-input-group">
-            <label for="供应商银行卡号">供应商银行卡号</label>
-            <input type="text" id="供应商银行卡号" placeholder="请输入供应商银行卡号" v-model="formData.bankAccount">
-          </div>
-          <div class="stash-input-group">
-            <label for="供应商状态">供应商状态</label>
-            <select id="供应商状态" v-model="formData.cooperationStatus">
-              <option value="">请选择供应商状态</option>
-              <option :value="true">启用</option>
-              <option :value="false">禁用</option>
+            <label for="存储方式">存储方式</label>
+            <select id="存储方式" v-model="formData.storageTemperature">
+              <option value="">请选择存储方式</option>
+              <option value="冷藏">冷藏</option>
+              <option value="阴凉">阴凉</option>
+              <option value="常温">常温</option>
             </select>
           </div>
-  
+          <div class="stash-input-group">
+            <label for="供货商">供货商</label>
+            <input type="text" id="供货商" placeholder="请输入供货商" v-model="formData.supplierName">
+          </div>
         </div>
         <div class="preview-container">
           <div v-for="(preview, index) in previews" :key="index" class="preview-item">
@@ -61,62 +57,42 @@
     </div>
   </template>
   
-  <script lang="ts" setup name='createSuppliers'>
-  import { onMounted, ref } from 'vue';
-  import { selectSuppliersById,updateSuppliers } from '@/api/suppliers/suppliers';
-  import { useRouter,useRoute } from 'vue-router';
+  <script lang="ts" setup name='createProduct'>
+  import { ref } from 'vue';
+  import { createProduct } from '@/api/product/product';
+  import { useRouter, useRoute } from 'vue-router'; // 新增路由依赖
   
   interface FormData {
-    supplierId?:number;
+    productName : string; 
+    category: string; 
+    stashName: string; 
+    storageTemperature: string; 
     supplierName: string; 
-    contactName: string; 
-    contactPhone: string; 
-    address: string; 
-    bankAccount: string; 
-    cooperationStatus:boolean;
     remark: string; 
   }
   
   const formData = ref<FormData>({
+    productName: '',
+    category: '',
+    stashName: '',
+    storageTemperature: '',
     supplierName: '',
-    contactName: '',
-    contactPhone: '',
-    address: '',
-    bankAccount: '',
-    cooperationStatus: true,
     remark: ''
   });
   
-  // 新增路由参数获取
+  // console.log('66666666FormData:', formData.value);
+  
   const router = useRouter();
-  const route = useRoute();
-
-// const stashId = ref<number>(() => parseInt(route.params.id as string)); // 从URL参数获取仓库ID
-  const supplierId = ref<number>(parseInt(route.params.id as string) || 0); // 从URL参数获取仓库ID
-
-// 新增：加载现有供应商数据（编辑页面需要预加载数据）
-onMounted(async () => {
-  if (supplierId.value) {
+  const submitForm = async () => {
     try {
-      const response = await selectSuppliersById(supplierId.value); // 调用更新后的接口
-      formData.value = response.result;
+      // 发送请求
+      const response = await createProduct(formData.value);
+      router.push('/showALLProduct');
     } catch (error) {
-      console.error('Failed to load stash data', error);
-      alert('无法加载仓库信息，请检查网络或联系管理员');
+      console.error('Error:', error);
+      alert('提交失败，请检查网络或联系管理员');
     }
-  }
-});
-
-const submitForm = async () => {
-  formData.value.supplierId = supplierId.value;
-  try {
-    const response = await updateSuppliers(formData.value); // 调用更新接口
-    router.push('/showALLSuppliers');
-  } catch (error) {
-    console.error('Error updating Suppliers', error);
-    alert('更新失败，请检查网络或联系管理员');
-  }
-};
+  };
   
   const previews = ref<string[]>([]);
   

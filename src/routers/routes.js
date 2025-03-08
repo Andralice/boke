@@ -5,14 +5,22 @@ import  store  from '@/store/index.js'
 import PersonCenter from  '@/pages/User/PersonCenter.vue'
 import sign from '@/pages/User/sign.vue'
 import home_index  from '@/pages/Home/index.vue'
-import addStore from '@/pages/Store/addStore.vue'
-import showStore from '@/pages/Store/ShowStore/showStore.vue'
-import editStore from '@/pages/Store/EditStore/editStore.vue'
-import reports from '@/pages/Store/reports.vue'
+
 import createStash from '@/pages/stash/createStash.vue'
 import showAllStash from '@/pages/stash/showAllStash.vue'
-import suppliers from '@/pages/stash/Suppliers.vue'
 import updateStash from '@/pages/stash/updateStash.vue'
+
+import createSuppliers from  '@/pages/suppliers/createSuppliers.vue'
+import showAllSuppliers from '@/pages/suppliers/showAllSuppliers.vue'
+import updateSuppliers from '@/pages/suppliers/updateSuppliers.vue'
+
+import createProduct from '@/pages/Product/createProduct.vue'
+import showAllProduct from '@/pages/Product/showAllProduct.vue'
+import updateProduct from '@/pages/Product/updateProduct.vue'
+
+import createInventory from '@/pages/inventory/createInventory.vue'
+import showAllInventory from '@/pages/inventory/showAllInventory.vue'
+// import updateInventory from '@/pages/inventory/updateInventory.vue'
 
 const router=createRouter({history:createWebHistory(),
     routes: [
@@ -30,22 +38,8 @@ const router=createRouter({history:createWebHistory(),
                     path:'/home_index',
                     component:home_index,
                 },
-                {
-                    path:'/addStore',
-                    component:addStore
-                },
-                {
-                    path:'/showStore',
-                    component:showStore
-                },
-                {
-                    path:'/editStore',
-                    component:editStore
-                },
-                {
-                    path:'/reports',
-                    component:reports
-                },
+
+                // 仓库管理
                 {
                     path:'/createStash',
                     component:createStash
@@ -59,17 +53,56 @@ const router=createRouter({history:createWebHistory(),
                     name:'updateStash',
                     component:updateStash
                 },
+
+                // 供应商管理
+                {
+                    path:'/createSuppliers',
+                    component:createSuppliers
+                },
+                {
+                    path:'/showALLSuppliers',
+                    component:showAllSuppliers
+                },
+                {
+                    path:'/updateSuppliers/:id',
+                    name:'updateSuppliers',
+                    component:updateSuppliers
+                },
+
+                // 产品管理
+                {
+                    path:'/createProduct',
+                    component:createProduct
+                },
+                {
+                    path:'/showALLProduct',
+                    component:showAllProduct
+                },
+                {
+                    path:'/updateProduct/:id',
+                    name:'updateProduct',
+                    component:updateProduct
+                },
+
+                // 库存管理
+                {
+                    path:'/createInventory',
+                    component:createInventory
+                },
+                {
+                    path:'/showALLInventory',
+                    component:showAllInventory
+                },
+                // {
+                //     path:'/updateInventory/:id',
+                //     name:'updateInventory',
+                //     component:updateInventory
+                // },
+
+
                 {
                     path:'/PersonCenter',
                     component:PersonCenter
-                },
-                {
-                    path:'/orders',
-                    component:reports
-                },
-                {
-                    path:'/suppliers',
-                    component:suppliers
                 }
             ]
         },

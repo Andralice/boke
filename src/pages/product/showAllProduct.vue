@@ -5,26 +5,23 @@
         <div class="filters">
             <div class="filter-row">
                 <div class="filter-group">
-                    <label>仓库名称</label>
-                    <select v-model="formData.stashName">
-                        <option value="">全部</option>
-                        <option value="仓库A">仓库A</option>
-                        <option value="仓库B">仓库B</option>
-                    </select>
+                    <label>商品ID</label>
+                    <input type="text" v-model="formData.productId">
                 </div>
                 <div class="filter-group">
-                    <label>仓库管理员</label>
-                    <select v-model="formData.managerName">
-                        <option value="">全部</option>
-                        <option value="管理员A">管理员A</option>
-                        <option value="管理员B">管理员B</option>
-                    </select>
+                    <label>商品名称</label>
+                    <input type="text" v-model="formData.productName">
                 </div>
                 <div class="filter-group">
-                    <label>存储温度</label>
+                    <label>商品类别</label>
+                    <input type="text" v-model="formData.category">
+                </div>
+                <div class="filter-group">
+                    <label>存储方式</label>
                     <select v-model="formData.storageTemperature">
                         <option value="">全部</option>
                         <option value="冷藏">冷藏</option>
+                        <option value="阴凉">阴凉：</option>
                         <option value="常温">常温</option>
                     </select>
                 </div>
@@ -41,24 +38,26 @@
                 <thead>
                     <tr>
                         <th>序号</th>
+                        <th>商品名称</th>
+                        <th>商品类别</th>
                         <th>仓库名称</th>
-                        <th>仓库地址</th>
-                        <th>存储温度</th>
-                        <th>仓库面积(m²)</th>
-                        <th>管理员</th>
+                        <th>存储方式</th>
+                        <th>供应商名称</th>
                         <th>创建时间</th>
+                        <th>更新时间</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in paginatedData" :key="item.stashId">
+                    <tr v-for="(item, index) in paginatedData" :key="item.productId">
                         <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+                        <td>{{ item.productName }}</td>
+                        <td>{{ item.category }}</td>
                         <td>{{ item.stashName }}</td>
-                        <td>{{ item.stashAddress }}</td>
                         <td>{{ item.storageTemperature }}</td>
-                        <td>{{ item.stashArea }}</td>
-                        <td>{{ item.managerName }}</td>
+                        <td>{{ item.supplierName }}</td>
                         <td>{{ formatDate(item.createTime) }}</td>
+                        <td>{{ formatDate(item.updateTime) }}</td>
                         <td>
                             <button @click="editItem(item)">编辑</button>
                         </td>
@@ -82,40 +81,45 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="showAllProduct">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import {selectAllStash,deleteStash} from '@/api/stash/stash';
+import { selectAllProduct,deleteProductById } from '@/api/product/product';
 
-interface StashItem {
-  stashId: number;
-  stashName: string;
-  stashAddress: string;
-  storageTemperature: string;
-  stashArea: number;
-  managerName: string;
-  createTime: string;
-  updateTime: string;
+interface  FormData{
+    productId?: number;
+    productName : string; 
+    category: string; 
+    stashName: string; 
+    storageTemperature: string; 
+    supplierName: string; 
+    remark: string;
+    createTime: string;
+    updateTime: string;
 }
-
-const router = useRouter();
 
 // 表单数据
 const formData = ref({
-  stashName: '',
-  managerName: '',
-  storageTemperature: ''
+    productId: undefined,
+    storageTemperature:'',
+    productName: '',
+    category: '',
+    stashName: ''
 });
+
+
+const router = useRouter();
+
 
 // 分页相关
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalItems = ref(0);
-const stashList = ref<StashItem[]>([]);
+const pageList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() => stashList.value);
+const paginatedData = computed(() => pageList.value);
 
 // 初始化加载数据
 onMounted(() => {
@@ -131,9 +135,9 @@ const loadData = async () => {
     //   ...formData.value
     };
     
-    const response = await selectAllStash(params);
+    const response = await selectAllProduct(params);
     
-    stashList.value = response.result;
+    pageList.value = response.result;
     // totalItems.value = response.data.total;
   } catch (error) {
     console.error('加载数据失败:', error);
@@ -162,17 +166,17 @@ const formatDate = (timestamp: string) => {
 
 // 页面跳转
 const navigateToAddPage = () => {
-  router.push('/createStash');
+  router.push('/createProduct');
 };
 
-const editItem = (item: StashItem) => {
-  router.push(`/updateStash/${item.stashId}`);
+const editItem = (item: FormData) => {
+  router.push(`/updateProduct/${item.productId}`);
   
 };
-const deleteItem = async (item: StashItem) => {
-  if (item.stashId !== undefined) {
+const deleteItem = async (item: FormData) => {
+  if (item.productId !== undefined) {
     try {
-      const response = await deleteStash(item.stashId); // 调用删除接口
+      const response = await deleteProductById(item.productId); // 调用删除接口
       alert('删除成功！');
       // 可以选择重定向到其他页面或刷新列表
       loadData(); // 刷新列表
