@@ -11,6 +11,7 @@ import editStore from '@/pages/Store/EditStore/editStore.vue'
 import reports from '@/pages/Store/reports.vue'
 import createStash from '@/pages/stash/createStash.vue'
 import showAllStash from '@/pages/stash/showAllStash.vue'
+import suppliers from '@/pages/stash/Suppliers.vue'
 const router=createRouter({history:createWebHistory(),
     routes: [
         {
@@ -61,7 +62,7 @@ const router=createRouter({history:createWebHistory(),
                 },
                 {
                     path:'/suppliers',
-                    component:reports
+                    component:suppliers
                 }
             ]
         },

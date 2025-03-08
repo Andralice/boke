@@ -60,247 +60,254 @@
     </div>
   </div>
 </template>
-  
-  <script lang="ts" setup name='CreateWarehouse'>
-  import { ref } from 'vue';
-  import {createStash} from '@/api/stash/stash';
-  
-  interface FormData {
-    stashName: string; // stashName
-    stashAddress: string; //stashAddress
-    managerName: string; // managerName
-    stashArea: string; // stashArea
-    storageTemperature: string; // storageTemperature
-    remark: string; // remark
-  }
-  
-  const formData = ref<FormData>({
-    stashName: '',
-    stashAddress: '',
-    managerName: '',
-    stashArea: '',
-    storageTemperature: '',
-    remark: ''
-  });
-  
-  // console.log('66666666FormData:', formData.value);
-  
-  const submitForm = async () => {
-    try {
-      // 发送请求
-      const response = await createStash( formData.value);
 
-      // alert(`创建成功！仓库ID: ${response.data.id}`);
-    } catch (error) {
-      console.error('Error:', error);
-      alert('提交失败，请检查网络或联系管理员');
-    }
+<script lang="ts" setup name='CreateWarehouse'>
+import { ref } from 'vue';
+import { createStash } from '@/api/stash/stash';
+
+interface FormData {
+  stashName: string; // stashName
+  stashAddress: string; //stashAddress
+  managerName: string; // managerName
+  stashArea: string; // stashArea
+  storageTemperature: string; // storageTemperature
+  remark: string; // remark
+}
+
+const formData = ref<FormData>({
+  stashName: '',
+  stashAddress: '',
+  managerName: '',
+  stashArea: '',
+  storageTemperature: '',
+  remark: ''
+});
+
+// console.log('66666666FormData:', formData.value);
+
+const submitForm = async () => {
+  try {
+    // 发送请求
+    const response = await createStash(formData.value);
+    alert("提交成功！"+response.message)
+    // alert(`创建成功！仓库ID: ${response.data.id}`);
+  } catch (error) {
+    console.error('Error:', error);
+    alert('提交失败，请检查网络或联系管理员');
+  }
 };
 
 const previews = ref<string[]>([]);
-  
-  
-  function handleFileChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    if (target.files) {
-      previews.value = [];
-      for (let i = 0; i < target.files.length; i++) {
-        const file = target.files[i];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          if (e.target?.result) {
-            previews.value.push(e.target.result as string);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
+
+
+function handleFileChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files) {
+    previews.value = [];
+    for (let i = 0; i < target.files.length; i++) {
+      const file = target.files[i];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (e.target?.result) {
+          previews.value.push(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
-  
-  function clearNote() {
-    formData.value.remark  = '';
-  }
-  
-  </script>
-  
-  <style scoped>
-  .addstore-body {
-    width: 100%;
-    height: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f9f9f9; /* 轻微背景色 */
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .new-stash-container {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    margin-bottom: 20px;
-    background-color: white;
-  }
-  
-  .new-stash-container h2 {
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  .new-stash-container:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  .stash-input-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .stash-input-group {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 250px;
-    margin-bottom: 10px;
-  }
-  
-  .stash-input-group label {
-    font-weight: 500;
-    width: 120px; /* 固定宽度以确保对齐 */
-    margin-right: 10px;
-    color: #555;
-  }
-  
-  .stash-input-group input,
-  .stash-input-group select {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .stash-input-group input:focus,
-  .stash-input-group select:focus {
-    border-color: #007bff;
-  }
-  
-  .preview-container {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .preview-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .preview-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .note-container {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .note-container:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .header h2 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  textarea {
-    width: 100%;
-    height: 140px;
-    resize: vertical;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  textarea:focus {
-    border-color: #007bff;
-  }
-  
-  .note-button {
-    margin-left: 10px;
-    height: 40px;
-    background-color: #555; /* 更柔和的颜色 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .note-button:hover {
-    background-color: #333;
-  }
-  
-  .addstore-button {
-    position: fixed;
-    right: 80px;
-    bottom: 80px; /* 向上移动一些 */
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .addstore-button button {
-    width: 200px; /* 减少宽度 */
-    height: 40px; /* 减少高度 */
-    color: white;
-    background-color: #555; /* 更柔和的颜色 */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .addstore-button button:hover {
-    background-color: #333;
-  }
-  </style>
+}
+
+function clearNote() {
+  formData.value.remark = '';
+}
+
+</script>
+
+<style scoped>
+.addstore-body {
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  /* 轻微背景色 */
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+}
+
+.new-stash-container {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.new-stash-container h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #333;
+  font-weight: 500;
+}
+
+.new-stash-container:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.stash-input-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stash-input-group {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 10px;
+}
+
+.stash-input-group label {
+  font-weight: 500;
+  width: 120px;
+  /* 固定宽度以确保对齐 */
+  margin-right: 10px;
+  color: #555;
+}
+
+.stash-input-group input,
+.stash-input-group select {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+.stash-input-group input:focus,
+.stash-input-group select:focus {
+  border-color: #007bff;
+}
+
+.preview-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.note-container {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+.note-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header h2 {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+}
+
+textarea {
+  width: 98%;
+  height: 140px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+textarea:focus {
+  border-color: #007bff;
+}
+
+.note-button {
+  margin-left: 10px;
+  height: 40px;
+  background-color: #555;
+  /* 更柔和的颜色 */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.note-button:hover {
+  background-color: #333;
+}
+
+.addstore-button {
+  position: fixed;
+  right: 80px;
+  bottom: 80px;
+  /* 向上移动一些 */
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.addstore-button button {
+  width: 200px;
+  /* 减少宽度 */
+  height: 40px;
+  /* 减少高度 */
+  color: white;
+  background-color: #555;
+  /* 更柔和的颜色 */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.addstore-button button:hover {
+  background-color: #333;
+}
+</style>

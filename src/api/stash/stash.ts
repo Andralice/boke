@@ -1,4 +1,5 @@
 import { Get,Post,http_PostUp } from '@/util/request';
+import axios from 'axios';
 
 // 查询仓库
 export const getStash = (data) => Post('/Stash/selectStash', data);
@@ -11,4 +12,6 @@ export const createStash = (data) => Post('/Stash/createStash', data);
 export const updateStash = (data) => Post('/Stash/updateStash', data);
 // 删除仓库
 export const deleteStash = (data) => Post('/Stash/deleteStash', data);
+//供应商分页
+export const selectSuppliersPage = (data)=>axios.post('/Suppliers/getSuppliers',data);
 
