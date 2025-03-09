@@ -1,236 +1,280 @@
 <template>
-  <div class="suppliers-page">
-    <h1 class="page-title">供应商管理</h1>
+  <div class="addstore-body">
+    <h1>新增仓库</h1>
 
-    <!-- 搜索表单容器 -->
-    <div class="search-container">
-      <div class="search-form">
-        <el-form :model="searchForm" ref="searchFormRef" label-width="100px">
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="供应商名称" prop="supplierName">
-                <el-input v-model="searchForm.supplierName"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="联系人姓名" prop="contactName">
-                <el-input v-model="searchForm.contactName"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="联系电话" prop="contactPhone">
-                <el-input v-model="searchForm.contactPhone"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="详细地址" prop="address">
-                <el-input v-model="searchForm.address"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="合作状态" prop="cooperationStatus">
-                <el-select v-model="searchForm.cooperationStatus" placeholder="请选择合作状态">
-                  <el-option label="启用" value="true"></el-option>
-                  <el-option label="停用" value="false"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item>
-                <el-button type="primary" @click="fetchSuppliers">查询</el-button>
-                <el-button @click="resetForm">重置</el-button>
-                <el-button type="success" @click="opencreatSuppliers">新增供应商</el-button> <!-- 新增供应商按钮 -->
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
+    <!-- 新增仓库输入框模块 -->
+    <div class="new-stash-container">
+      <h2>新增仓库信息</h2>
+      <div class="stash-input-row">
+        <div class="stash-input-group">
+          <label for="仓库名称">仓库名称</label>
+          <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
+        </div>
+        <div class="stash-input-group">
+          <label for="仓库地址">仓库地址</label>
+          <input type="text" id="仓库地址" placeholder="请输入仓库地址" v-model="formData.stashAddress">
+        </div>
+        <div class="stash-input-group">
+          <label for="仓库联系人">仓库联系人</label>
+          <input type="text" id="仓库联系人" placeholder="请输入仓库联系人" v-model="formData.managerName">
+        </div>
+      </div>
+      <div class="stash-input-row">
+        <div class="stash-input-group">
+          <label for="存储温度">存储温度</label>
+          <select id="存储温度" v-model="formData.storageTemperature">
+            <option value="">请选择存储温度</option>
+            <option value="-20°~0°">冷藏：-20°~0°</option>
+            <option value="0°~20°">阴凉： 0°~20°</option>
+            <option value="20°~40°">常温： 20°~40°</option>
+          </select>
+        </div>
+        <div class="stash-input-group">
+          <label for="仓库面积">仓库面积</label>
+          <input type="text" id="仓库面积" placeholder="请输入仓库面积" v-model="formData.stashArea">
+        </div>
+        <div class="stash-input-group">
+          <label for="imageInput">上传仓库图片</label>
+          <input type="file" id="imageInput" accept="image/*" multiple @change="handleFileChange">
+        </div>
+      </div>
+      <div class="preview-container">
+        <div v-for="(preview, index) in previews" :key="index" class="preview-item">
+          <img :src="preview" alt="Preview" class="preview-image">
+        </div>
       </div>
     </div>
 
-    <!-- 供应商列表容器 -->
-    <div class="supplier-list-container">
-      <div class="supplier-list">
-        <el-table :data="suppliers" style="width: 100%">
-          <el-table-column prop="supplierId" label="供应商ID" width="100"></el-table-column>
-          <el-table-column prop="supplierName" label="供应商名称"></el-table-column>
-          <el-table-column prop="contactName" label="联系人姓名"></el-table-column>
-          <el-table-column prop="contactPhone" label="联系电话"></el-table-column>
-          <el-table-column prop="address" label="详细地址"></el-table-column>
-          <el-table-column prop="bankAccount" label="银行账号"></el-table-column>
-          <el-table-column prop="cooperationStatus" label="合作状态">
-            <template #default="{ row }">
-              <el-tag :type="row.cooperationStatus === true ? 'danger' : 'success'">
-                {{ row.cooperationStatus === true ? '停用' : '启用' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" label="创建时间"></el-table-column>
-          <el-table-column prop="updateTime" label="更新时间"></el-table-column>
-        </el-table>
+    <!-- 备注 -->
+    <div class="note-container">
+      <div class="header">
+        <h2>添加备注</h2>
+        <button class="note-button" @click="clearNote()">清除备注</button>
       </div>
-
-      <!-- 分页控件 -->
-      <div class="pagination">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>
-      </div>
+      <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
     </div>
 
-    <!-- 新增供应商弹窗 -->
-    <creatSuppliers 
-      v-model:visible="iscreatSuppliersVisible" 
-      @submit="handleSupplierSubmit"
-    />
+    <!-- 提交按钮 -->
+    <div class="addstore-button">
+      <button @click="submitForm">提交</button>
+    </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
-import { selectSuppliersPage } from '@/api/stash/stash'; // 确认API路径正确
-import { ElMessage } from 'element-plus';
-import creatSuppliers from '@/pages/Modals/creatSuppliers.vue'; // 根据实际情况调整路径
+<script lang="ts" setup name='CreateWarehouse'>
+import { ref } from 'vue';
+import { createStash } from '@/api/stash/stash';
 
-// 搜索表单数据
-const searchForm = reactive({
-  supplierName: '',
-  contactName: '',
-  contactPhone: '',
-  address: '',
-  cooperationStatus: ''
+interface FormData {
+  stashName: string; // 仓库名称
+  stashAddress: string; // 仓库地址
+  managerName: string; // 仓库联系人
+  stashArea: string; // 仓库面积
+  storageTemperature: string; // 存储温度
+  remark: string; // 备注
+}
+
+const formData = ref<FormData>({
+  stashName: '',
+  stashAddress: '',
+  managerName: '',
+  stashArea: '',
+  storageTemperature: '',
+  remark: ''
 });
 
-// 表单引用
-const searchFormRef = ref(null);
+const submitForm = async () => {
+  try {
+    const response = await createStash(formData.value);
+    alert("提交成功！" + response.message);
+  } catch (error) {
+    console.error('Error:', error);
+    alert('提交失败，请检查网络或联系管理员');
+  }
+};
 
-// 供应商列表数据
-const suppliers = ref([]);
+const previews = ref<string[]>([]);
 
-// 当前页码和每页显示数量
-const currentPage = ref(1);
-const pageSize = ref(10);
-
-// 总记录数
-const total = ref(0);
-
-// 控制新增供应商弹窗的显示与隐藏
-const iscreatSuppliersVisible = ref(false);
-
-// 获取供应商数据
-const fetchSuppliers = () => {
-  const params = {
-    pageNum: currentPage.value,
-    pageSize: pageSize.value,
-    ...searchForm
-  };
-
-  selectSuppliersPage(params)
-    .then(response => {
-      if (response.data && response.data.records !== undefined) {
-        suppliers.value = response.data.records;
-        total.value = response.data.total; // 使用正确的属性名获取总数
-        
-        // 检查是否有记录
-        if (!suppliers.value.length) {
-          ElMessage({
-            message: '未查询到相关供应商信息',
-            type: 'warning',
-          });
+function handleFileChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files) {
+    previews.value = [];
+    for (let i = 0; i < target.files.length; i++) {
+      const file = target.files[i];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (e.target?.result) {
+          previews.value.push(e.target.result as string);
         }
-      } else {
-        console.error('Unexpected API response structure:', response.data);
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching suppliers:', error);
-      // 可选：在此处添加用户友好的错误提示
-    });
-};
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
 
-// 处理每页显示数量变化
-const handleSizeChange = (size) => {
-  pageSize.value = size;
-  fetchSuppliers();
-};
-
-// 处理当前页码变化
-const handleCurrentChange = (page) => {
-  currentPage.value = page;
-  fetchSuppliers();
-};
-
-// 重置搜索表单
-const resetForm = () => {
-  searchFormRef.value.resetFields();
-  fetchSuppliers();
-};
-
-// 打开新增供应商弹窗
-const opencreatSuppliers = () => {
-  iscreatSuppliersVisible.value = true;
-};
-
-// 处理新增供应商提交的数据
-const handleSupplierSubmit = (formData) => {
-  console.log('提交的数据:', formData);
-  // 这里可以添加发送数据到服务器的逻辑
-  fetchSuppliers(); // 提交后重新获取供应商列表
-};
-
-// 页面加载时获取供应商数据
-onMounted(() => {
-  fetchSuppliers();
-});
+function clearNote() {
+  formData.value.remark = '';
+}
 </script>
 
 <style scoped>
-/* 样式部分保持不变 */
-.suppliers-page {
+.addstore-body {
   padding: 20px;
-  background-color: #F5F5F5; /* 稍微暗淡的奶油色 */
+  background-color: #F5F5F5; /* 偏向于白色的灰色 */
+  font-family: Arial, sans-serif;
 }
 
-.page-title {
-  font-family: 'Arial', sans-serif;
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.search-container,
-.supplier-list-container {
-  background-color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.3s ease;
-}
-
-.search-container:hover {
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-}
-
-.supplier-list-container:hover {
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-}
-
-.search-form {
-  padding: 20px;
-}
-
-.supplier-list {
-  padding: 20px;
-}
-
-.pagination {
+h1 {
   text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+  font-weight: bold;
+}
+
+.new-stash-container,
+.note-container {
   padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.new-stash-container h2,
+.note-container .header h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #333;
+  font-weight: 500;
+}
+
+.new-stash-container:hover,
+.note-container:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.stash-input-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stash-input-group {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 10px;
+}
+
+.stash-input-group label {
+  font-weight: 500;
+  width: 120px;
+  margin-right: 10px;
+  color: #555;
+  font-size: 14px;
+}
+
+.stash-input-group input,
+.stash-input-group select {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #333;
+  width: 100%;
+}
+
+.stash-input-group input:focus,
+.stash-input-group select:focus {
+  border-color: #007bff;
+}
+
+.preview-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.note-container .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.note-button {
+  margin-left: 10px;
+  height: 40px;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.note-button:hover {
+  background-color: #333;
+}
+
+textarea {
+  width: 98%;
+  height: 140px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+textarea:focus {
+  border-color: #007bff;
+}
+
+.addstore-button {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.addstore-button button {
+  width: 200px;
+  height: 40px;
+  color: white;
+  background-color: #555;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.addstore-button button:hover {
+  background-color: #333;
 }
 </style>

@@ -92,9 +92,9 @@
     </div>
   </template>
   
-  <script lang="ts" setup>
+  <script lang="ts" setup name="suppliers">
   import { ref, reactive, onMounted } from 'vue';
-  import { selectSuppliersPage } from '@/api/stash/stash'; // 确认API路径正确
+  import { selectSuppliersPage } from '@/api/suppliers/suppliers'; // 确认API路径正确
   import { ElMessage } from 'element-plus';
   import creatSuppliers from '@/pages/Modals/creatSuppliers.vue'; // 根据实际情况调整路径
   

@@ -12,6 +12,7 @@ import reports from '@/pages/Store/reports.vue'
 import createStash from '@/pages/stash/createStash.vue'
 import showAllStash from '@/pages/stash/showAllStash.vue'
 import updateStash from '@/pages/stash/updateStash.vue'
+import suppliers from '@/pages/suppliers/Suppliers.vue'
 
 const router=createRouter({history:createWebHistory(),
     routes: [
