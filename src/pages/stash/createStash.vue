@@ -61,17 +61,18 @@
   </div>
 </template>
 
-<script lang="ts" setup name='CreateWarehouse'>
+<script lang="ts" setup name='createStash'>
 import { ref } from 'vue';
 import { createStash } from '@/api/stash/stash';
+import { useRouter, useRoute } from 'vue-router'; // 新增路由依赖
 
 interface FormData {
-  stashName: string; // 仓库名称
-  stashAddress: string; // 仓库地址
-  managerName: string; // 仓库联系人
-  stashArea: string; // 仓库面积
-  storageTemperature: string; // 存储温度
-  remark: string; // 备注
+  stashName: string; // stashName
+  stashAddress: string; //stashAddress
+  managerName: string; // managerName
+  stashArea: string; // stashArea
+  storageTemperature: string; // storageTemperature
+  remark: string; // remark
 }
 
 const formData = ref<FormData>({
@@ -83,10 +84,14 @@ const formData = ref<FormData>({
   remark: ''
 });
 
+// console.log('66666666FormData:', formData.value);
+
+const router = useRouter();
 const submitForm = async () => {
   try {
+    // 发送请求
     const response = await createStash(formData.value);
-    alert("提交成功！" + response.message);
+    router.push('/showALLStash');
   } catch (error) {
     console.error('Error:', error);
     alert('提交失败，请检查网络或联系管理员');
@@ -94,6 +99,7 @@ const submitForm = async () => {
 };
 
 const previews = ref<string[]>([]);
+
 
 function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement;
@@ -115,44 +121,45 @@ function handleFileChange(event: Event) {
 function clearNote() {
   formData.value.remark = '';
 }
+
 </script>
 
 <style scoped>
 .addstore-body {
+  width: 100%;
+  height: auto;
   padding: 20px;
-  background-color: #F5F5F5; /* 偏向于白色的灰色 */
-  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  /* 轻微背景色 */
 }
 
 h1 {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 28px;
+  font-size: 24px;
   color: #333;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-.new-stash-container,
-.note-container {
+.new-stash-container {
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
   margin-bottom: 20px;
   background-color: white;
 }
 
-.new-stash-container h2,
-.note-container .header h2 {
+.new-stash-container h2 {
   margin-bottom: 10px;
   font-size: 20px;
   color: #333;
   font-weight: 500;
 }
 
-.new-stash-container:hover,
-.note-container:hover {
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+.new-stash-container:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .stash-input-row {
@@ -174,9 +181,9 @@ h1 {
 .stash-input-group label {
   font-weight: 500;
   width: 120px;
+  /* 固定宽度以确保对齐 */
   margin-right: 10px;
   color: #555;
-  font-size: 14px;
 }
 
 .stash-input-group input,
@@ -188,7 +195,6 @@ h1 {
   transition: border-color 0.3s ease;
   font-size: 14px;
   color: #333;
-  width: 100%;
 }
 
 .stash-input-group input:focus,
@@ -217,27 +223,30 @@ h1 {
   border-radius: 4px;
 }
 
-.note-container .header {
+.note-container {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+.note-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.note-button {
-  margin-left: 10px;
-  height: 40px;
-  background-color: #555;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.note-button:hover {
-  background-color: #333;
+.header h2 {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
 }
 
 textarea {
@@ -256,16 +265,41 @@ textarea:focus {
   border-color: #007bff;
 }
 
+.note-button {
+  margin-left: 10px;
+  height: 40px;
+  background-color: #555;
+  /* 更柔和的颜色 */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.note-button:hover {
+  background-color: #333;
+}
+
 .addstore-button {
-  text-align: center;
+  position: fixed;
+  right: 80px;
+  bottom: 80px;
+  /* 向上移动一些 */
+  display: flex;
+  justify-content: flex-end;
   margin-top: 20px;
 }
 
 .addstore-button button {
   width: 200px;
+  /* 减少宽度 */
   height: 40px;
+  /* 减少高度 */
   color: white;
   background-color: #555;
+  /* 更柔和的颜色 */
   border: none;
   border-radius: 8px;
   cursor: pointer;

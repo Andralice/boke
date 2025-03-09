@@ -30,61 +30,21 @@
             </el-icon> 概览
           </router-link>
         </li>
-        <div @click.prevent="toggleInventoryDropdown" :class="{ 'active': isInventoryDropdownVisible }">
-          <li>
-            <span>
-              <el-icon class="icon">
-                <Box />
-              </el-icon> 库存管理
-            </span>
-            <div class="dropdown-menu2">
-              <ul ref="inventoryDropdown" class="dropdown-menu" v-if="isInventoryDropdownVisible">
-                <li>
-                  <router-link to="/showStore" @click="toggleInventoryDropdown">
-                    <el-icon class="icon">
-                      <Box />
-                    </el-icon> 库存概览
-                  </router-link>
-                </li>
-                <li>
-                  <router-link to="/addStore" @click="toggleInventoryDropdown">
-                    <el-icon class="icon">
-                      <Plus />
-                    </el-icon> 新增库存
-                  </router-link>
-                </li>
-                <li>
-                  <router-link to="/reports" @click="toggleInventoryDropdown">
-                    <el-icon class="icon">
-                      <Document />
-                    </el-icon> 库存报表
-                  </router-link>
-                </li>
-              </ul>
-            </div>
-          </li>
-        </div>
         <li :style="isInventoryDropdownVisible ? { marginTop: inventoryDropdownHeight + 'px' } : {}">
-          <router-link to="/orders">
+          <router-link to="/">
             <el-icon class="icon">
               <Box />
             </el-icon> 转移申请
           </router-link>
         </li>
         <li>
-          <router-link to="/suppliers">
-            <el-icon class="icon">
-              <Box />
-            </el-icon> 供应商管理
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/reports">
+          <router-link to="/">
             <el-icon class="icon">
               <Histogram />
             </el-icon> 报表分析
           </router-link>
         </li>
+
         <li>
           <router-link to="/createStash">
             <el-icon class="icon">
@@ -99,6 +59,55 @@
             </el-icon> 仓库概览
           </router-link>
         </li>
+
+        <li>
+          <router-link to="/createSuppliers">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 添加供应商
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/showALLSuppliers">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 供应商概览
+          </router-link>
+        </li>
+
+        <li>
+          <router-link to="/createProduct">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 添加商品
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/showAllProduct">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 商品列表
+          </router-link>
+        </li>
+
+        <li>
+          <router-link to="/createInventory">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 添加库存
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/showAllInventory">
+            <el-icon class="icon">
+              <Plus />
+            </el-icon> 库存列表
+          </router-link>
+        </li>
+
+
+
+
       </ul>
     </div>
     <div class="content">

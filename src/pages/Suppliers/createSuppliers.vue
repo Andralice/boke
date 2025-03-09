@@ -1,38 +1,42 @@
 <template>
   <div class="addstore-body">
-    <h1>新增库存</h1>
+    <h1>新增供应商</h1>
 
     <!-- 新增仓库输入框模块 -->
     <div class="new-stash-container">
-      <h2>新增仓库信息</h2>
+      <h2>新增供应商信息</h2>
       <div class="stash-input-row">
         <div class="stash-input-group">
-          <label for="仓库名称">仓库名称</label>
-          <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.仓库名称">
+          <label for="供应商名称">供应商名称</label>
+          <input type="text" id="供应商名称" placeholder="请输入供应商名称" v-model="formData.supplierName">
         </div>
         <div class="stash-input-group">
-          <label for="仓库地址">仓库地址</label>
-          <input type="text" id="仓库地址" placeholder="请输入仓库地址" v-model="formData.仓库地址">
+          <label for="供应商联系人">供应商联系人</label>
+          <input type="text" id="供应商联系人" placeholder="请输入供应商联系人" v-model="formData.contactName">
         </div>
         <div class="stash-input-group">
-          <label for="仓库联系人">仓库联系人</label>
-          <input type="text" id="仓库联系人" placeholder="请输入仓库联系人" v-model="formData.仓库联系人">
+          <label for="供应商联系人电话">供应商联系人电话</label>
+          <input type="text" id="供应商联系人电话" placeholder="请输入供应商联系人电话" v-model="formData.contactPhone">
         </div>
       </div>
       <div class="stash-input-row">
         <div class="stash-input-group">
-          <label for="存储温度">存储温度</label>
-          <select id="存储温度" v-model="formData.存储温度">
-            <option value="">请选择存储温度</option>
-            <option value="-20°~0°">冷藏：-20°~0°</option>
-            <option value="0°~20°">阴凉： 0°~20°</option>
-            <option value="20°~40°">常温： 20°~40°</option>
-          </select>
+          <label for="供应商地址">供应商地址</label>
+          <input type="text" id="供应商地址" placeholder="请输入供应商地址" v-model="formData.address">
         </div>
         <div class="stash-input-group">
-          <label for="imageInput">上传仓库图片</label>
-          <input type="file" id="imageInput" accept="image/*" multiple @change="handleFileChange">
+          <label for="供应商银行卡号">供应商银行卡号</label>
+          <input type="text" id="供应商银行卡号" placeholder="请输入供应商银行卡号" v-model="formData.bankAccount">
         </div>
+        <div class="stash-input-group">
+          <label for="供应商状态">供应商状态</label>
+          <select id="供应商状态" v-model="formData.cooperationStatus">
+            <option value="">请选择供应商状态</option>
+            <option value="启用">启用</option>
+            <option value="禁用">禁用</option>
+          </select>
+        </div>
+
       </div>
       <div class="preview-container">
         <div v-for="(preview, index) in previews" :key="index" class="preview-item">
@@ -47,7 +51,7 @@
         <h2>添加备注</h2>
         <button class="note-button" @click="clearNote()">清除备注</button>
       </div>
-      <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.备注"></textarea>
+      <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
     </div>
 
     <!-- 提交按钮 -->
@@ -56,78 +60,85 @@
     </div>
   </div>
 </template>
-  
-  <script lang="ts" setup name='addStore'>
-  import { ref } from 'vue';
-  
-  interface FormData {
-    仓库名称: string; 
-    仓库地址: string; 
-    仓库联系人: string; 
-    货物名称: string; 
-    货物数量: string;
-    入库时间: string;
-    供货商: string;
-    存储时间: string;
-    存储温度: string;
-    备注: string;
+
+<script lang="ts" setup name='createSuppliers'>
+import { ref } from 'vue';
+import { createSuppliers } from '@/api/suppliers/suppliers';
+import { useRouter } from 'vue-router';
+
+interface FormData {
+  supplierName: string; // stashName
+  contactName: string; //stashAddress
+  contactPhone: string; // managerName
+  address: string; // stashArea
+  bankAccount: string; // storageTemperature
+  cooperationStatus:string;
+  remark: string; // remark
+}
+
+const formData = ref<FormData>({
+  supplierName: '',
+  contactName: '',
+  contactPhone: '',
+  address: '',
+  bankAccount: '',
+  cooperationStatus: '',
+  remark: ''
+});
+
+// console.log('66666666FormData:', formData.value);
+const router = useRouter();
+const submitForm = async () => {
+  try {
+      // 根据选择的状态设置 cooperationStatus
+  // 创建一个新的对象来发送请求，将 cooperationStatus 转换为 boolean
+    const requestData = {
+      ...formData.value,
+      cooperationStatus: formData.value.cooperationStatus === '启用'
+    };
+    // 发送请求
+    const response = await createSuppliers(requestData);
+    router.push('/showSuppliers'); // 创建成功返回列表页
+  } catch (error) {
+    console.error('Error:', error);
+    alert('提交失败，请检查网络或联系管理员');
   }
-  
-  const formData = ref<FormData>({
-    仓库名称: '',
-    仓库地址: '',
-    仓库联系人: '',
-    货物名称: '',
-    货物数量: '',
-    入库时间: '',
-    供货商: '',
-    存储时间: '',
-    存储温度: '',
-    备注: ''
-  });
-  
-  const previews = ref<string[]>([]);
-  
-  function setCurrentTime() {
-    const now = new Date();
-    const formattedTime = now.toLocaleString(); // 获取当前时间并格式化
-    formData.value.入库时间 = formattedTime;
-  }
-  
-  function handleFileChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    if (target.files) {
-      previews.value = [];
-      for (let i = 0; i < target.files.length; i++) {
-        const file = target.files[i];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          if (e.target?.result) {
-            previews.value.push(e.target.result as string);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
+};
+
+const previews = ref<string[]>([]);
+
+
+function handleFileChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files) {
+    previews.value = [];
+    for (let i = 0; i < target.files.length; i++) {
+      const file = target.files[i];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (e.target?.result) {
+          previews.value.push(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
-  
-  function clearNote() {
-    formData.value.备注 = '';
-  }
-  
-  function submitForm() {
-    console.log('Form submitted:', formData.value);
-    // 在这里可以进行表单验证和提交逻辑
-  }
-  </script>
-  
-  <style scoped>
+}
+
+function clearNote() {
+  formData.value.remark = '';
+}
+
+</script>
+
+<style scoped>
 .addstore-body {
   width: 100%;
   height: auto;
   padding: 20px;
   box-sizing: border-box;
-  background-color: #f9f9f9; /* 轻微背景色 */
+  background-color: #f9f9f9;
+  /* 轻微背景色 */
 }
 
 h1 {
@@ -171,13 +182,13 @@ h1 {
   align-items: center;
   flex: 1;
   min-width: 250px;
-  max-width: calc(50% - 10px); /* 确保每个输入组最多占据一半宽度 */
   margin-bottom: 10px;
 }
 
 .stash-input-group label {
   font-weight: 500;
-  width: 120px; /* 固定宽度以确保对齐 */
+  width: 120px;
+  /* 固定宽度以确保对齐 */
   margin-right: 10px;
   color: #555;
 }
@@ -191,7 +202,6 @@ h1 {
   transition: border-color 0.3s ease;
   font-size: 14px;
   color: #333;
-  max-width: calc(100% - 130px); /* 确保输入框不会超出容器 */
 }
 
 .stash-input-group input:focus,
@@ -247,7 +257,7 @@ h1 {
 }
 
 textarea {
-  width: 100%;
+  width: 98%;
   height: 140px;
   resize: vertical;
   padding: 10px;
@@ -265,7 +275,8 @@ textarea:focus {
 .note-button {
   margin-left: 10px;
   height: 40px;
-  background-color: #555; /* 更柔和的颜色 */
+  background-color: #555;
+  /* 更柔和的颜色 */
   color: white;
   border: none;
   border-radius: 4px;
@@ -281,17 +292,21 @@ textarea:focus {
 .addstore-button {
   position: fixed;
   right: 80px;
-  bottom: 80px; /* 向上移动一些 */
+  bottom: 80px;
+  /* 向上移动一些 */
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
 }
 
 .addstore-button button {
-  width: 200px; /* 减少宽度 */
-  height: 40px; /* 减少高度 */
+  width: 200px;
+  /* 减少宽度 */
+  height: 40px;
+  /* 减少高度 */
   color: white;
-  background-color: #555; /* 更柔和的颜色 */
+  background-color: #555;
+  /* 更柔和的颜色 */
   border: none;
   border-radius: 8px;
   cursor: pointer;
