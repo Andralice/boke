@@ -9,7 +9,7 @@ import home_index  from '@/pages/Home/index.vue'
 import createStash from '@/pages/stash/createStash.vue'
 import showAllStash from '@/pages/stash/showAllStash.vue'
 import updateStash from '@/pages/stash/updateStash.vue'
-import suppliers from '@/pages/suppliers/Suppliers.vue'
+
 
 import createSuppliers from  '@/pages/suppliers/createSuppliers.vue'
 import showAllSuppliers from '@/pages/suppliers/showAllSuppliers.vue'
@@ -124,7 +124,7 @@ const router=createRouter({history:createWebHistory(),
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
     const isLoggedIn = store.getters.isLoggedIn; // 从 Vuex store 获取登录状态
-  
+
     if (requiresAuth && !isLoggedIn) {
       next('/login'); // 如果需要登录且未登录，则重定向到登录页面
     } else {

@@ -72,7 +72,7 @@ interface FormData {
   contactPhone: string; // managerName
   address: string; // stashArea
   bankAccount: string; // storageTemperature
-  cooperationStatus:string;
+  cooperationStatus: string;
   remark: string; // remark
 }
 
@@ -90,15 +90,16 @@ const formData = ref<FormData>({
 const router = useRouter();
 const submitForm = async () => {
   try {
-      // 根据选择的状态设置 cooperationStatus
-  // 创建一个新的对象来发送请求，将 cooperationStatus 转换为 boolean
+    // 根据选择的状态设置 cooperationStatus
+    // 创建一个新的对象来发送请求，将 cooperationStatus 转换为 boolean
     const requestData = {
       ...formData.value,
-      cooperationStatus: formData.value.cooperationStatus === '启用'
+      cooperationStatus: formData.value.cooperationStatus === '启用' ? 1 : 0
     };
     // 发送请求
     const response = await createSuppliers(requestData);
-    router.push('/showSuppliers'); // 创建成功返回列表页
+    router.push('/showALLSuppliers'); // 创建成功返回列表页
+    alert('提交成功');
   } catch (error) {
     console.error('Error:', error);
     alert('提交失败，请检查网络或联系管理员');

@@ -59,7 +59,7 @@
           </tr>
         </tbody>
       </table>
-      
+
       <!-- 分页控件 -->
       <div class="pagination">
         <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
@@ -118,9 +118,9 @@ const loadData = async () => {
       size: pageSize.value,
       ...formData.value
     };
-    
+
     const response = await selectAllSuppliers(params);
-    
+
     pageList.value = response.result;
     totalItems.value = response.total; // 假设 response 包含 total 字段
   } catch (error) {
