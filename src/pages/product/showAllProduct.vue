@@ -1,115 +1,118 @@
 <template>
-    <div class="showStore-body">
-        <h1>库存概览</h1>
-        <!-- 筛选表单 -->
-        <div class="filters">
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>商品ID</label>
-                    <input type="text" v-model="formData.productId">
-                </div>
-                <div class="filter-group">
-                    <label>商品名称</label>
-                    <input type="text" v-model="formData.productName">
-                </div>
-                <div class="filter-group">
-                    <label>商品类别</label>
-                    <input type="text" v-model="formData.category">
-                </div>
-                <div class="filter-group">
-                    <label>存储方式</label>
-                    <select v-model="formData.storageTemperature">
-                        <option value="">全部</option>
-                        <option value="冷藏">冷藏</option>
-                        <option value="阴凉">阴凉：</option>
-                        <option value="常温">常温</option>
-                    </select>
-                </div>
-            </div>
-            <div class="filter-row">
-                <button class="search-btn" @click="loadData">搜索</button>
-                <button class="add-btn" @click="navigateToAddPage">新增仓库</button>
-            </div>
+  <div class="showStore-body">
+    <h1>库存概览</h1>
+    <!-- 筛选表单 -->
+    <div class="filters">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>商品ID</label>
+          <input type="text" v-model="formData.productId">
         </div>
-
-        <!-- 数据表格 -->
-        <div class="data-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>序号</th>
-                        <th>商品名称</th>
-                        <th>商品类别</th>
-                        <th>仓库名称</th>
-                        <th>存储方式</th>
-                        <th>供应商名称</th>
-                        <th>创建时间</th>
-                        <th>更新时间</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(item, index) in paginatedData" :key="item.productId">
-                        <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
-                        <td>{{ item.productName }}</td>
-                        <td>{{ item.category }}</td>
-                        <td>{{ item.stashName }}</td>
-                        <td>{{ item.storageTemperature }}</td>
-                        <td>{{ item.supplierName }}</td>
-                        <td>{{ formatDate(item.createTime) }}</td>
-                        <td>{{ formatDate(item.updateTime) }}</td>
-                        <td>
-                            <button @click="editItem(item)">编辑</button>
-                        </td>
-                        <td>
-                            <button @click="deleteItem(item)">删除</button>
-                        </td>
-                    </tr>
-                    <tr v-if="paginatedData.length === 0">
-                        <td colspan="9" class="no-data">暂无数据</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <!-- 分页控件 -->
-            <div class="pagination">
-                <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
-                <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
-                <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
-            </div>
+        <div class="filter-group">
+          <label>商品名称</label>
+          <input type="text" v-model="formData.productName">
         </div>
+        <div class="filter-group">
+          <label>商品类别</label>
+          <input type="text" v-model="formData.category">
+        </div>
+        <div class="filter-group">
+          <label>存储方式</label>
+          <select v-model="formData.storageTemperature">
+            <option value="">全部</option>
+            <option value="冷藏">冷藏</option>
+            <option value="阴凉">阴凉</option>
+            <option value="常温">常温</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-row">
+        <button class="search-btn" @click="loadData">搜索</button>
+        <button class="add-btn" @click="navigateToAddPage">新增仓库</button>
+      </div>
     </div>
+
+    <!-- 数据表格 -->
+    <div class="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>商品图片</th>
+            <th>商品名称</th>
+            <th>商品类别</th>
+            <th>仓库名称</th>
+            <th>存储方式</th>
+            <th>供应商名称</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in paginatedData" :key="item.productId">
+            <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+            <td><img :src="getImageUrl(item.imageUrl)" alt="商品图片" style="max-width: 50px;"></td>
+            <td>{{ item.productName }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.stashName }}</td>
+            <td>{{ item.storageTemperature }}</td>
+            <td>{{ item.supplierName }}</td>
+            <td>{{ formatDate(item.createTime) }}</td>
+            <td>{{ formatDate(item.updateTime) }}</td>
+            <td>
+              <button @click="editItem(item)">编辑</button>
+            </td>
+            <td>
+              <button @click="deleteItem(item)">删除</button>
+            </td>
+          </tr>
+          <tr v-if="paginatedData.length === 0">
+            <td colspan="10" class="no-data">暂无数据</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 分页控件 -->
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
+        <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup name="showAllProduct">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { selectAllProduct,deleteProductById } from '@/api/product/product';
+import { selectAllProduct, deleteProductById } from '@/api/product/product';
 
-interface  FormData{
-    productId?: number;
-    productName : string; 
-    category: string; 
-    stashName: string; 
-    storageTemperature: string; 
-    supplierName: string; 
-    remark: string;
-    createTime: string;
-    updateTime: string;
+interface FormData {
+  productId?: number;
+  productName: string;
+  category: string;
+  stashName: string;
+  storageTemperature: string;
+  supplierName: string;
+  remark: string;
+  createTime: string;
+  updateTime: string;
+  imageUrl: string; // 图片 Base64 编码字符串
+  shelfLife: number; // 保质期
+  productTime: string; // 生产日期
 }
 
 // 表单数据
 const formData = ref({
-    productId: undefined,
-    storageTemperature:'',
-    productName: '',
-    category: '',
-    stashName: ''
+  productId: undefined,
+  storageTemperature: '',
+  productName: '',
+  category: '',
+  stashName: ''
 });
 
-
 const router = useRouter();
-
 
 // 分页相关
 const currentPage = ref(1);
@@ -119,7 +122,9 @@ const pageList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() => pageList.value);
+const paginatedData = computed(() =>
+  pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+);
 
 // 初始化加载数据
 onMounted(() => {
@@ -132,13 +137,12 @@ const loadData = async () => {
     const params = {
       page: currentPage.value,
       size: pageSize.value
-    //   ...formData.value
     };
-    
+
     const response = await selectAllProduct(params);
-    
+
     pageList.value = response.result;
-    // totalItems.value = response.data.total;
+    totalItems.value = response.total || pageList.value.length;
   } catch (error) {
     console.error('加载数据失败:', error);
   }
@@ -171,8 +175,8 @@ const navigateToAddPage = () => {
 
 const editItem = (item: FormData) => {
   router.push(`/updateProduct/${item.productId}`);
-  
 };
+
 const deleteItem = async (item: FormData) => {
   if (item.productId !== undefined) {
     try {
@@ -188,7 +192,17 @@ const deleteItem = async (item: FormData) => {
     alert('未找到仓库ID');
   }
 };
+
+// 解码 Base64 并生成图片 URL
+const getImageUrl = (base64String: string): string => {
+  if (!base64String.startsWith('data:image')) {
+    base64String = `data:image/jpeg;base64,${base64String}`;
+  }
+  return base64String;
+};
 </script>
+
+
 
 <style scoped>
 .showStore-body {

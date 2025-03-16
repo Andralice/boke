@@ -1,124 +1,215 @@
 <template>
-    <div class="addstore-body">
-      <h1>新增商品</h1>
-  
-      <!-- 新增仓库输入框模块 -->
-      <div class="new-stash-container">
-        <h2>新增商品信息</h2>
-        <div class="stash-input-row">
-          <div class="stash-input-group">
-            <label for="商品名称">商品名称</label>
-            <input type="text" id="商品名称" placeholder="请输入商品名称" v-model="formData.productName">
-          </div>
-          <div class="stash-input-group">
-            <label for="商品类别">商品类别</label>
-            <input type="text" id="商品类别" placeholder="请输入商品类别" v-model="formData.category">
-          </div>
-          <div class="stash-input-group">
-            <label for="仓库名称">仓库名称</label>
-            <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
-          </div>
+  <div class="addstore-body">
+    <h1>新增商品</h1>
+
+    <!-- 新增仓库输入框模块 -->
+    <div class="new-stash-container">
+      <h2>新增商品信息</h2>
+      <div class="stash-input-row">
+        <div class="stash-input-group">
+          <label for="商品名称">商品名称</label>
+          <input type="text" id="商品名称" placeholder="请输入商品名称" v-model="formData.productName">
         </div>
-        <div class="stash-input-row">
-          <div class="stash-input-group">
-            <label for="存储方式">存储方式</label>
-            <select id="存储方式" v-model="formData.storageTemperature">
-              <option value="">请选择存储方式</option>
-              <option value="冷藏">冷藏</option>
-              <option value="阴凉">阴凉</option>
-              <option value="常温">常温</option>
-            </select>
-          </div>
-          <div class="stash-input-group">
-            <label for="供货商">供货商</label>
-            <input type="text" id="供货商" placeholder="请输入供货商" v-model="formData.supplierName">
-          </div>
+        <div class="stash-input-group">
+          <label for="商品类别">商品类别</label>
+          <input type="text" id="商品类别" placeholder="请输入商品类别" v-model="formData.category">
         </div>
-        <div class="preview-container">
-          <div v-for="(preview, index) in previews" :key="index" class="preview-item">
-            <img :src="preview" alt="Preview" class="preview-image">
-          </div>
+        <div class="stash-input-group">
+          <label for="仓库名称">仓库名称</label>
+          <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
         </div>
       </div>
-  
-      <!-- 备注 -->
-      <div class="note-container">
-        <div class="header">
-          <h2>添加备注</h2>
-          <button class="note-button" @click="clearNote()">清除备注</button>
+      <div class="stash-input-row">
+        <div class="stash-input-group">
+          <label for="存储方式">存储方式</label>
+          <select id="存储方式" v-model="formData.storageTemperature">
+            <option value="">请选择存储方式</option>
+            <option value="冷藏">冷藏</option>
+            <option value="阴凉">阴凉</option>
+            <option value="常温">常温</option>
+          </select>
         </div>
-        <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
+
+        <div class="stash-input-group">
+          <label for="生产日期">生产日期</label>
+          <input type="date" id="生产日期" v-model="formData.productTime">
+        </div>
+
+        <div class="stash-input-group">
+          <label for="保质期">保质期(月)</label>
+          <input type="text" id="保质期" placeholder="请输入保质期" v-model="formData.shelfLife">
+        </div>
       </div>
-  
-      <!-- 提交按钮 -->
-      <div class="addstore-button">
-        <button @click="submitForm">提交</button>
+
+      <div class="stash-input-group">
+        <label for="供货商">供货商</label>
+        <input type="text" id="供货商" placeholder="请输入供货商" v-model="formData.supplierName">
+      </div>
+      
+      <div class="stash-input-group">
+        <label for="图片上传">上传图片</label>
+        <input type="file" id="图片上传" @change="handleFileChange">
+      </div>
+      <div class="preview-container">
+        <div v-if="previews.length > 0" class="preview-item">
+          <img :src="previews[0]" alt="Preview" class="preview-image">
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script lang="ts" setup name='createProduct'>
-  import { ref } from 'vue';
-  import { createProduct } from '@/api/product/product';
-  import { useRouter, useRoute } from 'vue-router'; // 新增路由依赖
-  
-  interface FormData {
-    productName : string; 
-    category: string; 
-    stashName: string; 
-    storageTemperature: string; 
-    supplierName: string; 
-    remark: string; 
-  }
-  
-  const formData = ref<FormData>({
-    productName: '',
-    category: '',
-    stashName: '',
-    storageTemperature: '',
-    supplierName: '',
-    remark: ''
-  });
-  
-  // console.log('66666666FormData:', formData.value);
-  
-  const router = useRouter();
-  const submitForm = async () => {
-    try {
-      // 发送请求
-      const response = await createProduct(formData.value);
-      router.push('/showALLProduct');
-    } catch (error) {
-      console.error('Error:', error);
-      alert('提交失败，请检查网络或联系管理员');
-    }
-  };
-  
-  const previews = ref<string[]>([]);
-  
-  
-  function handleFileChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    if (target.files) {
-      previews.value = [];
-      for (let i = 0; i < target.files.length; i++) {
-        const file = target.files[i];
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          if (e.target?.result) {
-            previews.value.push(e.target.result as string);
-          }
+
+    <!-- 备注 -->
+    <div class="note-container">
+      <div class="header">
+        <h2>添加备注</h2>
+        <button class="note-button" @click="clearNote()">清除备注</button>
+      </div>
+      <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="addstore-button">
+      <button :disabled="isSubmitting || !formData.imageUrl" @click="submitForm">提交</button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup name='createProduct'>
+import { ref } from 'vue';
+import { createProduct } from '@/api/product/product';
+import { useRouter } from 'vue-router'; // 新增路由依赖
+
+interface FormData {
+  productName: string;  // 商品名称
+  category: string; // 商品类别
+  stashName: string; // 仓库名称
+  storageTemperature: string; // 存储方式
+  supplierName: string; // 供货商
+  remark: string; // 备注
+  imageUrl: string; // 图片二进制数据
+  shelfLife: number; // 保质期
+  productTime: string; // 生产日期
+}
+
+const formData = ref<FormData>({
+  productName: '',
+  category: '',
+  stashName: '',
+  storageTemperature: '',
+  supplierName: '',
+  remark: '',
+  imageUrl: '',
+  shelfLife: 0,
+  productTime: '',
+});
+
+const router = useRouter();
+const previews = ref<string[]>([]);
+const isSubmitting = ref(false);
+
+function handleFileChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0];
+    
+    // 使用 FileReader 读取文件
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      if (e.target?.result instanceof ArrayBuffer) {
+        // 将 ArrayBuffer 转换为 Base64 编码的字符串
+        const imgBuffer = e.target.result;
+        const base64String = arrayBufferToBase64(imgBuffer);
+
+        // 创建一个临时的 Image 对象来加载图片数据
+        const img = new Image();
+        img.src = `data:image/jpeg;base64,${base64String}`;
+        img.onload = () => {
+          // 压缩图片并获取压缩后的 Base64 编码字符串
+          const compressedBase64 = compressImage(img, 200 * 1024); // 目标大小为 200KB
+          
+          previews.value = [URL.createObjectURL(file)]; // 更新预览数组
+          formData.value.imageUrl = compressedBase64; // 更新 Base64 编码的图片数据
         };
-        reader.readAsDataURL(file);
       }
-    }
+    };
+
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+// 辅助函数：将 ArrayBuffer 转换为 Base64 编码的字符串
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+// 压缩图片并返回 Base64 编码的字符串
+function compressImage(img: HTMLImageElement, maxSizeInBytes: number): string {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  let width = img.width;
+  let height = img.height;
+
+  // 计算缩放比例
+  let ratio = Math.sqrt(maxSizeInBytes / (img.width * img.height * 4));
+  width = Math.floor(width * ratio);
+  height = Math.floor(height * ratio);
+
+  canvas.width = width;
+  canvas.height = height;
+
+  // 绘制缩小后的图像
+  ctx?.drawImage(img, 0, 0, width, height);
+
+  // 获取压缩后的 Base64 编码字符串
+  const mimeType = 'image/jpeg'; // 可以根据需要选择其他格式
+  const quality = 0.92; // 图片质量，可以根据需要调整
+  const compressedBase64 = canvas.toDataURL(mimeType, quality);
+
+  return compressedBase64;
+}
+
+
+function clearNote() {
+  formData.value.remark = '';
+}
+
+async function submitForm() {
+  if (!formData.value.imageUrl) {
+    alert('请先上传图片');
+    return;
   }
   
-  function clearNote() {
-    formData.value.remark = '';
+
+  isSubmitting.value = true;
+  try {
+    // 发送请求
+    const response = await createProduct(formData.value);
+    router.push('/showALLProduct');
+  } catch (error) {
+    console.error('Error:', error);
+    alert('提交失败，请检查网络或联系管理员');
+  } finally {
+    isSubmitting.value = false;
   }
-  
-  </script>
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
   
   <style scoped>
   .addstore-body {
