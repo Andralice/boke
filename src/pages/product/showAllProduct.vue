@@ -87,6 +87,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { selectAllProduct, deleteProductById } from '@/api/product/product';
+import { arrayBufferToBase64, compressImage } from '@/util/imageUtils';
 
 interface FormData {
   productId?: number;
@@ -200,6 +201,8 @@ const getImageUrl = (base64String: string): string => {
   }
   return base64String;
 };
+
+
 </script>
 
 
