@@ -1,6 +1,6 @@
 <template>
   <div class="showStore-body">
-    <h1>库存概览</h1>
+    <h1>商品概览</h1>
     <!-- 筛选表单 -->
     <div class="filters">
       <div class="filter-row">
@@ -123,9 +123,21 @@ const pageList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() =>
-  pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
-);
+// const paginatedData = computed(() =>
+//   pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+// );
+const paginatedData = computed(() => {
+  console.log('Page List:', pageList.value);
+  console.log('Current Page:', currentPage.value);
+  console.log('Page Size:', pageSize.value);
+  const startIndex = (currentPage.value - 1) * pageSize.value;
+  const endIndex = currentPage.value * pageSize.value;
+  console.log('Start Index:', startIndex);
+  console.log('End Index:', endIndex);
+  return pageList.value.slice(startIndex, endIndex);
+});
+
+
 
 // 初始化加载数据
 onMounted(() => {
@@ -221,9 +233,11 @@ const getImageUrl = (base64String: string): string => {
   margin-bottom: 20px;
 }
 
+/* 修改 .filter-row 以使用 flex 布局并允许换行 */
 .filter-row {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap; /* 允许子元素换行 */
+  gap: 20px; /* 子元素之间的间距 */
   margin-bottom: 15px;
 }
 
@@ -231,11 +245,14 @@ const getImageUrl = (base64String: string): string => {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1 1 calc(33.333% - 40px); /* 每个过滤组占据三分之一宽度，减去间距 */
+  min-width: 200px; /* 设置最小宽度，防止过窄 */
 }
 
 .filter-group label {
   min-width: 80px;
 }
+
 
 select, input {
   padding: 8px 12px;
