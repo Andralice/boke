@@ -1,4 +1,5 @@
-import { Get,Post,http_PostUp } from '@/util/request';
+import { Post } from '@/util/request';
+
 
 // 查询仓库
 export const selectStashById = (id:number) => Post(`/Stash/selectStashById/${id}`);

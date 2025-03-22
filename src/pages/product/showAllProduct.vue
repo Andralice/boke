@@ -28,7 +28,7 @@
       </div>
       <div class="filter-row">
         <button class="search-btn" @click="loadData">搜索</button>
-        <button class="add-btn" @click="navigateToAddPage">新增仓库</button>
+        <button class="add-btn" @click="navigateToAddPage">新增商品</button>
       </div>
     </div>
 
@@ -153,7 +153,7 @@ const loadData = async () => {
     };
 
     const response = await selectAllProduct(params);
-
+    console.log('Response:', response);
     pageList.value = response.result;
     totalItems.value = response.total || pageList.value.length;
   } catch (error) {
@@ -202,7 +202,7 @@ const deleteItem = async (item: FormData) => {
       alert('删除失败，请检查网络或联系管理员');
     }
   } else {
-    alert('未找到仓库ID');
+    alert('商品数据错误');
   }
 };
 

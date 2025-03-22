@@ -46,14 +46,24 @@ const password = ref('');
 // const isLoggedIn = computed(() => store.getters.isLoggedIn);
 
 const handleLogin = async () => {
+  try {
+    const response = await store.dispatch('login', { username: username.value, password: password.value });
+    console.log("log99999999999", response);
+    console.log('Is user logged in?', store.getters.isLoggedIn);
+
     try {
-        await store.dispatch('login', { username: username.value, password: password.value });
-        router.push('/');
-        console.log("login successful");
-    } catch (error) {
-        console.error('Login failed:', error);
+      await router.push('/');
+      console.log("Navigation to home successful");
+    } catch (navigationError) {
+      console.error('Navigation failed:', navigationError);
     }
+
+    console.log("login successful");
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
 };
+
 
 // const logout = () => {
 //     store.dispatch('logout');

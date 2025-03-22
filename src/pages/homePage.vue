@@ -8,7 +8,7 @@
           </router-link>
           <div :class="['user-dropdown-menu', { 'show': isDropdownVisible }]" ref="dropdownMenu">
             <ul>
-              <li v-if="isLoggedIn">
+              <li >
                 <router-link to="/PersonCenter">个人资料</router-link>
               </li>
               <li v-if="!isLoggedIn">
@@ -202,6 +202,7 @@ onUnmounted(() => {
   }
 });
 </script>
+
 <style scoped>
 body, html {
   margin: 0;

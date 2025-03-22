@@ -1,8 +1,5 @@
-// authStore.js
 import { createStore } from 'vuex';
-import ApiClient from '../util/request';
-
-const apiClient = new ApiClient('http://localhost:8080/');
+import apiClient from '../util/request'; // 使用相同的Axios实例
 
 const store = createStore({
   state: {
@@ -32,24 +29,17 @@ const store = createStore({
   },
   actions: {
     login({ commit }, credentials) {
-      return apiClient.request({
-        method: 'post',
-        url: '/User/login',
-        data: credentials
-      })
-      .then(response => {
-        const token = response.data.token;
-        const refreshToken = response.data.refreshToken; // 假设服务器返回refreshToken
-        commit('setToken', token);
-        commit('setRefreshToken', refreshToken);
-        return Promise.resolve(token);
-      })
-      .catch(error => {
-        commit('setToken', null);
-        commit('setRefreshToken', null);
-        console.error('Login failed:', error.response ? error.response.data : error.message);
-        return Promise.reject(error.response ? error.response.data : error.message);
-      });
+      return apiClient.login(credentials)
+        .then(token => {
+          commit('setToken', token);
+          return Promise.resolve(token);
+        })
+        .catch(error => {
+          commit('setToken', null);
+          commit('setRefreshToken', null);
+          console.error('Login failed:', error);
+          return Promise.reject(error);
+        });
     },
     logout({ commit }) {
       commit('setToken', null);
@@ -57,18 +47,21 @@ const store = createStore({
     },
     refreshAccessToken({ commit, state }) {
       return apiClient.refreshAccessToken()
-      .then(newToken => {
-        commit('setToken', newToken);
-        return Promise.resolve(newToken);
-      })
-      .catch(error => {
-        commit('setToken', null);
-        commit('setRefreshToken', null);
-        console.error('Token refresh failed:', error.response ? error.response.data : error.message);
-        return Promise.reject(error.response ? error.response.data : error.message);
-      });
+        .then(newToken => {
+          commit('setToken', newToken);
+          return Promise.resolve(newToken);
+        })
+        .catch(error => {
+          commit('setToken', null);
+          commit('setRefreshToken', null);
+          console.error('Token refresh failed:', error);
+          return Promise.reject(error);
+        });
     },
   },
 });
 
 export default store;
+
+
+

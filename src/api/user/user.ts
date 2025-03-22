@@ -1,9 +1,10 @@
-import { http_Get,http_Post,http_PostUp } from '@/util/request';
+import { Post } from '@/util/request';
+
 // 登录
-export const login = (data) => http_Post('/User/login', data); // 登录接口[3,7](@ref)
+export const login = (data) => Post('/User/login', data); // 登录接口[3,7](@ref)
 // 创建用户
-export const createUser = (data) => http_Post('/User/createUser', data);
+export const createUser = (data) => Post('/User/createUser', data);
 // 修改用户
-export const updateUser = (data) => http_Post('/User/updateUser', data);
+export const updateUser = (data) => Post('/User/updateUser', data);
 // 删除用户
-export const deleteUser = (data) => http_Post('/User/deleteUser', data);
+export const deleteUser = (data) => Post('/User/deleteUser', data);
