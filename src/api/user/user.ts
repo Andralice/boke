@@ -8,3 +8,5 @@ export const createUser = (data) => Post('/User/createUser', data);
 export const updateUser = (data) => Post('/User/updateUser', data);
 // 删除用户
 export const deleteUser = (data) => Post('/User/deleteUser', data);
+// 查找用户
+export const findUser = (userName: string) => Post('/User/findUser', userName);
