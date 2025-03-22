@@ -6,6 +6,7 @@ const store = createStore({
     token: localStorage.getItem('token') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
     userName: localStorage.getItem('userName') || '',
+    loggedIn: false, // 初始化 loggedIn 状态
   },
   mutations: {
     setUserName(state, name) {
@@ -30,12 +31,24 @@ const store = createStore({
         localStorage.removeItem('refreshToken');
       }
     },
+    clearAuthInfo(state) {
+      state.token = null;
+      state.refreshToken = null;
+      state.userName = '';
+      state.loggedIn = false;
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userName');
+    },
   },
   getters: {
     isLoggedIn: (state) => state.token !== null,
   },
   actions: {
     login({ commit }, credentials) {
+      // 清理现有认证信息
+      commit('clearAuthInfo');
+
       return apiClient.post('/User/login', credentials)
         .then(response => {
           // 检查 response.data 是否存在以及必要的字段是否齐全
@@ -51,17 +64,12 @@ const store = createStore({
           return Promise.resolve(response);
         })
         .catch(error => {
-          commit('setToken', null);
-          commit('setRefreshToken', null);
           console.error('Login failed:', error.response ? JSON.stringify(error.response.data, null, 2) : error.message);
           return Promise.reject(error.response ? error.response.data : error.message);
         });
     },
     logout({ commit }) {
-      commit('setToken', null);
-      commit('setRefreshToken', null);
-      commit('setUserName', '');
-      commit('setLoggedIn', false);
+      commit('clearAuthInfo');
     },
     refreshAccessToken({ commit, state }) {
       return apiClient.post('/refresh-token', {

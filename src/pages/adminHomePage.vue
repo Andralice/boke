@@ -88,6 +88,18 @@ const logout = () => {
     router.push('/login');
 };
 
+const handleClickOutside = (event) => {
+    const dropdownMenu = document.querySelector('.user-dropdown-menu.show');
+    if (dropdownMenu && !dropdownMenu.contains(event.target)) {
+        isDropdownVisible.value = false;
+    }
+
+    const navList = document.querySelector('.nav-list');
+    if (navList && !navList.contains(event.target)) {
+        activeDropdowns.value = [];
+    }
+};
+
 onMounted(async () => {
     console.log("Entering onMounted hook");
 
@@ -104,16 +116,19 @@ onMounted(async () => {
         console.log(`Fetching user info for username: ${userName}`);
         const response = await findUser(user); // 调用更新后的接口
         console.log('Response received:', response.result.role);
-        menuItems.value = getMenuData( response.result.role);
+        menuItems.value = getMenuData(response.result.role);
     } catch (error) {
         console.error('Failed to fetch user info:', error);
     }
+
+    window.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
     if (hideTimeout.value !== null) {
         clearTimeout(hideTimeout.value);
     }
+    window.removeEventListener('click', handleClickOutside);
 });
 </script>
 
@@ -270,5 +285,3 @@ body {
 </style>
 
 
-
-./menuItems.js
