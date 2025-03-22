@@ -1,20 +1,20 @@
 <template>
   <div class="showStore-body">
-    <h1>库存概览</h1>
+    <h1>供应商概览</h1>
     <!-- 筛选表单 -->
     <div class="filters">
       <div class="filter-row">
         <div class="filter-group">
           <label>供应商名称</label>
-          <input type="text" v-model="formData.supplierName">
+          <input type="text" v-model="formData.supplierName" placeholder="请输入供应商名称">
         </div>
         <div class="filter-group">
           <label>联系人名称</label>
-          <input type="text" v-model="formData.contactName">
+          <input type="text" v-model="formData.contactName" placeholder="请输入联系人名称">
         </div>
         <div class="filter-group">
           <label>联系人电话</label>
-          <input type="text" v-model="formData.contactPhone">
+          <input type="text" v-model="formData.contactPhone" placeholder="请输入联系人电话">
         </div>
       </div>
       <div class="filter-row">
@@ -47,15 +47,13 @@
             <td>{{ item.address }}</td>
             <td>{{ item.bankAccount }}</td>
             <td>{{ item.cooperationStatus ? '启用' : '禁用' }}</td>
-            <td>
-              <button @click="editItem(item)">编辑</button>
-            </td>
-            <td>
-              <button @click="deleteItem(item)">删除</button>
+            <td class="action-buttons">
+              <button @click="editItem(item)" class="edit-btn">编辑</button>
+              <button @click="deleteItem(item)" class="delete-btn">删除</button>
             </td>
           </tr>
           <tr v-if="paginatedData.length === 0">
-            <td colspan="9" class="no-data">暂无数据</td>
+            <td colspan="8" class="no-data">暂无数据</td>
           </tr>
         </tbody>
       </table>
@@ -170,109 +168,204 @@ const deleteItem = async (item: FormData) => {
 
 <style scoped>
 .showStore-body {
-padding: 20px;
-max-width: 1200px;
-margin: 0 auto;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background-color: #f9fafb; /* 浅色背景 */
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
 }
 
 .filters {
-background: #f5f7fa;
-padding: 20px;
-border-radius: 8px;
-margin-bottom: 20px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
 }
 
 .filter-row {
-display: flex;
-gap: 20px;
-margin-bottom: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
 }
 
 .filter-group {
-display: flex;
-align-items: center;
-gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 减少标签和输入框之间的间距 */
+  flex-basis: calc(33.33% - 16px);
 }
 
 .filter-group label {
-min-width: 80px;
+  min-width: 100px;
+  color: #555;
+  font-weight: 500;
 }
 
 select, input {
-padding: 8px 12px;
-border: 1px solid #dcdfe6;
-border-radius: 4px;
-width: 200px;
+  padding: 10px 16px; /* 缩小输入框的内边距 */
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  width: 100%;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+select:focus, input:focus {
+  border-color: #409eff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
 }
 
 .search-btn, .add-btn {
-padding: 10px 20px;
-border: none;
-border-radius: 4px;
-cursor: pointer;
+  padding: 10px 20px; /* 缩小按钮的内边距 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: white;
 }
 
 .search-btn {
-background: #409eff;
-color: white;
+  background: #409eff;
+}
+
+.search-btn:hover {
+  background: #357ae8;
+  transform: translateY(-2px);
 }
 
 .add-btn {
-background: #67c23a;
-color: white;
-margin-left: auto;
+  background: #67c23a;
+  margin-left: auto;
+}
+
+.add-btn:hover {
+  background: #5daf34;
+  transform: translateY(-2px);
 }
 
 .data-table {
-background: white;
-border-radius: 8px;
-overflow: hidden;
-box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
 }
 
 table {
-width: 100%;
-border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th, td {
-padding: 12px 15px;
-text-align: left;
-border-bottom: 1px solid #ebeef5;
+  padding: 12px 16px; /* 缩小单元格的内边距 */
+  text-align: left;
+  border-bottom: 1px solid #ebebeb;
+  font-size: 14px;
+  color: #333;
 }
 
 th {
-background: #fafafa;
-font-weight: 600;
+  background: #f5f7fa; /* 标识栏背景色与展示框一致 */
+  font-weight: 600;
+  color: #333;
+}
+
+tr:nth-child(even) {
+  background: #fcfcfd;
 }
 
 tr:hover {
-background: #f5f7fa;
+  background: #f5f7fa;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: white;
+}
+
+.edit-btn {
+  background: #409eff;
+}
+
+.edit-btn:hover {
+  background: #357ae8;
+  transform: translateY(-2px);
+}
+
+.delete-btn {
+  background: #ff4d4f;
+}
+
+.delete-btn:hover {
+  background: #ff4544;
+  transform: translateY(-2px);
 }
 
 .pagination {
-padding: 15px;
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 15px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
 }
 
 .pagination button {
-padding: 8px 16px;
-border: 1px solid #ddd;
-background: white;
-cursor: pointer;
+  padding: 10px 20px; /* 缩小分页按钮的内边距 */
+  border: 1px solid #ddd;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+.pagination button:hover {
+  background: #f5f5f5;
+  border-color: #aaa;
+  transform: translateY(-2px);
 }
 
 .pagination button:disabled {
-opacity: 0.6;
-cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .no-data {
-text-align: center;
-color: #909399;
-padding: 20px;
+  text-align: center;
+  color: #999;
+  padding: 24px;
+  font-size: 14px;
 }
 </style>
+
