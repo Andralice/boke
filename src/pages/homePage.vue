@@ -31,7 +31,7 @@
           </router-link>
         </li>
         <li :style="isInventoryDropdownVisible ? { marginTop: inventoryDropdownHeight + 'px' } : {}">
-          <router-link to="/">
+          <router-link to="/outStash">
             <el-icon class="icon">
               <Box />
             </el-icon> 转移申请

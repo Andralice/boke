@@ -10,7 +10,7 @@ import home_index  from '@/pages/Home/index.vue'
 import createStash from '@/pages/stash/createStash.vue'
 import showAllStash from '@/pages/stash/showAllStash.vue'
 import updateStash from '@/pages/stash/updateStash.vue'
-
+import outStash from '@/pages/stash/outStash.vue'
 
 import createSuppliers from  '@/pages/suppliers/createSuppliers.vue'
 import showAllSuppliers from '@/pages/suppliers/showAllSuppliers.vue'
@@ -54,6 +54,11 @@ const router=createRouter({history:createWebHistory(),
                     path:'/updateStash/:id',
                     name:'updateStash',
                     component:updateStash
+                },
+                {
+                  path:'/outStash',
+                  name:'outStash',
+                  component:outStash
                 },
 
                 // 供应商管理

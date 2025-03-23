@@ -5,11 +5,11 @@
       <h3>快捷入口</h3>
     </div>
     <div class="box-container">
-      <div class="small-box put-storage">
+      <div class="small-box put-storage" @click="goToInbound">
         <div class="box-title">入库申请</div>
         <div class="box-icon"></div>
       </div>
-      <div class="small-box del-storage">
+      <div class="small-box del-storage" @click="goToOutbound">
         <div class="box-title">出库申请</div>
         <div class="box-icon"></div>
       </div>
@@ -37,8 +37,18 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-// 必要的脚本部分
+<script lang="ts" setup name="QuickAccess">
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goToInbound = () => {
+  router.push({ name: 'outStash', query: { tab: 'inbound' } });
+};
+
+const goToOutbound = () => {
+  router.push({ name: 'outStash', query: { tab: 'outbound' } });
+};
 </script>
 
 <style scoped>
@@ -95,6 +105,7 @@
   justify-content: center;
   align-items: center;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer; /* 添加鼠标指针样式 */
 }
 
 .region.region2 .small-box:hover {
@@ -183,3 +194,6 @@
   background-color: #ddd;
 }
 </style>
+
+
+
