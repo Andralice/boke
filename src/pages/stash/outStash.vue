@@ -164,9 +164,10 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup name="outStash">
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage, useRoute } from 'element-plus';
+import { ElMessage} from 'element-plus';
+import {useRoute} from 'vue-router';
 
 const route = useRoute();
 const activeTab = ref(route.query.tab || 'inbound');

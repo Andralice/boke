@@ -8,62 +8,98 @@ export const getMenuData = (role: string) => {
                 {
                     "label": "商品管理",
                     "subItems": [
-                        { "label": "添加商品", "route": "/add-product" },
-                        { "label": "编辑商品", "route": "/edit-product" },
-                        { "label": "删除商品", "route": "/delete-product" }
+                        { "label": "添加商品", "route": "/createProduct" },
+                        { "label": "商品列表", "route": "/showALLProduct" }
+                        // { "label": "编辑商品", "route": "/edit-product" },
+                        // { "label": "删除商品", "route": "/delete-product" }
                     ]
                 },
                 {
                     "label": "仓库管理",
                     "subItems": [
-                        { "label": "添加仓库", "route": "/add-warehouse" },
-                        { "label": "编辑仓库", "route": "/edit-warehouse" },
-                        { "label": "删除仓库", "route": "/delete-warehouse" }
+                        { "label": "添加仓库", "route": "/createStash" },
+                        { "label": "仓库列表", "route": "/showALLStash" }
+                        // { "label": "删除仓库", "route": "/delete-warehouse" }
                     ]
                 },
                 {
                     "label": "供应商管理",
                     "subItems": [
-                        { "label": "添加供应商", "route": "/add-supplier" },
-                        { "label": "编辑供应商", "route": "/edit-supplier" },
-                        { "label": "删除供应商", "route": "/delete-supplier" }
+                        { "label": "添加供应商", "route": "/createSuppliers" },
+                        { "label": "供应商列表", "route": "/showALLSuppliers" }
+                        // { "label": "编辑供应商", "route": "/showALLSuppliers" },
+                        // { "label": "删除供应商", "route": "/delete-supplier" }
                     ]
                 },
                 {
                     "label": "库存管理",
                     "subItems": [
-                        { "label": "查看库存", "route": "/view-inventory" },
-                        { "label": "调整库存", "route": "/adjust-inventory" },
-                        { "label": "库存报告", "route": "/inventory-report" }
+                        { "label": "查看库存", "route": "/createInventory" },
+                        { "label": "库存列表", "route": "/showALLInventory" }
+                        // { "label": "库存报告", "route": "/inventory-report" }
+                    ]
+                },
+                {
+                    "label": "任务管理",
+                    "subItems": [
+                        { "label": "添加任务", "route": "/createOrder" },
+                        { "label": "任务列表", "route": "/showALLOrder" }
+                        // { "label": "订单报告", "route": "/order-report" }
+                    ]
+                },
+                {
+                    "label": "用户管理",
+                    "subItems": [
+                        { "label": "添加用户", "route": "/createUser" },
+                        { "label": "用户列表", "route": "/showALLUser" }
+                        // { "label": "编辑用户", "route": "/edit-user" },
+                        // { "label": "删除用户", "route": "/delete-user" }
                     ]
                 }
             ];
-        case 'user':
+        case 'User':
             return [
                 {
                     "label": "商品管理",
                     "subItems": [
-                        { "label": "查看商品", "route": "/view-products" }
+                        { "label": "添加商品", "route": "/createProduct" },
+                        { "label": "商品列表", "route": "/showALLProduct" }
+                        // { "label": "编辑商品", "route": "/edit-product" },
+                        // { "label": "删除商品", "route": "/delete-product" }
                     ]
                 },
                 {
                     "label": "仓库管理",
                     "subItems": [
-                        { "label": "查看仓库", "route": "/view-warehouses" }
+                        { "label": "添加仓库", "route": "/createStash" },
+                        { "label": "仓库列表", "route": "/showALLStash" }
+                        // { "label": "删除仓库", "route": "/delete-warehouse" }
                     ]
                 },
                 {
                     "label": "供应商管理",
                     "subItems": [
-                        { "label": "查看供应商", "route": "/view-suppliers" }
+                        { "label": "添加供应商", "route": "/createSuppliers" },
+                        { "label": "供应商列表", "route": "/showALLSuppliers" }
+                        // { "label": "编辑供应商", "route": "/showALLSuppliers" },
+                        // { "label": "删除供应商", "route": "/delete-supplier" }
                     ]
                 },
                 {
                     "label": "库存管理",
                     "subItems": [
-                        { "label": "查看库存", "route": "/view-inventory" }
+                        { "label": "查看库存", "route": "/createInventory" },
+                        { "label": "库存列表", "route": "/showALLInventory" }
+                        // { "label": "库存报告", "route": "/inventory-report" }
                     ]
-                }
+                },
+                {
+                    "label": "任务管理",
+                    "subItems": [
+                        { "label": "任务列表", "route": "/showALLOrder" }
+                        // { "label": "订单报告", "route": "/order-report" }
+                    ]
+                },
             ];
         default:
             return [];
