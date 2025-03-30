@@ -1,37 +1,42 @@
 <template>
     <div class="addstore-body">
-      <h1>新增库存</h1>
+      <h1>新增用户</h1>
   
       <!-- 新增仓库输入框模块 -->
       <div class="new-stash-container">
-        <h2>新增库存信息</h2>
+        <h2>新增用户信息</h2>
         <div class="stash-input-row">
           <div class="stash-input-group">
-            <label for="商品名称">商品名称</label>
-            <input type="text" id="商品名称" placeholder="请输入商品名称" v-model="formData.productName">
+            <label for="用户名称">用户名称</label>
+            <input type="text" id="用户名称" placeholder="请输入用户名称" v-model="formData.username">
           </div>
           <div class="stash-input-group">
-            <label for="仓库名称">仓库名称</label>
-            <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
+            <label for="管理员名称">管理员名称</label>
+            <input type="text" id="管理员名称" placeholder="请输入管理员名称" v-model="formData.adminName">
           </div>
           <div class="stash-input-group">
-            <label for="供货商名称">供货商名称</label>
-            <input type="text" id="供货商名称" placeholder="请输入供货商名称" v-model="formData.supplierName">
+            <label for="设置密码">设置密码</label>
+            <input type="text" id="设置密码" placeholder="请设置密码" v-model="formData.password">
           </div>
-        </div>
-        <div class="stash-input-row">
           <div class="stash-input-group">
-            <label for="修改方式">修改方式</label>
-            <select id="修改方式" v-model="formData.type">
-              <option value="">请选择修改方式</option>
-              <option value="add">添加</option>
-              <option value="del">减少</option>
-              <option value="reset">覆盖</option>
+            <label for="设置职位">设置职位</label>
+            <input type="text" id="设置职位" placeholder="设置职位" v-model="formData.position">
+          </div>
+          <div class="stash-input-group">
+            <label for="设置电话号码">设置电话号码</label>
+            <input type="text" id="设置电话号码" placeholder="设置电话号码" v-model="formData.telephone">
+          </div>
+          <div class="stash-input-group">
+            <label for="权限">权限</label>
+            <select id="权限" v-model="formData.role">
+              <option value="">请选择权限</option>
+              <option value="Admin">管理员</option>
+              <option value="User">用户</option>
             </select>
           </div>
           <div class="stash-input-group">
-            <label for="修改数量">修改数量</label>
-            <input type="text" id="修改数量" placeholder="请输入修改数量" v-model="formData.quantity">
+            <label for="设置工作地点">设置工作地点</label>
+            <input type="text" id="设置工作地点" placeholder="设置工作地点" v-model="formData.workPlace">
           </div>
         </div>
         <div class="preview-container">
@@ -57,36 +62,45 @@
     </div>
   </template>
   
-  <script lang="ts" setup name='createInventory'>
+  <script lang="ts" setup name='createStash'>
   import { ref } from 'vue';
-  import { createInventory } from '@/api/inventory/inventory';
+  import { createUser } from '@/api/user/user';
   import { useRouter, useRoute } from 'vue-router'; // 新增路由依赖
   
   interface FormData {
-    productName : string; 
-    stashName: string; 
-    supplierName: string; 
-    type: string; 
-    quantity?: number; 
-    remark: string; 
+    username: string;
+    adminName?: string;
+    password: string;
+    position?: string;
+    telephone?: string;
+    workPlace?: string;
+    role?: string;
+    remark?: string;
+    createTime?: string; 
+    updateTime?: string; 
   }
   
+  // 表单数据
   const formData = ref<FormData>({
-    productName: '',
-    stashName: '',
-    supplierName: '',
-    type: '',
-    quantity: undefined,
-    remark: ''
+    username: "",
+    adminName: "",
+    password: "",
+    position: "",
+    telephone: "",
+    workPlace: "",
+    role: "",
+    remark: ""
   });
   
+  
+  // console.log('66666666FormData:', formData.value);
   
   const router = useRouter();
   const submitForm = async () => {
     try {
       // 发送请求
-      const response = await createInventory(formData.value);
-      router.push('/showAllInventory');
+      const response = await createUser(formData.value);
+      router.push('/showALLUser');
     } catch (error) {
       console.error('Error:', error);
       alert('提交失败，请检查网络或联系管理员');

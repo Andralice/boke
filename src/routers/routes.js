@@ -22,7 +22,17 @@ import updateProduct from '@/pages/Product/updateProduct.vue'
 
 import createInventory from '@/pages/inventory/createInventory.vue'
 import showAllInventory from '@/pages/inventory/showAllInventory.vue'
+import showAllInventoryLog from '@/pages/inventory/showAllInventoryLog.vue'
 // import updateInventory from '@/pages/inventory/updateInventory.vue'
+import showAllExamine from '@/pages/inventory/showAllExamine.vue'
+
+import showAllUser from '@/pages/User/showAllUser.vue'
+import CreateUser from '@/pages/User/CreateUser.vue'
+import UpdateUser from '@/pages/User/UpdateUser.vue'
+
+import  createTask from '@/pages/Task/createTask.vue'
+import showAllTask from '@/pages/Task/showAllTask.vue'
+import updateTask from '@/pages/Task/updateTask.vue'
 
 const router=createRouter({history:createWebHistory(),
     routes: [
@@ -100,6 +110,14 @@ const router=createRouter({history:createWebHistory(),
                     path:'/showALLInventory',
                     component:showAllInventory
                 },
+                {
+                    path:'/showAllExamine',
+                    component:showAllExamine
+                },
+                {
+                    path:'/showAllInventoryLog',
+                    component:showAllInventoryLog
+                },
                 // {
                 //     path:'/updateInventory/:id',
                 //     name:'updateInventory',
@@ -110,7 +128,36 @@ const router=createRouter({history:createWebHistory(),
                 {
                     path:'/PersonCenter',
                     component:PersonCenter
-                }
+                },
+                {
+                    path:'/showAllUser',
+                    component:showAllUser
+                },
+                {
+                    path:'/CreateUser',
+                    component:CreateUser
+                },
+                {
+                    path:'/UpdateUser/:id',
+                    name:'UpdateUser',
+                    component:UpdateUser
+                },
+
+
+                // 任务管理
+                {
+                    path:'/createTask',
+                    component:createTask
+                },
+                {
+                    path:'/showAllTask',
+                    component:showAllTask
+                },
+                {
+                    path:'/updateTask/:id',
+                    name:'updateTask',
+                    component:updateTask
+                },
             ]
         },
         {

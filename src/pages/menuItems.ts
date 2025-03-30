@@ -6,6 +6,9 @@ export const getMenuData = (role: string) => {
         case 'Admin':
             return [
                 {
+                   "label": "面板", "route": "/"
+                },
+                {
                     "label": "商品管理",
                     "subItems": [
                         { "label": "添加商品", "route": "/createProduct" },
@@ -34,16 +37,19 @@ export const getMenuData = (role: string) => {
                 {
                     "label": "库存管理",
                     "subItems": [
-                        { "label": "查看库存", "route": "/createInventory" },
-                        { "label": "库存列表", "route": "/showALLInventory" }
+                        { "label": "新增库存", "route": "/createInventory" },
+                        { "label": "库存列表", "route": "/showALLInventory" },
+                        { "label": "库存记录", "route": "/showAllInventoryLog"},
+                        {"label": "库存审核","route": "/showAllExamine"}
+                        
                         // { "label": "库存报告", "route": "/inventory-report" }
                     ]
                 },
                 {
                     "label": "任务管理",
                     "subItems": [
-                        { "label": "添加任务", "route": "/createOrder" },
-                        { "label": "任务列表", "route": "/showALLOrder" }
+                        { "label": "添加任务", "route": "/createTask" },
+                        { "label": "任务列表", "route": "/showALLTask" }
                         // { "label": "订单报告", "route": "/order-report" }
                     ]
                 },
@@ -89,7 +95,8 @@ export const getMenuData = (role: string) => {
                     "label": "库存管理",
                     "subItems": [
                         { "label": "查看库存", "route": "/createInventory" },
-                        { "label": "库存列表", "route": "/showALLInventory" }
+                        { "label": "库存列表", "route": "/showALLInventory" },
+                        { "label": "库存记录", "route": "/showAllInventoryLog"}
                         // { "label": "库存报告", "route": "/inventory-report" }
                     ]
                 },

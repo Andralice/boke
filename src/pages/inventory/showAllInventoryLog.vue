@@ -15,7 +15,6 @@
             </div>
             <div class="filter-row">
                 <button class="search-btn" @click="loadData">搜索</button>
-                <button class="add-btn" @click="navigateToAddPage">新增库存</button>
             </div>
         </div>
 
@@ -28,8 +27,9 @@
                         <th>商品名称</th>
                         <th>仓库名称</th>
                         <th>供应商名称</th>
-                        <th>数量</th>
-                        <th>更新时间</th>
+                        <th>修改方式</th>
+                        <th>修改数量</th>
+                        <th>创建时间</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +38,8 @@
                         <td>{{ item.productName }}</td>
                         <td>{{ item.stashName }}</td>
                         <td>{{ item.supplierName }}</td>
-                        <td>{{ item.quantity }}</td> 
+                        <td>{{ item.type }}</td>
+                        <td>{{ item.quantity }}</td>
                         <td>{{ formatDate(item.lastStockTime) }}</td>
                     </tr>
                     <tr v-if="paginatedData.length === 0">
@@ -57,10 +58,10 @@
     </div>
 </template>
 
-<script lang="ts" setup name="showAllProduct">
+<script lang="ts" setup name="showAllInventoryLog">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { selectAllInventory } from '@/api/inventory/inventory';
+import { selectAllInventoryLog } from '@/api/inventory/inventory';
 
   
 interface FormData {
@@ -68,6 +69,7 @@ interface FormData {
   productName: string; 
   stashName: string; 
   supplierName: string; 
+  type: string; 
   quantity?: number; 
   remark: string;
   lastStockTime: string;
@@ -77,6 +79,7 @@ const formData = ref<FormData>({
   productName: '',
   stashName: '',
   supplierName: '',
+  type: '',
   remark: '',
   quantity: undefined,
   lastStockTime: ''
@@ -108,7 +111,7 @@ const loadData = async () => {
     //   ...formData.value
     };
     
-    const response = await selectAllInventory(params);
+    const response = await selectAllInventoryLog(params);
     
     pageList.value = response.result;
     // totalItems.value = response.data.total;
@@ -135,11 +138,6 @@ const nextPage = () => {
 // 工具方法
 const formatDate = (timestamp: string) => {
   return new Date(timestamp).toLocaleDateString();
-};
-
-// 页面跳转
-const navigateToAddPage = () => {
-  router.push('/createInventory');
 };
 
 </script>
