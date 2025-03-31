@@ -1,80 +1,94 @@
 <template>
   <div class="addstore-body">
-    <h1>新增商品</h1>
-
-    <!-- 新增仓库输入框模块 -->
-    <div class="new-stash-container">
-      <h2>新增商品信息</h2>
-      <div class="stash-input-row">
-        <div class="stash-input-group">
-          <label for="商品名称">商品名称</label>
-          <input type="text" id="商品名称" placeholder="请输入商品名称" v-model="formData.productName">
-        </div>
-        <div class="stash-input-group">
-          <label for="商品类别">商品类别</label>
-          <input type="text" id="商品类别" placeholder="请输入商品类别" v-model="formData.category">
-        </div>
-        <div class="stash-input-group">
-          <label for="仓库名称">仓库名称</label>
-          <input type="text" id="仓库名称" placeholder="请输入仓库名称" v-model="formData.stashName">
-        </div>
-      </div>
-      <div class="stash-input-row">
-        <div class="stash-input-group">
-          <label for="存储方式">存储方式</label>
-          <select id="存储方式" v-model="formData.storageTemperature">
-            <option value="">请选择存储方式</option>
-            <option value="冷藏">冷藏</option>
-            <option value="阴凉">阴凉</option>
-            <option value="常温">常温</option>
-          </select>
-        </div>
-
-        <div class="stash-input-group">
-          <label for="生产日期">生产日期</label>
-          <input type="date" id="生产日期" v-model="formData.productTime">
-        </div>
-
-        <div class="stash-input-group">
-          <label for="保质期">保质期(月)</label>
-          <input type="text" id="保质期" placeholder="请输入保质期" v-model="formData.shelfLife">
-        </div>
+    <!-- 主体容器 -->
+    <el-card shadow="always" class="main-container">
+      <div class="header-title">
+        <h1>新增商品</h1>
       </div>
 
-      <div class="stash-input-group">
-        <label for="供货商">供货商</label>
-        <input type="text" id="供货商" placeholder="请输入供货商" v-model="formData.supplierName">
+      <!-- 新增仓库输入框模块 -->
+      <div class="new-stash-container">
+        <el-form :model="formData" label-width="180px" :rules="rules" ref="formRef">
+          <el-row :gutter="40">
+            <el-col :span="12">
+              <el-form-item label="商品名称" prop="productName">
+                <el-input v-model="formData.productName" placeholder="请输入商品名称" class="expanded-input"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="商品类别" prop="category">
+                <el-input v-model="formData.category" placeholder="请输入商品类别" class="expanded-input"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="40">
+            <el-col :span="12">
+              <el-form-item label="仓库名称" prop="stashName">
+                <el-input v-model="formData.stashName" placeholder="请输入仓库名称" class="expanded-input"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="存储方式" prop="storageTemperature">
+                <el-select v-model="formData.storageTemperature" placeholder="请选择存储方式" class="expanded-input">
+                  <el-option label="冷藏" value="冷藏"></el-option>
+                  <el-option label="阴凉" value="阴凉"></el-option>
+                  <el-option label="常温" value="常温"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="40">
+            <el-col :span="12">
+              <el-form-item label="生产日期" prop="productTime">
+                <el-date-picker v-model="formData.productTime" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" placeholder="选择日期" class="expanded-input"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="保质期(月)" prop="shelfLife">
+                <el-input-number v-model="formData.shelfLife" :min="1" placeholder="请输入保质期" class="expanded-input"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="40">
+            <el-col :span="12">
+              <el-form-item label="供货商" prop="supplierName">
+                <el-input v-model="formData.supplierName" placeholder="请输入供货商" class="expanded-input"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="图片上传" prop="imageUrl">
+                <el-upload action="#" :auto-upload="false" :on-change="handleFileChange" accept="image/*">
+                  <el-button slot="trigger" type="primary">选取文件</el-button>
+                </el-upload>
+                <div v-if="previews.length > 0" class="preview-container">
+                  <img :src="previews[0]" alt="Preview" class="preview-image">
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </div>
-      
-      <div class="stash-input-group">
-        <label for="图片上传">上传图片</label>
-        <input type="file" id="图片上传" @change="handleFileChange">
-      </div>
-      <div class="preview-container">
-        <div v-if="previews.length > 0" class="preview-item">
-          <img :src="previews[0]" alt="Preview" class="preview-image">
+
+      <!-- 备注 -->
+      <div class="note-container">
+        <div class="header">
+          <h2>添加备注</h2>
+          <el-button type="danger" @click="clearNote()">清除备注</el-button>
         </div>
+        <el-input type="textarea" v-model="formData.remark" :rows="6" placeholder="在这里输入您的备注..." class="expanded-textarea"></el-input>
       </div>
-    </div>
 
-    <!-- 备注 -->
-    <div class="note-container">
-      <div class="header">
-        <h2>添加备注</h2>
-        <button class="note-button" @click="clearNote()">清除备注</button>
+      <!-- 提交按钮 -->
+      <div class="addstore-button">
+        <el-button type="success" :disabled="isSubmitting || !formData.imageUrl" @click="submitForm">提交</el-button>
       </div>
-      <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
-    </div>
-
-    <!-- 提交按钮 -->
-    <div class="addstore-button">
-      <button :disabled="isSubmitting || !formData.imageUrl" @click="submitForm">提交</button>
-    </div>
+    </el-card>
   </div>
 </template>
 
 <script lang="ts" setup name='createProduct'>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
 import { createProduct } from '@/api/product/product';
 import { useRouter } from 'vue-router'; // 新增路由依赖
 import { arrayBufferToBase64, compressImage } from '@/util/imageUtils';
@@ -91,7 +105,8 @@ interface FormData {
   productTime: string; // 生产日期
 }
 
-const formData = ref<FormData>({
+const formRef = ref();
+const formData = reactive<FormData>({
   productName: '',
   category: '',
   stashName: '',
@@ -107,257 +122,165 @@ const router = useRouter();
 const previews = ref<string[]>([]);
 const isSubmitting = ref(false);
 
-function handleFileChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    const file = target.files[0];
-    
-    // 使用 FileReader 读取文件
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      if (e.target?.result instanceof ArrayBuffer) {
-        // 将 ArrayBuffer 转换为 Base64 编码的字符串
-        const imgBuffer = e.target.result;
-        const base64String = arrayBufferToBase64(imgBuffer);
+const rules = {
+  productName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+  category: [{ required: true, message: '请输入商品类别', trigger: 'blur' }],
+  stashName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
+  storageTemperature: [{ required: true, message: '请选择存储方式', trigger: 'change' }],
+  supplierName: [{ required: true, message: '请输入供货商', trigger: 'blur' }],
+  shelfLife: [{ required: true, message: '请输入保质期', trigger: 'blur' }],
+  productTime: [{ required: true, message: '请选择生产日期', trigger: 'change' }],
+  imageUrl: [{ required: true, message: '请上传图片', trigger: 'change' }],
+};
 
-        // 创建一个临时的 Image 对象来加载图片数据
-        const img = new Image();
-        img.src = `data:image/jpeg;base64,${base64String}`;
-        img.onload = () => {
-          // 压缩图片并获取压缩后的 Base64 编码字符串
-          const compressedBase64 = compressImage(img, 200 * 1024); // 目标大小为 200KB
-          
-          previews.value = [URL.createObjectURL(file)]; // 更新预览数组
-          formData.value.imageUrl = compressedBase64; // 更新 Base64 编码的图片数据
-        };
-      }
-    };
+function handleFileChange(file: any) {
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    if (e.target?.result instanceof ArrayBuffer) {
+      const imgBuffer = e.target.result;
+      const base64String = arrayBufferToBase64(imgBuffer);
 
-    reader.readAsArrayBuffer(file);
-  }
-  
+      const img = new Image();
+      img.src = `data:image/jpeg;base64,${base64String}`;
+      img.onload = () => {
+        const compressedBase64 = compressImage(img, 200 * 1024);
+
+        previews.value = [URL.createObjectURL(file.raw)];
+        formData.imageUrl = compressedBase64;
+      };
+    }
+  };
+
+  reader.readAsArrayBuffer(file.raw);
 }
+
 function clearNote() {
-  formData.value.remark = '';
+  formData.remark = '';
 }
 
 async function submitForm() {
-  if (!formData.value.imageUrl) {
-    alert('请先上传图片');
-    return;
-  }
-  
+  await formRef.value.validate(async (valid: boolean) => {
+    if (!valid) return;
 
-  isSubmitting.value = true;
-  try {
-    // 发送请求
-    const response = await createProduct(formData.value);
-    router.push('/showALLProduct');
-  } catch (error) {
-    console.error('Error:', error);
-    alert('提交失败，请检查网络或联系管理员');
-  } finally {
-    isSubmitting.value = false;
-  }
+    isSubmitting.value = true;
+    try {
+      const response = await createProduct(formData);
+      router.push('/showALLProduct');
+      ElMessage.success('商品新增成功！');
+    } catch (error) {
+      console.error('Error:', error);
+      ElMessage.error('提交失败，请检查网络或联系管理员');
+    } finally {
+      isSubmitting.value = false;
+    }
+  });
 }
 </script>
 
+<style scoped>
+.addstore-body {
+  width: 100%; /* 设置主体宽度为100% */
+  padding: 40px; /* 设置内边距 */
+  box-sizing: border-box; /* 包括内边距和边框在内的总宽度和高度 */
+  background-color: #f9f9f9; /* 设置背景颜色 */
+  display: flex; /* 使用Flexbox布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: flex-start; /* 垂直居中对齐改为垂直开始对齐 */
+  min-height: 100vh; /* 最小高度为视口高度 */
+  margin-top: -40px; /* 使用负的顶部外边距提升容器 */
+}
+
+.main-container {
+  width: 100%; /* 设置主容器宽度为100% */
+  max-width: 1400px; /* 最大宽度为1400px */
+  padding: 40px; /* 设置内边距 */
+  box-sizing: border-box; /* 包括内边距和边框在内的总宽度和高度 */
+  background-color: white; /* 设置背景颜色 */
+}
+
+.header-title {
+  text-align: left; /* 文字水平靠左 */
+  margin-bottom: 30px; /* 下外边距 */
+}
+
+.header-title h1 {
+  font-size: 32px; /* 字体大小 */
+  color: #333; /* 字体颜色 */
+  font-weight: 600; /* 字体粗细 */
+  margin: 0; /* 移除默认的上下外边距 */
+}
+
+.new-stash-container, .note-container {
+  margin-bottom: 40px; /* 下外边距 */
+}
+
+.header {
+  display: flex; /* 使用Flexbox布局 */
+  justify-content: space-between; /* 两端对齐 */
+  align-items: center; /* 垂直居中 */
+  margin-bottom: 20px; /* 下外边距 */
+}
+
+.preview-container {
+  margin-top: 20px; /* 上外边距 */
+}
+
+.preview-image {
+  width: 150px; /* 宽度 */
+  height: 150px; /* 高度 */
+  object-fit: cover; /* 裁剪图像以适应容器 */
+  border: 1px solid #ccc; /* 边框 */
+  border-radius: 4px; /* 圆角 */
+}
+
+.addstore-button {
+  display: flex; /* 使用Flexbox布局 */
+  justify-content: flex-end; /* 右对齐 */
+  margin-top: 40px; /* 上外边距 */
+}
+
+.el-form-item__label {
+  font-size: 24px; /* 字体大小 */
+  color: #555; /* 字体颜色 */
+}
+
+.expanded-input .el-input__inner, .expanded-input .el-textarea__inner, .expanded-input .el-select, .expanded-input .el-date-picker, .expanded-input .el-input-number {
+  font-size: 20px; /* 字体大小 */
+  height: 48px; /* 高度 */
+  line-height: 48px; /* 行高 */
+  width: 100%; /* 宽度为100% */
+}
+
+.expanded-textarea .el-textarea__inner {
+  font-size: 20px; /* 字体大小 */
+  height: auto; /* 自动高度 */
+  min-height: 150px; /* 最小高度 */
+  width: 100%; /* 宽度为100% */
+}
+
+.el-button {
+  font-size: 18px; /* 字体大小 */
+  padding: 14px 28px; /* 内边距 */
+}
+
+@media (max-width: 1400px) {
+  .main-container {
+    width: 95%; /* 宽度为95% */
+  }
+}
+
+@media (max-width: 1200px) {
+  .el-col {
+    flex-basis: 50% !important; /* 列宽度为50% */
+  }
+}
+
+@media (max-width: 992px) {
+  .el-col {
+    flex-basis: 100% !important; /* 列宽度为100% */
+  }
+}
+</style>
 
 
 
-
-
-
-
-
-
-
-  
-  <style scoped>
-  .addstore-body {
-    width: 100%;
-    height: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    /* 轻微背景色 */
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .new-stash-container {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    margin-bottom: 20px;
-    background-color: white;
-  }
-  
-  .new-stash-container h2 {
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  .new-stash-container:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  .stash-input-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .stash-input-group {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 250px;
-    margin-bottom: 10px;
-  }
-  
-  .stash-input-group label {
-    font-weight: 500;
-    width: 120px;
-    /* 固定宽度以确保对齐 */
-    margin-right: 10px;
-    color: #555;
-  }
-  
-  .stash-input-group input,
-  .stash-input-group select {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .stash-input-group input:focus,
-  .stash-input-group select:focus {
-    border-color: #007bff;
-  }
-  
-  .preview-container {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .preview-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .preview-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .note-container {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .note-container:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .header h2 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  textarea {
-    width: 98%;
-    height: 140px;
-    resize: vertical;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  textarea:focus {
-    border-color: #007bff;
-  }
-  
-  .note-button {
-    margin-left: 10px;
-    height: 40px;
-    background-color: #555;
-    /* 更柔和的颜色 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .note-button:hover {
-    background-color: #333;
-  }
-  
-  .addstore-button {
-    position: fixed;
-    right: 80px;
-    bottom: 80px;
-    /* 向上移动一些 */
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .addstore-button button {
-    width: 200px;
-    /* 减少宽度 */
-    height: 40px;
-    /* 减少高度 */
-    color: white;
-    background-color: #555;
-    /* 更柔和的颜色 */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .addstore-button button:hover {
-    background-color: #333;
-  }
-  </style>
