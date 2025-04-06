@@ -120,11 +120,10 @@ loadData();
 // 加载数据方法
 const loadData = async () => {
 try {
-  const params = {
-    ...formData.value,
-    page: currentPage.value,
-    size: pageSize.value
-  };
+    // 过滤掉空值字段
+    const params = Object.fromEntries(
+      Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
+    );
   
   const response = await selectAllStash(params);
   

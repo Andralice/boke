@@ -16,6 +16,8 @@
           <label>商品类别</label>
           <input type="text" v-model="formData.category">
         </div>
+      </div>
+      <div class="filter-row">
         <div class="filter-group">
           <label>存储方式</label>
           <select v-model="formData.storageTemperature">
@@ -25,6 +27,8 @@
             <option value="常温">常温</option>
           </select>
         </div>
+        <div class="filter-group"></div> <!-- 占位符 -->
+        <div class="filter-group"></div> <!-- 占位符 -->
       </div>
       <div class="filter-row">
         <button class="search-btn" @click="loadData">搜索</button>
@@ -61,11 +65,9 @@
             <td>{{ item.supplierName }}</td>
             <td>{{ formatDate(item.createTime) }}</td>
             <td>{{ formatDate(item.updateTime) }}</td>
-            <td>
-              <button @click="editItem(item)">编辑</button>
-            </td>
-            <td>
-              <button @click="deleteItem(item)">删除</button>
+            <td class="action-buttons">
+              <button class="edit-btn" @click="editItem(item)">编辑</button>
+              <button class="delete-btn" @click="deleteItem(item)">删除</button>
             </td>
           </tr>
           <tr v-if="paginatedData.length === 0">
@@ -88,7 +90,6 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { selectAllProduct, deleteProductById } from '@/api/product/product';
-import { arrayBufferToBase64, compressImage } from '@/util/imageUtils';
 
 interface FormData {
   productId?: number;
@@ -101,8 +102,6 @@ interface FormData {
   createTime: string;
   updateTime: string;
   imageUrl: string; // 图片 Base64 编码字符串
-  shelfLife: number; // 保质期
-  productTime: string; // 生产日期
 }
 
 // 表单数据
@@ -124,21 +123,9 @@ const pageList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-// const paginatedData = computed(() =>
-//   pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
-// );
-const paginatedData = computed(() => {
-  console.log('Page List:', pageList.value);
-  console.log('Current Page:', currentPage.value);
-  console.log('Page Size:', pageSize.value);
-  const startIndex = (currentPage.value - 1) * pageSize.value;
-  const endIndex = currentPage.value * pageSize.value;
-  console.log('Start Index:', startIndex);
-  console.log('End Index:', endIndex);
-  return pageList.value.slice(startIndex, endIndex);
-});
-
-
+const paginatedData = computed(() =>
+  pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+);
 
 // 初始化加载数据
 onMounted(() => {
@@ -154,7 +141,6 @@ const loadData = async () => {
     );
 
     const response = await selectAllProduct(params);
-    console.log('Response:', response);
     pageList.value = response.result;
     totalItems.value = response.total || pageList.value.length;
   } catch (error) {
@@ -194,12 +180,11 @@ const editItem = (item: FormData) => {
 const deleteItem = async (item: FormData) => {
   if (item.productId !== undefined) {
     try {
-      const response = await deleteProductById(item.productId); // 调用删除接口
+      await deleteProductById(item.productId); // 调用删除接口
       alert('删除成功！');
-      // 可以选择重定向到其他页面或刷新列表
       loadData(); // 刷新列表
     } catch (error) {
-      console.error('Error deleting stash', error);
+      console.error('Error deleting product', error);
       alert('删除失败，请检查网络或联系管理员');
     }
   } else {
@@ -214,77 +199,114 @@ const getImageUrl = (base64String: string): string => {
   }
   return base64String;
 };
-
-
 </script>
-
-
 
 <style scoped>
 .showStore-body {
-  padding: 20px;
+  padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background-color: #f9fafb; /* 浅色背景 */
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
 }
 
 .filters {
-  background: #f5f7fa;
-  padding: 20px;
+  background: #ffffff;
+  padding: 24px;
   border-radius: 8px;
-  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  width: 100%; /* 确保阴影与显示框等长 */
 }
 
-/* 修改 .filter-row 以使用 flex 布局并允许换行 */
 .filter-row {
   display: flex;
-  flex-wrap: wrap; /* 允许子元素换行 */
-  gap: 20px; /* 子元素之间的间距 */
-  margin-bottom: 15px;
+  justify-content: space-between;
+  gap: 16px; /* 增加行内元素之间的间距 */
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
 }
 
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex: 1 1 calc(33.333% - 40px); /* 每个过滤组占据三分之一宽度，减去间距 */
-  min-width: 200px; /* 设置最小宽度，防止过窄 */
+  gap: 8px; /* 减少标签和输入框之间的间距 */
+  flex-basis: calc(33.33% - 16px); /* 每个过滤组占据三分之一宽度，减去间距 */
+  min-width: 150px; /* 设置最小宽度，防止过窄 */
 }
 
 .filter-group label {
   min-width: 80px;
+  color: #555;
+  font-weight: 500;
 }
 
-
 select, input {
-  padding: 8px 12px;
-  border: 1px solid #dcdfe6;
+  padding: 8px 12px; /* 更小的内边距 */
+  border: 1px solid #dcdcdc;
   border-radius: 4px;
-  width: 200px;
+  width: 100%;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+select:focus, input:focus {
+  border-color: #409eff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
 }
 
 .search-btn, .add-btn {
-  padding: 10px 20px;
+  padding: 10px 20px; /* 缩小按钮的内边距 */
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: white;
 }
 
 .search-btn {
   background: #409eff;
-  color: white;
+}
+
+.search-btn:hover {
+  background: #357ae8;
+  transform: translateY(-2px);
 }
 
 .add-btn {
   background: #67c23a;
-  color: white;
   margin-left: auto;
 }
 
+.add-btn:hover {
+  background: #5daf34;
+  transform: translateY(-2px);
+}
+
 .data-table {
-  background: white;
+  background: #ffffff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+  width: 100%; /* 确保阴影与显示框等长 */
 }
 
 table {
@@ -293,33 +315,83 @@ table {
 }
 
 th, td {
-  padding: 12px 15px;
+  padding: 12px 16px; /* 缩小单元格的内边距 */
   text-align: left;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid #ebebeb;
+  font-size: 14px;
+  color: #333;
 }
 
 th {
-  background: #fafafa;
+  background: #f5f7fa; /* 标识栏背景色与展示框一致 */
   font-weight: 600;
+  color: #333;
+}
+
+tr:nth-child(even) {
+  background: #fcfcfd;
 }
 
 tr:hover {
   background: #f5f7fa;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: white;
+}
+
+.edit-btn {
+  background: #409eff;
+}
+
+.edit-btn:hover {
+  background: #357ae8;
+  transform: translateY(-2px);
+}
+
+.delete-btn {
+  background: #ff4d4f;
+}
+
+.delete-btn:hover {
+  background: #ff4544;
+  transform: translateY(-2px);
+}
+
 .pagination {
-  padding: 15px;
+  padding: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 16px;
+  margin-top: 24px;
 }
 
 .pagination button {
-  padding: 8px 16px;
+  padding: 10px 20px; /* 缩小分页按钮的内边距 */
   border: 1px solid #ddd;
-  background: white;
+  background: #ffffff;
   cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+.pagination button:hover {
+  background: #f5f5f5;
+  border-color: #aaa;
+  transform: translateY(-2px);
 }
 
 .pagination button:disabled {
@@ -329,7 +401,11 @@ tr:hover {
 
 .no-data {
   text-align: center;
-  color: #909399;
-  padding: 20px;
+  color: #999;
+  padding: 24px;
+  font-size: 14px;
 }
 </style>
+
+
+
