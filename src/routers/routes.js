@@ -1,6 +1,5 @@
 import {createRouter,createWebHistory} from 'vue-router'
 import home from '@/pages/homePage.vue'
-import adminHome from '@/pages/adminHomePage.vue'
 import login from '@/pages/login.vue'
 import  store  from '@/store/index.js'
 import PersonCenter from  '@/pages/User/PersonCenter.vue'
@@ -159,12 +158,6 @@ const router=createRouter({history:createWebHistory(),
                     component:updateTask
                 },
             ]
-        },
-        {
-            path:'/adminHome',
-            name:'adminHome',
-            meta:{ requiresAuth: true },
-            component: adminHome,
         },
         {
             name: 'denglu',

@@ -102,11 +102,10 @@ onMounted(() => {
 // 加载数据方法
 const loadData = async () => {
   try {
-    const params = {
-      page: currentPage.value,
-      size: pageSize.value
-    //   ...formData.value
-    };
+    // 过滤掉空值字段
+    const params = Object.fromEntries(
+      Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
+    );
     
     const response = await selectAllInventory(params);
     

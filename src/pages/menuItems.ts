@@ -66,6 +66,9 @@ export const getMenuData = (role: string) => {
         case 'User':
             return [
                 {
+                    "label": "面板", "route": "/"
+                 },
+                {
                     "label": "商品管理",
                     "subItems": [
                         { "label": "添加商品", "route": "/createProduct" },

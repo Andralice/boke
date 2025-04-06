@@ -22,16 +22,22 @@
           <input type="checkbox" v-model="showInboundQuantity" @change="updateChart"> 入库数量
         </label>
       </div>
+      <div class="pagination-container">
+        <button @click="prevPage" :disabled="currentPage === 0">上一页</button>
+        <span>{{ currentPage + 1 }} / {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage >= totalPages - 1">下一页</button>
+      </div>
       <div class="chart-container">
-        <canvas id="reportChart" width="1000" height="400"></canvas>
+        <canvas id="reportChart" width="800" height="300"></canvas>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
+import { PanelAllData } from '@/api/Data/allData';
 
 // 注册所有Chart.js插件
 Chart.register(...registerables);
@@ -43,14 +49,28 @@ const showOutboundQuantity = ref(true); // 默认勾选出库数量
 const showInboundQuantity = ref(true); // 默认勾选入库数量
 
 let chartInstance: any;
+const products = ref([]);
+const currentPage = ref(0);
+const pageSize = 5;
 
-onMounted(() => {
+onMounted(async () => {
+  await loadData();
   updateChart();
 });
 
+async function loadData() {
+  try {
+    const response = await PanelAllData(); // 假设这是你的API调用函数
+    console.log(response);
+    products.value = response.product.productList.slice(0, 50); // 假设最多展示前50个商品
+  } catch (error) {
+    console.error('加载数据失败:', error);
+  }
+}
+
 function updateChart() {
   const ctx = document.getElementById('reportChart') as HTMLCanvasElement;
-  const labels = getProductNames(); // 获取商品名称
+  const labels = getProductNames(); // 获取当前页面的商品名称
   const datasets = [];
 
   if (showWarehouseStocks.value) {
@@ -114,6 +134,7 @@ function updateChart() {
   }
 
   if (chartInstance) {
+    chartInstance.data.labels = labels;
     chartInstance.data.datasets = datasets;
     chartInstance.update();
   } else {
@@ -201,27 +222,49 @@ function updateChart() {
 }
 
 function getProductNames(): string[] {
-  return ['商品A', '商品B', '商品C', '商品D', '商品E', '商品F'];
+  return currentProducts.value.map(product => product.productName);
 }
 
 function getWarehouseStocks(): number[] {
-  return [1500, 2000, 2500, 1800, 2200, 2100];
+  return currentProducts.value.map(product => product.quantity);
 }
 
 function getProductStocks(): number[] {
-  return [500, 1000, 1500, 1200, 1800, 1600];
+  return currentProducts.value.map(product => product.addNum);
 }
 
 function getCategoryStocks(): number[] {
-  return [300, 600, 900, 700, 1100, 1000];
+  return currentProducts.value.map(product => product.subNum);
 }
 
 function getOutboundQuantities(): number[] {
-  return [200, 400, 600, 500, 700, 600];
+  return currentProducts.value.map(product => product.subNum);
 }
 
 function getInboundQuantities(): number[] {
-  return [700, 1400, 2100, 1700, 2100, 2000];
+  return currentProducts.value.map(product => product.addNum);
+}
+
+const currentProducts = computed(() => {
+  const start = currentPage.value * pageSize;
+  const end = start + pageSize;
+  return products.value.slice(start, end);
+});
+
+const totalPages = computed(() => Math.ceil(products.value.length / pageSize));
+
+function nextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++;
+    updateChart();
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--;
+    updateChart();
+  }
 }
 </script>
 
@@ -230,8 +273,6 @@ function getInboundQuantities(): number[] {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  padding: 20px;
   background-color: #f8f9fa;
 }
 
@@ -295,11 +336,43 @@ function getInboundQuantities(): number[] {
   margin-right: 5px;
 }
 
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.pagination-container button {
+  margin: 0 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .chart-container {
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 450px;
+  height: 400px; /* 减少高度 */
+}
+
+.chart-container canvas {
+  width: 800px; /* 调整宽度 */
+  height: 350px; /* 调整高度 */
 }
 </style>
+
+
+

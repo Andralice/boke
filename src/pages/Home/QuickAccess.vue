@@ -22,18 +22,6 @@
         <div class="box-icon"></div>
       </div>
     </div>
-    <!-- 新增部分：底部内容 -->
-    <div class="footer-content">
-      <!-- <div class="description">
-        <p>这里是快捷入口区域的描述信息。您可以在此处添加更多关于这些功能的详细说明或提示。</p>
-      </div> -->
-      <!-- <div class="action-buttons">
-        <button class="btn-primary">查看更多</button>
-        <button class="btn-secondary">帮助中心</button>
-        <button class="btn-primary">查看更多</button>
-        <button class="btn-secondary">帮助中心</button>
-      </div> -->
-    </div>
   </div>
 </template>
 
@@ -53,8 +41,8 @@ const goToOutbound = () => {
 
 <style scoped>
 .region.region2 {
-  height: 348px; /* 让容器自适应高度 */
-  width: 100%;
+  height: auto; /* 让容器自适应高度 */
+  width: 90%;
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
@@ -89,8 +77,10 @@ const goToOutbound = () => {
 
 .region.region2 .box-container {
   display: flex;
+  flex-direction: column; /* 修改为列布局 */
   gap: 20px;
   justify-content: center;
+  align-items: center; /* 水平居中对齐 */
   margin-bottom: 20px; /* 添加间距 */
 }
 
@@ -143,55 +133,6 @@ const goToOutbound = () => {
 
 .region.region2 .small-box.storage-list .box-icon {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%237cfc00" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 48 256 48s200 89.5 200 200-89.5 200-200 200z"/><path d="M200 100v100h112V100H200zm0 150v100h112V250H200z" fill="%23fff"/></svg>');
-}
-
-/* 新增部分：底部内容样式 */
-.footer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
-  margin-top: auto; /* 将其推到容器底部 */
-}
-
-.footer-content .description {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.footer-content .action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.btn-primary {
-  background-color: #1e90ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.btn-primary:hover {
-  background-color: #007bff;
-}
-
-.btn-secondary {
-  background-color: #e9ecef;
-  color: #333;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.btn-secondary:hover {
-  background-color: #ddd;
 }
 </style>
 

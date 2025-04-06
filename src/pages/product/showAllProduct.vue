@@ -47,6 +47,7 @@
             <th>创建时间</th>
             <th>更新时间</th>
             <th>操作</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -118,7 +119,7 @@ const router = useRouter();
 // 分页相关
 const currentPage = ref(1);
 const pageSize = ref(10);
-const totalItems = ref(0);
+const totalItems = ref(1);
 const pageList = ref<FormData[]>([]);
 
 // 计算属性
@@ -147,10 +148,10 @@ onMounted(() => {
 // 加载数据方法
 const loadData = async () => {
   try {
-    const params = {
-      page: currentPage.value,
-      size: pageSize.value
-    };
+    // 过滤掉空值字段
+    const params = Object.fromEntries(
+      Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
+    );
 
     const response = await selectAllProduct(params);
     console.log('Response:', response);

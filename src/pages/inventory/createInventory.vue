@@ -25,8 +25,7 @@
             <select id="修改方式" v-model="formData.type">
               <option value="">请选择修改方式</option>
               <option value="add">添加</option>
-              <option value="del">减少</option>
-              <option value="reset">覆盖</option>
+              <option value="sub">减少</option>
             </select>
           </div>
           <div class="stash-input-group">

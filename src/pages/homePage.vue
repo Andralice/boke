@@ -191,7 +191,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  display: flex;
+  /* display: flex; */
 }
 
 .sidebar {
@@ -269,7 +269,6 @@ body {
 
 .content {
   margin-left: 270px;
-  padding: 20px;
   width: calc(100% - 270px);
 }
 

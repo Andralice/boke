@@ -16,6 +16,14 @@
           <label>联系人电话</label>
           <input type="text" v-model="formData.contactPhone" placeholder="请输入联系人电话">
         </div>
+        <div class="filter-group">
+          <label>供应商状态</label>
+          <select v-model="formData.cooperationStatus">
+            <option value="">全部</option>
+            <option value="1">启用</option>
+            <option value="0">禁用</option>
+          </select>
+        </div>
       </div>
       <div class="filter-row">
         <button class="search-btn" @click="loadData">搜索</button>
@@ -80,7 +88,7 @@ interface FormData {
   contactPhone: string;
   address: string;
   bankAccount: string;
-  cooperationStatus: boolean;
+  cooperationStatus: number;
   remark: string;
 }
 
@@ -90,13 +98,14 @@ const router = useRouter();
 const formData = ref({
   supplierName: '',
   contactName: '',
-  contactPhone: ''
+  contactPhone: '',
+  cooperationStatus: ""
 });
 
 // 分页相关
 const currentPage = ref(1);
 const pageSize = ref(10);
-const totalItems = ref(0);
+const totalItems = ref(0); // 初始化为0
 const pageList = ref<FormData[]>([]);
 
 // 计算属性
@@ -111,18 +120,24 @@ onMounted(() => {
 // 加载数据方法
 const loadData = async () => {
   try {
-    const params = {
-      page: currentPage.value,
-      size: pageSize.value,
-      ...formData.value
-    };
-
+    // 过滤掉空值字段
+    const params = Object.fromEntries(
+      Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
+    );
     const response = await selectAllSuppliers(params);
 
-    pageList.value = response.result;
-    totalItems.value = response.total; // 假设 response 包含 total 字段
+    if (response.result && Array.isArray(response.result)) {
+      pageList.value = response.result;
+      totalItems.value = response.total || response.result.length; // 确保总条目数至少为0
+    } else {
+      console.error('无效的数据格式:', response);
+      pageList.value = [];
+      totalItems.value = 0;
+    }
   } catch (error) {
     console.error('加载数据失败:', error);
+    pageList.value = [];
+    totalItems.value = 0;
   }
 };
 
@@ -130,14 +145,12 @@ const loadData = async () => {
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
-    loadData();
   }
 };
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
-    loadData();
   }
 };
 
@@ -154,17 +167,24 @@ const deleteItem = async (item: FormData) => {
   if (item.supplierId !== undefined) {
     try {
       const response = await deleteSuppliersById(item.supplierId); // 调用删除接口
-      alert('删除成功！');
+      console.log('删除成功！', response);
       loadData(); // 刷新列表
     } catch (error) {
       console.error('Error deleting supplierId', error);
       alert('删除失败，请检查网络或联系管理员');
     }
   } else {
-    alert('未找到仓库ID');
+    alert('未找到供应商ID');
   }
 };
 </script>
+
+
+
+
+
+
+
 
 <style scoped>
 .showStore-body {

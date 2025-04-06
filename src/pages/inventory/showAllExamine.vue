@@ -49,10 +49,10 @@
                         <td>{{ formatDate(item.createTime) }}</td>
                         <td>{{ formatDate(item.updateTime) }}</td>
                         <td>
-                            <button @click="updateExamineStatus(item,'1')">审核通过</button>
-                        </td>                        
+                            <button @click="updateExamineStatus(item, '1')">审核通过</button>
+                        </td>
                         <td>
-                            <button @click="updateExamineStatus(item,'2')">审核拒绝</button>
+                            <button @click="updateExamineStatus(item, '2')">审核拒绝</button>
                         </td>
                     </tr>
                     <tr v-if="paginatedData.length === 0">
@@ -77,30 +77,30 @@ import { useRouter } from 'vue-router';
 import { selectAllExamine, UpdateExamine } from '@/api/Examine/examine';
 
 interface FormData {
-  examineId?: number;
-  examineName: string;
-  examineData: string;
-  examineStatus: string;
-  examineType: string;
-  createTime?: string;
-  updateTime?: string;
+    examineId?: number;
+    examineName: string;
+    examineData: string;
+    examineStatus: string;
+    examineType: string;
+    createTime?: string;
+    updateTime?: string;
 }
 
 const formData = ref<FormData>({
-  examineId: undefined,
-  examineName: "",
-  examineData: "",
-  examineStatus: "",
-  examineType: "",
-  createTime: undefined,
-  updateTime: undefined
+    examineId: undefined,
+    examineName: "",
+    examineData: "",
+    examineStatus: "",
+    examineType: "",
+    createTime: undefined,
+    updateTime: undefined
 });
 const router = useRouter();
 
 // 分页相关
 const currentPage = ref(1);
 const pageSize = ref(10);
-const totalItems = ref(0);
+const totalItems = ref(1);
 const pageList = ref<FormData[]>([]);
 
 // 计算属性
@@ -115,52 +115,102 @@ onMounted(() => {
 // 加载数据方法
 const loadData = async () => {
     try {
-        const params = {
-            page: currentPage.value,
-            size: pageSize.value
-            //   ...formData.value
-        };
+    // 过滤掉空值字段
+    const params = Object.fromEntries(
+      Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
+    );
 
         const response = await selectAllExamine(params);
 
-        pageList.value = response.result;
-        // totalItems.value = response.data.total;
-    } catch (error) {
+        if (Array.isArray(response.result)) {
+            const examineDataList = []; // 使用普通数组而不是 ref
+            const examineTypeList = [];
+
+            for (const item of response.result) {
+                if (item.examineData) {
+                    // 将 examineData 转换为 JSON 字符串
+                    const examineDataJson = JSON.parse(item.examineData, null, 2);
+                    examineDataList.push(examineDataJson);
+                    console.log(item.examineData.productName);
+                } else {
+                    console.warn("Item does not have examineData field:", item);
+                }
+                if (item.examineType == "ädd") {
+                    examineTypeList.push("入库申请");
+                } else {
+                    examineTypeList.push("出库申请");
+                }
+            }
+
+            // 创建一个新的数组来存储处理后的字符串
+            const processedExamineData = [];
+
+            for (const item of examineDataList) {
+                try {
+                    // 解析 JSON 字符串回对象
+                    const { productName, stashName } = item;
+                    console.log("Item has examineData field:", item.productName, item.stashName);
+
+                    // 拼接新的字符串
+                    const combinedString = `${productName} - ${stashName}`;
+
+                    // 将拼接后的字符串添加到新的数组中
+                    processedExamineData.push(combinedString);
+                } catch (error) {
+                    console.error("Failed to parse JSON string:", item, error);
+                }
+            }
+
+            // 将处理后的字符串数组存回 response.result.examineData
+            response.result.forEach((item, index) => {
+                if (processedExamineData[index]) {
+                    item.examineData = processedExamineData[index];
+                }
+                if (examineTypeList[index]) {
+                    item.examineType = examineTypeList[index];
+                    }
+            });
+
+            pageList.value = response.result;
+        } else {
+            console.error("response.result is not an array:", response.result);
+        }
+    }catch (error) {
         console.error('加载数据失败:', error);
     }
 };
 
-// 分页操作
-const prevPage = () => {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-        loadData();
-    }
-};
+    // 分页操作
+    const prevPage = () => {
+        if (currentPage.value > 1) {
+            currentPage.value--;
+            loadData();
+        }
+    };
 
-const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
-        loadData();
-    }
-};
+    const nextPage = () => {
+        if (currentPage.value < totalPages.value) {
+            currentPage.value++;
+            loadData();
+        }
+    };
 
-const updateExamineStatus = async (item: FormData, status: string) => {
-    try {
-        item.examineStatus = status;
-        const response = await UpdateExamine(item);
-        console.log(response);
-        
-    }
-    catch (error) {
-        console.error('审核失败:', error);
-    }
-}
+    const updateExamineStatus = async (item: FormData, status: string) => {
+        try {
+            item.examineStatus = status;
+            const response = await UpdateExamine(item);
+            console.log(response);
 
-// 工具方法
-const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString();
-  };
+        }
+        catch (error) {
+            console.error('审核失败:', error);
+        }
+    }
+
+    // 工具方法
+    const formatDate = (timestamp: string) => {
+        return new Date(timestamp).toLocaleDateString();
+    };
 </script>
 
 <style scoped>
