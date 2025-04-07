@@ -296,7 +296,7 @@ body {
 
 /* 内容区域样式 */
 .content {
-  margin-left: 270px;
+  margin-left: 250px;
   width: calc(100% - 270px);
 }
 

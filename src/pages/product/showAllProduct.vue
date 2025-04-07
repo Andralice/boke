@@ -194,9 +194,16 @@ const deleteItem = async (item: FormData) => {
 
 // 解码 Base64 并生成图片 URL
 const getImageUrl = (base64String: string): string => {
+  // 如果没有图片数据，使用默认的图片
+  if (!base64String) {
+    return 'https://example.com/default-image.jpg';  // 这里替换为你项目中的默认图片 URL
+  }
+
+  // 如果是有效的 Base64 字符串，则返回其本身
   if (!base64String.startsWith('data:image')) {
     base64String = `data:image/jpeg;base64,${base64String}`;
   }
+
   return base64String;
 };
 </script>

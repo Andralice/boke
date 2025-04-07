@@ -38,7 +38,7 @@
                         <td>{{ item.productName }}</td>
                         <td>{{ item.stashName }}</td>
                         <td>{{ item.supplierName }}</td>
-                        <td>{{ item.quantity }}</td> 
+                        <td>{{ item.quantity }}</td>
                         <td>{{ formatDate(item.lastStockTime) }}</td>
                     </tr>
                     <tr v-if="paginatedData.length === 0">
@@ -46,7 +46,7 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <!-- 分页控件 -->
             <div class="pagination">
                 <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
@@ -62,13 +62,13 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { selectAllInventory } from '@/api/inventory/inventory';
 
-  
+
 interface FormData {
   inventoryId?: number;
-  productName: string; 
-  stashName: string; 
-  supplierName: string; 
-  quantity?: number; 
+  productName: string;
+  stashName: string;
+  supplierName: string;
+  quantity?: number;
   remark: string;
   lastStockTime: string;
 }
@@ -106,15 +106,21 @@ const loadData = async () => {
     const params = Object.fromEntries(
       Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
     );
-    
+
+    // 加入分页参数
+    params.page = currentPage.value;
+    params.pageSize = pageSize.value;
+
+    // 向后端请求数据，确保传递分页参数
     const response = await selectAllInventory(params);
-    
-    pageList.value = response.result;
-    // totalItems.value = response.data.total;
+
+    pageList.value = response.result;  // 返回当前页数据
+    totalItems.value = response.total;  // 返回符合条件的总数据量
   } catch (error) {
     console.error('加载数据失败:', error);
   }
 };
+
 
 // 分页操作
 const prevPage = () => {
