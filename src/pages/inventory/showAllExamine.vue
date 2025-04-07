@@ -11,15 +11,13 @@
                 <div class="filter-group">
                     <label>审核状态</label>
                     <select v-model="formData.examineStatus">
-                        <option value="">全部</option>
                         <option value="0">未完成</option>
                         <option value="1">已通过</option>
                         <option value="2">已拒绝</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label>审核类型</label>
-                    <input type="text" v-model="formData.examineType">
+                    <button class="search-btn" @click="loadData">搜索</button>
                 </div>
             </div>
         </div>
@@ -36,7 +34,7 @@
                         <th>审核类型</th>
                         <th>创建时间</th>
                         <th>更新时间</th>
-                        <th>操作</th>
+                        <th v-if="hasUnreviewedItems">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,10 +46,8 @@
                         <td>{{ item.examineType }}</td>
                         <td>{{ formatDate(item.createTime) }}</td>
                         <td>{{ formatDate(item.updateTime) }}</td>
-                        <td>
+                        <td v-if="item.examineStatus === '0'" class="actions">
                             <button @click="updateExamineStatus(item, '1')">审核通过</button>
-                        </td>
-                        <td>
                             <button @click="updateExamineStatus(item, '2')">审核拒绝</button>
                         </td>
                     </tr>
@@ -90,7 +86,7 @@ const formData = ref<FormData>({
     examineId: undefined,
     examineName: "",
     examineData: "",
-    examineStatus: "",
+    examineStatus: "0", // 默认设置为未完成
     examineType: "",
     createTime: undefined,
     updateTime: undefined
@@ -105,7 +101,10 @@ const pageList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() => pageList.value);
+const paginatedData = computed(() => pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value));
+
+// 是否有未审核项
+const hasUnreviewedItems = computed(() => paginatedData.value.some(item => item.examineStatus === '0'));
 
 // 初始化加载数据
 onMounted(() => {
@@ -115,10 +114,10 @@ onMounted(() => {
 // 加载数据方法
 const loadData = async () => {
     try {
-    // 过滤掉空值字段
-    const params = Object.fromEntries(
-      Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
-    );
+        // 过滤掉空值字段
+        const params = Object.fromEntries(
+            Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
+        );
 
         const response = await selectAllExamine(params);
 
@@ -132,13 +131,13 @@ const loadData = async () => {
                     const examineDataJson = JSON.parse(item.examineData, null, 2);
                     examineDataList.push(examineDataJson);
                     console.log(item.examineData.productName);
+                    if (examineDataJson.type == "add") {
+                        examineTypeList.push("入库申请");
+                    } else {
+                        examineTypeList.push("出库申请");
+                    }
                 } else {
                     console.warn("Item does not have examineData field:", item);
-                }
-                if (item.examineType == "ädd") {
-                    examineTypeList.push("入库申请");
-                } else {
-                    examineTypeList.push("出库申请");
                 }
             }
 
@@ -168,49 +167,49 @@ const loadData = async () => {
                 }
                 if (examineTypeList[index]) {
                     item.examineType = examineTypeList[index];
-                    }
+                }
             });
 
             pageList.value = response.result;
+            totalItems.value = response.result.length; // 设置总项目数
         } else {
             console.error("response.result is not an array:", response.result);
         }
-    }catch (error) {
+    } catch (error) {
         console.error('加载数据失败:', error);
     }
 };
 
-    // 分页操作
-    const prevPage = () => {
-        if (currentPage.value > 1) {
-            currentPage.value--;
-            loadData();
-        }
-    };
-
-    const nextPage = () => {
-        if (currentPage.value < totalPages.value) {
-            currentPage.value++;
-            loadData();
-        }
-    };
-
-    const updateExamineStatus = async (item: FormData, status: string) => {
-        try {
-            item.examineStatus = status;
-            const response = await UpdateExamine(item);
-            console.log(response);
-
-        }
-        catch (error) {
-            console.error('审核失败:', error);
-        }
+// 分页操作
+const prevPage = () => {
+    if (currentPage.value > 1) {
+        currentPage.value--;
+        loadData();
     }
+};
 
-    // 工具方法
-    const formatDate = (timestamp: string) => {
-        return new Date(timestamp).toLocaleDateString();
-    };
+const nextPage = () => {
+    if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+        loadData();
+    }
+};
+
+const updateExamineStatus = async (item: FormData, status: string) => {
+    try {
+        item.examineStatus = status;
+        const response = await UpdateExamine(item);
+        console.log(response);
+        loadData(); // 刷新数据
+    } catch (error) {
+        console.error('审核失败:', error);
+    }
+};
+
+// 工具方法
+const formatDate = (timestamp: string) => {
+    return new Date(timestamp).toLocaleDateString();
+};
 </script>
 
 <style scoped>
@@ -324,4 +323,11 @@ tr:hover {
     color: #909399;
     padding: 20px;
 }
+
+.actions button {
+    margin-right: 5px;
+}
 </style>
+
+
+

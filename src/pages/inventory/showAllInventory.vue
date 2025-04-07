@@ -47,12 +47,12 @@
                 </tbody>
             </table>
 
-            <!-- 分页控件 -->
-            <div class="pagination">
-                <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
-                <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
-                <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
-            </div>
+          <!-- 分页控件 -->
+          <div class="pagination">
+            <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
+            <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
+          </div>
         </div>
     </div>
 </template>
@@ -92,7 +92,9 @@ const pageList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() => pageList.value);
+const paginatedData = computed(() =>
+  pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+);
 
 // 初始化加载数据
 onMounted(() => {
@@ -115,7 +117,7 @@ const loadData = async () => {
     const response = await selectAllInventory(params);
 
     pageList.value = response.result;  // 返回当前页数据
-    totalItems.value = response.total;  // 返回符合条件的总数据量
+    totalItems.value = response.total || response.result.length; // 确保总条目数至少为0
   } catch (error) {
     console.error('加载数据失败:', error);
   }
@@ -136,6 +138,7 @@ const nextPage = () => {
     loadData();
   }
 };
+
 
 // 工具方法
 const formatDate = (timestamp: string) => {

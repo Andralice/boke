@@ -23,7 +23,7 @@
           <select v-model="formData.storageTemperature">
             <option value="">全部</option>
             <option value="冷藏">冷藏</option>
-            <option value="阴凉">阴凉</option>
+            <option value="冷冻">冷冻</option>
             <option value="常温">常温</option>
           </select>
         </div>
@@ -48,6 +48,7 @@
             <th>仓库名称</th>
             <th>存储方式</th>
             <th>供应商名称</th>
+            <th>可用库存</th>
             <th>创建时间</th>
             <th>更新时间</th>
             <th>操作</th>
@@ -63,6 +64,7 @@
             <td>{{ item.stashName }}</td>
             <td>{{ item.storageTemperature }}</td>
             <td>{{ item.supplierName }}</td>
+            <td>{{ item.quantity}}</td>
             <td>{{ formatDate(item.createTime) }}</td>
             <td>{{ formatDate(item.updateTime) }}</td>
             <td class="action-buttons">
@@ -96,6 +98,7 @@ interface FormData {
   productName: string;
   category: string;
   stashName: string;
+  quantity: number;
   storageTemperature: string;
   supplierName: string;
   remark: string;

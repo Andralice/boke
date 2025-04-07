@@ -289,6 +289,7 @@ table {
 
 th, td {
   padding: 12px 16px; /* 缩小单元格的内边距 */
+  max-width:180px ;
   text-align: left;
   border-bottom: 1px solid #ebebeb;
   font-size: 14px;

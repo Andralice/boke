@@ -13,11 +13,11 @@
         <div class="box-title">出库申请</div>
         <div class="box-icon"></div>
       </div>
-      <div class="small-box task">
-        <div class="box-title">我的任务</div>
+      <div class="small-box task " @click="goToTask">
+        <div class="box-title">任务列表</div>
         <div class="box-icon"></div>
       </div>
-      <div class="small-box storage-list">
+      <div class="small-box storage-list" @click="goToStorageList">
         <div class="box-title">库存列表</div>
         <div class="box-icon"></div>
       </div>
@@ -37,6 +37,16 @@ const goToInbound = () => {
 const goToOutbound = () => {
   router.push({ name: 'outStash', query: { tab: 'outbound' } });
 };
+
+const goToTask = () => {
+  router.push("/showAllTask");
+};
+
+const goToStorageList = () => {
+    router.push("/showALLInventory");
+};
+
+
 </script>
 
 <style scoped>

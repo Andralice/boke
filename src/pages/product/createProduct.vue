@@ -29,7 +29,7 @@
             <el-form-item label="存储方式" prop="storageTemperature">
               <el-select v-model="formData.storageTemperature" placeholder="请选择存储方式" class="expanded-input">
                 <el-option label="冷藏" value="冷藏"></el-option>
-                <el-option label="阴凉" value="阴凉"></el-option>
+                <el-option label="冷冻" value="冷冻"></el-option>
                 <el-option label="常温" value="常温"></el-option>
               </el-select>
             </el-form-item>

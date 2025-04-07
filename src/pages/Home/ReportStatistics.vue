@@ -9,12 +9,12 @@
         <label>
           <input type="checkbox" v-model="showWarehouseStocks" @change="updateChart"> 仓库库存
         </label>
-        <label>
+        <!-- <label>
           <input type="checkbox" v-model="showProductStocks" @change="updateChart"> 商品库存
-        </label>
-        <label>
+        </label> -->
+        <!-- <label>
           <input type="checkbox" v-model="showCategoryStocks" @change="updateChart"> 种类库存
-        </label>
+        </label> -->
         <label>
           <input type="checkbox" v-model="showOutboundQuantity" @change="updateChart"> 出库数量
         </label>
@@ -43,8 +43,8 @@ import { PanelAllData } from '@/api/Data/allData';
 Chart.register(...registerables);
 
 const showWarehouseStocks = ref(true); // 默认勾选仓库库存
-const showProductStocks = ref(true); // 默认勾选商品库存
-const showCategoryStocks = ref(true); // 默认勾选种类库存
+// const showProductStocks = ref(true); // 默认勾选商品库存
+// const showCategoryStocks = ref(true); // 默认勾选种类库存
 const showOutboundQuantity = ref(true); // 默认勾选出库数量
 const showInboundQuantity = ref(true); // 默认勾选入库数量
 
@@ -85,29 +85,29 @@ function updateChart() {
     });
   }
 
-  if (showProductStocks.value) {
-    datasets.push({
-      label: '商品库存',
-      data: getProductStocks(), // 获取商品库存数据
-      backgroundColor: 'rgba(153, 102, 255, 0.8)',
-      borderColor: 'rgba(153, 102, 255, 1)',
-      borderWidth: 1,
-      barPercentage: 0.6,
-      categoryPercentage: 0.6,
-    });
-  }
+  // if (showProductStocks.value) {
+  //   datasets.push({
+  //     label: '商品库存',
+  //     data: getProductStocks(), // 获取商品库存数据
+  //     backgroundColor: 'rgba(153, 102, 255, 0.8)',
+  //     borderColor: 'rgba(153, 102, 255, 1)',
+  //     borderWidth: 1,
+  //     barPercentage: 0.6,
+  //     categoryPercentage: 0.6,
+  //   });
+  // }
 
-  if (showCategoryStocks.value) {
-    datasets.push({
-      label: '种类库存',
-      data: getCategoryStocks(), // 获取种类库存数据
-      backgroundColor: 'rgba(255, 159, 64, 0.8)',
-      borderColor: 'rgba(255, 159, 64, 1)',
-      borderWidth: 1,
-      barPercentage: 0.6,
-      categoryPercentage: 0.6,
-    });
-  }
+  // if (showCategoryStocks.value) {
+  //   datasets.push({
+  //     label: '种类库存',
+  //     data: getCategoryStocks(), // 获取种类库存数据
+  //     backgroundColor: 'rgba(255, 159, 64, 0.8)',
+  //     borderColor: 'rgba(255, 159, 64, 1)',
+  //     borderWidth: 1,
+  //     barPercentage: 0.6,
+  //     categoryPercentage: 0.6,
+  //   });
+  // }
 
   if (showOutboundQuantity.value) {
     datasets.push({
@@ -162,7 +162,7 @@ function updateChart() {
           },
           y: {
             beginAtZero: true,
-            max: 2000,
+            max: 5000,
             ticks: {
               stepSize: 500,
               font: {
@@ -193,28 +193,28 @@ function updateChart() {
               color: '#333'
             }
           },
-          tooltip: {
-            enabled: true,
-            callbacks: {
-              label: function(context) {
-                return `${context.dataset.label}: ${context.raw}`;
-              }
-            },
-            bodyFont: {
-              size: 14,
-              family: 'Arial',
-            },
-            titleFont: {
-              size: 14,
-              family: 'Arial',
-            },
-            displayColors: false,
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderColor: '#ddd',
-            borderWidth: 1,
-            cornerRadius: 4,
-            padding: 10
-          }
+          // tooltip: {
+          //   enabled: true,
+          //   callbacks: {
+          //     label: function(context) {
+          //       return `${context.dataset.label}: ${context.raw}`;
+          //     }
+          //   },
+          //   bodyFont: {
+          //     size: 14,
+          //     family: 'Arial',
+          //   },
+          //   titleFont: {
+          //     size: 14,
+          //     family: 'Arial',
+          //   },
+          //   displayColors: false,
+          //   backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          //   borderColor: '#ddd',
+          //   borderWidth: 1,
+          //   cornerRadius: 4,
+          //   padding: 10
+          // }
         }
       }
     });
