@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="row_right">
-              <QuickAccess />
+      <QuickAccess />
       <!-- <Notifications /> -->
     </div>
   </div>

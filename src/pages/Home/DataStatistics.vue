@@ -11,19 +11,21 @@
         <div class="box-description">当前分类记录数</div>
         <div class="badge" v-if="badgeVisibility.blue">{{ badgeTexts.blue }}</div>
       </div>
-      <div class="data-box cyan" @mouseenter="showBadge('cyan')" @mouseleave="hideBadge('cyan')">
-        <div class="box-title">商品类型</div>
-        <div class="box-number">{{ productNum }}</div>
-        <div class="box-description">当前分类记录数</div>
-        <div class="badge" v-if="badgeVisibility.cyan">{{ badgeTexts.cyan }}</div>
-      </div>
       <div class="data-box green" @mouseenter="showBadge('green')" @mouseleave="hideBadge('green')">
         <div class="box-title">库存总额</div>
         <div class="box-number">{{ inventoryNum }}</div>
         <div class="box-description">当前分类记录数</div>
         <div class="badge" v-if="badgeVisibility.green">{{ badgeTexts.green }}</div>
       </div>
-      <div class="data-box light-green" @mouseenter="showBadge('lightGreen')" @mouseleave="hideBadge('lightGreen')" @click="showNoInventoryModal = true">
+      <div class="data-box cyan" @mouseenter="showBadge('cyan')" @mouseleave="hideBadge('cyan')"
+           @click="showNoTimeModal = true">
+        <div class="box-title">到期商品</div>
+        <div class="box-number">{{ noTimeNum }}</div>
+        <div class="box-description">当前分类记录数</div>
+        <div class="badge" v-if="badgeVisibility.cyan">{{ badgeTexts.cyan }}</div>
+      </div>
+      <div class="data-box light-green" @mouseenter="showBadge('lightGreen')" @mouseleave="hideBadge('lightGreen')"
+           @click="showNoInventoryModal = true">
         <div class="box-title">缺货商品</div>
         <div class="box-number">{{ noInventoryNum }}</div>
         <div class="box-description">当前分类记录数</div>
@@ -45,20 +47,56 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(product, index) in noInventoryProducts" :key="index">
+            <tr v-for="(product, index) in paginatedNoInventoryProducts" :key="index">
               <td>{{ product.productName }}</td>
               <td>{{ product.stashName }}</td>
               <td>{{ product.supplierName }}</td>
             </tr>
           </tbody>
         </table>
+        <div class="pagination">
+          <button @click="prevNoInventoryPage" :disabled="currentNoInventoryPage === 1">上一页</button>
+          <span>第 {{ currentNoInventoryPage }} 页 / 共 {{ noInventoryTotalPages }} 页</span>
+          <button @click="nextNoInventoryPage" :disabled="currentNoInventoryPage === noInventoryTotalPages">下一页</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 到期商品弹窗 -->
+    <div v-if="showNoTimeModal" class="modal-overlay" @click="showNoTimeModal = false">
+      <div class="modal-content" @click.stop>
+        <span class="close-button" @click="showNoTimeModal = false">&times;</span>
+        <h4>到期商品列表</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>商品名称</th>
+              <th>仓库</th>
+              <th>供应商</th>
+              <th>剩余时间(天)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(product, index) in paginatedNoTimeProducts" :key="index">
+              <td>{{ product.productName }}</td>
+              <td>{{ product.stashName }}</td>
+              <td>{{ product.supplierName }}</td>
+              <td :class="{ 'expired': product.daysLeft < 0 }">{{ product.daysLeft < 0 ? '过期' : product.daysLeft }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button @click="prevNoTimePage" :disabled="currentNoTimePage === 1">上一页</button>
+          <span>第 {{ currentNoTimePage }} 页 / 共 {{ noTimeTotalPages }} 页</span>
+          <button @click="nextNoTimePage" :disabled="currentNoTimePage === noTimeTotalPages">下一页</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { PanelAllData } from '@/api/Data/allData';
 
 const badgeTexts = ref({
@@ -89,17 +127,61 @@ const productNum = ref(0);
 const inventoryNum = ref(0);
 const noInventoryNum = ref(0);
 const noInventoryProducts = ref([]);
+const noTimeNum = ref(0);
+const noTimeProducts = ref([]);
 
 // 弹窗显示状态
 const showNoInventoryModal = ref(false);
+const showNoTimeModal = ref(false);
+
+// 缺货商品分页
+const currentNoInventoryPage = ref(1);
+const noInventoryPageSize = ref(5);
+const noInventoryTotalPages = computed(() => Math.ceil(noInventoryProducts.value.length / noInventoryPageSize.value));
+const paginatedNoInventoryProducts = computed(() =>
+  noInventoryProducts.value.slice((currentNoInventoryPage.value - 1) * noInventoryPageSize.value, currentNoInventoryPage.value * noInventoryPageSize.value)
+);
+
+// 到期商品分页
+const currentNoTimePage = ref(1);
+const noTimePageSize = ref(5);
+const noTimeTotalPages = computed(() => Math.ceil(noTimeProducts.value.length / noTimePageSize.value));
+const paginatedNoTimeProducts = computed(() =>
+  noTimeProducts.value.slice((currentNoTimePage.value - 1) * noTimePageSize.value, currentNoTimePage.value * noTimePageSize.value)
+);
+
+// 分页操作
+const prevNoInventoryPage = () => {
+  if (currentNoInventoryPage.value > 1) {
+    currentNoInventoryPage.value--;
+  }
+};
+
+const nextNoInventoryPage = () => {
+  if (currentNoInventoryPage.value < noInventoryTotalPages.value) {
+    currentNoInventoryPage.value++;
+  }
+};
+
+const prevNoTimePage = () => {
+  if (currentNoTimePage.value > 1) {
+    currentNoTimePage.value--;
+  }
+};
+
+const nextNoTimePage = () => {
+  if (currentNoTimePage.value < noTimeTotalPages.value) {
+    currentNoTimePage.value++;
+  }
+};
 
 // 初始化加载数据
 onMounted(() => {
-  loadData();
+  loadPanelData();
 });
 
 // 加载数据方法
-const loadData = async () => {
+const loadPanelData = async () => {
   try {
     const response = await PanelAllData();
     console.log(response);
@@ -109,11 +191,17 @@ const loadData = async () => {
     inventoryNum.value = response.inventory.totalNum;
     noInventoryNum.value = response.noInventoryNum;
     noInventoryProducts.value = response.noInventoryProducts;
+    noTimeNum.value = response.noTimeNum;
+    noTimeProducts.value = response.noTimeProducts;
   } catch (error) {
     console.error('加载数据失败:', error);
   }
 };
 </script>
+
+
+
+
 
 <style scoped>
 .region.region1 {
@@ -230,7 +318,8 @@ const loadData = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* 设置更高的z-index值 */
+  z-index: 1000;
+  /* 设置更高的z-index值 */
 }
 
 .modal-content {
@@ -239,7 +328,8 @@ const loadData = async () => {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  z-index: 1001; /* 设置更高的z-index值 */
+  z-index: 1001;
+  /* 设置更高的z-index值 */
   width: 80%;
   max-width: 600px;
   overflow-y: auto;
@@ -258,7 +348,8 @@ const loadData = async () => {
   border-collapse: collapse;
 }
 
-.modal-content th, .modal-content td {
+.modal-content th,
+.modal-content td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
@@ -268,6 +359,3 @@ const loadData = async () => {
   background-color: #f2f2f2;
 }
 </style>
-
-
-

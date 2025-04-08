@@ -66,6 +66,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { getMenuData } from './menuItems'; // 导入数据函数
 import { findUser } from '@/api/user/user';
+import QuickAccess from '@/pages/Home/QuickAccess.vue';
 import {
   HomeFilled,
   Box,
@@ -393,6 +394,10 @@ h2 {
 
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: transparent; /* 滚动条悬停时的颜色 */
+}
+
+.row_right{
+  flex: 0.1;
 }
 </style>
 

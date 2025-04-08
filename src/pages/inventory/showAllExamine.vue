@@ -41,9 +41,9 @@
                     <tr v-for="(item, index) in paginatedData" :key="item.examineId">
                         <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
                         <td>{{ item.examineName }}</td>
-                        <td>{{ item.examineData }}</td>
+                        <td>{{ item.displayExamineData }}</td>
                         <td>{{ item.examineStatus === '0' ? '未完成' : item.examineStatus === '1' ? '已通过' : '已拒绝' }}</td>
-                        <td>{{ item.examineType }}</td>
+                        <td>{{ item.examineType === "add" ? '入库申请' : '出库申请' }}</td>
                         <td>{{ formatDate(item.createTime) }}</td>
                         <td>{{ formatDate(item.updateTime) }}</td>
                         <td v-if="item.examineStatus === '0'" class="actions">
@@ -69,7 +69,6 @@
 
 <script lang="ts" setup name="showAllExamine">
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { selectAllExamine, UpdateExamine } from '@/api/Examine/examine';
 
 interface FormData {
@@ -86,12 +85,11 @@ const formData = ref<FormData>({
     examineId: undefined,
     examineName: "",
     examineData: "",
-    examineStatus: "0", // 默认设置为未完成
+    examineStatus: "0", // 默认设置为空
     examineType: "",
     createTime: undefined,
     updateTime: undefined
 });
-const router = useRouter();
 
 // 分页相关
 const currentPage = ref(1);
@@ -122,55 +120,25 @@ const loadData = async () => {
         const response = await selectAllExamine(params);
 
         if (Array.isArray(response.result)) {
-            const examineDataList = []; // 使用普通数组而不是 ref
-            const examineTypeList = [];
+            const processedData = response.result.map(item => {
+                let displayExamineData = '';
 
-            for (const item of response.result) {
                 if (item.examineData) {
-                    // 将 examineData 转换为 JSON 字符串
-                    const examineDataJson = JSON.parse(item.examineData, null, 2);
-                    examineDataList.push(examineDataJson);
-                    console.log(item.examineData.productName);
-                    if (examineDataJson.type == "add") {
-                        examineTypeList.push("入库申请");
-                    } else {
-                        examineTypeList.push("出库申请");
+                    try {
+                        const examineDataJson = JSON.parse(item.examineData);
+                        displayExamineData = `${examineDataJson.stashName}的${examineDataJson.productName}更新${examineDataJson.quantity}`;
+                    } catch (error) {
+                        console.error("Failed to parse JSON string:", item.examineData, error);
                     }
-                } else {
-                    console.warn("Item does not have examineData field:", item);
                 }
-            }
 
-            // 创建一个新的数组来存储处理后的字符串
-            const processedExamineData = [];
-
-            for (const item of examineDataList) {
-                try {
-                    // 解析 JSON 字符串回对象
-                    const { productName, stashName } = item;
-                    console.log("Item has examineData field:", item.productName, item.stashName);
-
-                    // 拼接新的字符串
-                    const combinedString = `${productName} - ${stashName}`;
-
-                    // 将拼接后的字符串添加到新的数组中
-                    processedExamineData.push(combinedString);
-                } catch (error) {
-                    console.error("Failed to parse JSON string:", item, error);
-                }
-            }
-
-            // 将处理后的字符串数组存回 response.result.examineData
-            response.result.forEach((item, index) => {
-                if (processedExamineData[index]) {
-                    item.examineData = processedExamineData[index];
-                }
-                if (examineTypeList[index]) {
-                    item.examineType = examineTypeList[index];
-                }
+                return {
+                    ...item,
+                    displayExamineData
+                };
             });
 
-            pageList.value = response.result;
+            pageList.value = processedData;
             totalItems.value = response.result.length; // 设置总项目数
         } else {
             console.error("response.result is not an array:", response.result);
