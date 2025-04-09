@@ -56,42 +56,51 @@
   </div>
 </template>
 
-<script lang="ts" setup name='createInventory'>
-import { ref } from 'vue';
-import { createInventory } from '@/api/inventory/inventory';
+
+<script lang="ts" setup name='createProduct'>
+import { ref, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
+import { createProduct } from '@/api/product/product';
 import { useRouter } from 'vue-router'; // 新增路由依赖
+// 假设不需要arrayBufferToBase64和compressImage函数，如果需要请保留导入
 
 interface FormData {
   productName: string;
+  category: string;
   stashName: string;
+  storageTemperature: string;
   supplierName: string;
-  type: string;
-  quantity?: number;
   remark: string;
+  imageUrl: string | null; // 允许为空
+  shelfLife: number;
+  productTime: string;
 }
 
-const formData = ref<FormData>({
+const formRef = ref();
+const formData = reactive<FormData>({
   productName: '',
+  category: '',
   stashName: '',
+  storageTemperature: '',
   supplierName: '',
-  type: '',
-  quantity: undefined,
-  remark: ''
+  remark: '',
+  imageUrl: null,
+  shelfLife: 0,
+  productTime: '',
 });
 
 const router = useRouter();
-const submitForm = async () => {
-  try {
-    // 发送请求
-    const response = await createInventory(formData.value);
-    router.push('/showAllInventory');
-  } catch (error) {
-    console.error('Error:', error);
-    alert('提交失败，请检查网络或联系管理员');
-  }
-};
-
 const previews = ref<string[]>([]);
+const uploadRef = ref(); // 引用el-upload组件
+const rules = {
+  productName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+  category: [{ required: true, message: '请输入商品类别', trigger: 'blur' }],
+  stashName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
+  storageTemperature: [{ required: true, message: '请选择存储方式', trigger: 'change' }],
+  supplierName: [{ required: true, message: '请输入供货商', trigger: 'blur' }],
+  shelfLife: [{ required: true, message: '请输入保质期', trigger: 'blur' }],
+  productTime: [{ required: true, message: '请选择生产日期', trigger: 'change' }],
+};
 
 function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement;
@@ -103,6 +112,10 @@ function handleFileChange(event: Event) {
       reader.onload = function (e) {
         if (e.target?.result) {
           previews.value.push(e.target.result as string);
+          // 更新formData中的imageUrl为第一个文件的base64字符串
+          if (i === 0) {
+            formData.imageUrl = e.target.result as string;
+          }
         }
       };
       reader.readAsDataURL(file);
@@ -110,9 +123,22 @@ function handleFileChange(event: Event) {
   }
 }
 
-function clearNote() {
-  formData.value.remark = '';
+async function submitForm() {
+  formRef.value.validate(async (valid: boolean) => {
+    if (!valid) return;
+
+    try {
+      // 提交表单数据
+      await createProduct(formData);
+      router.push('/showALLProduct');
+      ElMessage.success('商品新增成功！');
+    } catch (error) {
+      console.error('Error:', error);
+      ElMessage.error('提交失败，请检查网络或联系管理员');
+    }
+  });
 }
+
 </script>
 
 <style scoped>

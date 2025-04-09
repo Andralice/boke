@@ -60,8 +60,8 @@ interface User {
   workPlace?: string;
   role?: string;
   remark?: string;
-  createTime?: string; 
-  updateTime?: string; 
+  createTime?: string;
+  updateTime?: string;
 }
 
 const user = ref<User>({
@@ -94,50 +94,55 @@ onMounted(async () => {
 <style scoped>
 .profile-container {
   display: flex;
-  height: 920px;
+  justify-content: center; /* 居中对齐 */
+  align-items: center; /* 垂直居中 */
+  min-height: 90vh; /* 视窗高度的90% */
   background-color: #f4f4f9;
+  padding: 20px;
 }
 
 .profile-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  width: 100%;
+  max-width: 800px; /* 增加最大宽度 */
+  background-color: #ffffff;
+  border-radius: 15px; /* 增大圆角半径 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* 更深的阴影效果 */
+  padding: 40px;
+  padding-left: 60px; /* 在左侧添加一段距离 */
+  text-align: left;
 }
 
 .profile-header {
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* 增加底部外边距 */
 }
 
 .profile-header h1 {
-  font-size: 2em;
+  font-size: 2.2em; /* 增大字体大小 */
   margin: 0;
   color: #333;
+  text-align: center;
 }
 
 .profile-section {
-  width: 600px;
+  width: 100%; /* 使用全宽 */
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   padding: 20px;
-  margin-bottom: 20px;
-  max-width: 100%;
+  margin-bottom: 30px; /* 增加底部外边距 */
 }
 
 .profile-section h2 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
+  font-size: 1.6em; /* 增大字体大小 */
+  margin-bottom: 15px;
   color: #333;
-  position: sticky;
-  top: 0;
-  background-color: #ffffff;
-  z-index: 1;
+  position: relative;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e0e0; /* 添加下划线 */
 }
 
 .profile-item {
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* 增加底部外边距 */
   display: flex;
   align-items: center;
 }
@@ -145,15 +150,28 @@ onMounted(async () => {
 .profile-item strong {
   font-weight: bold;
   color: #333;
-  margin-right: 10px;
-  width: 120px; /* 固定宽度以对齐文案 */
+  margin-right: 20px; /* 增加右边距以更好对齐 */
+  width: 150px; /* 增加固定宽度 */
 }
 
 .profile-item span {
   color: #757575;
   flex-grow: 1;
 }
+
+/* 增加一些额外的样式来提升视觉效果 */
+.profile-section:last-child {
+  margin-bottom: 0;
+}
+
+.profile-item:nth-child(even) {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+}
 </style>
+
+
 
 
 

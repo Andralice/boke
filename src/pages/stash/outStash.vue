@@ -163,7 +163,132 @@
     </el-dialog>
   </div>
 </template>
+<script lang="ts" setup name="outStash">
+ import { ref, reactive, onMounted } from 'vue';
+ import { ElMessage} from 'element-plus';
+ import {useRoute} from 'vue-router';
 
+ const route = useRoute();
+ const activeTab = ref(route.query.tab || 'inbound');
+ const uploadRef = ref(null);
+
+ const inboundForm = reactive({
+   productName: '',
+   category: '',
+   stashName: '',
+   supplierName: '',
+   storageTemperature: '',
+   remark: '',
+   shelfLife: 1,
+   productTime: '',
+   quantity: 1,
+   imageUrl: '',
+ });
+
+ const outboundForm = reactive({
+   productName: '',
+   quantity: 1,
+   reason: '',
+ });
+
+ const inventoryData = ref([
+   // 初始数据为空
+ ]);
+
+ const dialogVisible = ref(false);
+ const selectedItem = ref('');
+ const selectedType = ref('');
+ const dialogImageUrlVisible = ref(false);
+ const dialogImageUrl = ref('');
+ const fileList = ref([]);
+
+ const templateItems = [];
+
+ const openSelectDialog = (type) => {
+   dialogVisible.value = true;
+   selectedType.value = type;
+ };
+
+ const confirmSelection = () => {
+   if (selectedType.value === 'inbound') {
+     inboundForm.productName = selectedItem.value;
+   } else if (selectedType.value === 'outbound') {
+     outboundForm.productName = selectedItem.value;
+   }
+   dialogVisible.value = false;
+   selectedItem.value = '';
+ };
+
+ const handleInboundSubmit = () => {
+   const itemIndex = inventoryData.value.findIndex(item => item.productName === inboundForm.productName);
+   if (itemIndex !== -1) {
+     inventoryData.value[itemIndex].quantity += inboundForm.quantity;
+   } else {
+     inventoryData.value.push({ ...inboundForm });
+   }
+   resetForm(inboundForm);
+ };
+
+ const handleOutboundSubmit = () => {
+   const itemIndex = inventoryData.value.findIndex(item => item.productName === outboundForm.productName);
+   if (itemIndex !== -1 && inventoryData.value[itemIndex].quantity >= outboundForm.quantity) {
+     inventoryData.value[itemIndex].quantity -= outboundForm.quantity;
+     if (inventoryData.value[itemIndex].quantity === 0) {
+       inventoryData.value.splice(itemIndex, 1);
+     }
+   } else {
+     ElMessage.error('库存不足或商品不存在');
+   }
+   resetForm(outboundForm);
+ };
+
+ const resetForm = (form) => {
+   form.productName = '';
+   form.category = '';
+   form.stashName = '';
+   form.supplierName = '';
+   form.storageTemperature = '';
+   form.remark = '';
+   form.shelfLife = 1;
+   form.productTime = '';
+   form.quantity = 1;
+   form.imageUrl = '';
+   form.reason = '';
+   fileList.value = [];
+ };
+
+ const handleRemove = (file, fileList) => {
+   console.log(file, fileList);
+ };
+
+ const handlePictureCardPreview = (file) => {
+   dialogImageUrl.value = file.url;
+   dialogImageUrlVisible.value = true;
+ };
+
+ const beforeUpload = (file) => {
+   const isJPGorPNG = file.type === 'image/jpeg' || file.type === 'image/png';
+   const isLt2M = file.size / 1024 / 1024 < 2;
+
+   if (!isJPGorPNG) {
+     ElMessage.error('上传头像图片只能是 JPG 或 PNG 格式!');
+   }
+   if (!isLt2M) {
+     ElMessage.error('上传头像图片大小不能超过 2MB!');
+   }
+
+   return isJPGorPNG && isLt2M;
+ };
+
+ const submitUpload = () => {
+   uploadRef.value.submit();
+ };
+
+ onMounted(() => {
+   // 初始化时根据查询参数设置活动标签
+   activeTab.value = route.query.tab || 'inbound';
+ });
+ </script>
 
 
 <style scoped>
@@ -187,6 +312,3 @@
   width: 100%;
 }
 </style>
-
-
-
