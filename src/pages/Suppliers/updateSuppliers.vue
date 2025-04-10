@@ -1,10 +1,10 @@
 <template>
     <div class="addstore-body">
-      <h1>新增供应商</h1>
+      <h1>更新供应商</h1>
   
       <!-- 新增仓库输入框模块 -->
       <div class="new-stash-container">
-        <h2>新增供应商信息</h2>
+        <h2>更新供应商信息</h2>
         <div class="stash-input-row">
           <div class="stash-input-group">
             <label for="供应商名称">供应商名称</label>
@@ -32,8 +32,8 @@
             <label for="供应商状态">供应商状态</label>
             <select id="供应商状态" v-model="formData.cooperationStatus">
               <option value="">请选择供应商状态</option>
-              <option :value="true">启用</option>
-              <option :value="false">禁用</option>
+              <option :value="1">启用</option>
+              <option :value="0">禁用</option>
             </select>
           </div>
   

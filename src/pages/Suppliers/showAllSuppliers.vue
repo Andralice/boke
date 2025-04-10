@@ -36,7 +36,7 @@
       <table>
         <thead>
           <tr>
-            <th>序号</th>
+            <th class="one">序号</th>
             <th>供应商名称</th>
             <th>联系人名称</th>
             <th>联系人电话</th>
@@ -54,9 +54,10 @@
             <td>{{ item.contactPhone }}</td>
             <td>{{ item.address }}</td>
             <td>{{ item.bankAccount }}</td>
-            <td>{{ item.cooperationStatus ? '启用' : '禁用' }}</td>
+            <td>{{ item.cooperationStatus ? '启用' : '禁用' }}</td>     
             <td class="action-buttons">
-              <button @click="editItem(item)" class="edit-btn">编辑</button>
+              <button @click="checkItem(item)" class="check-btn">查看</button>
+              <button @click="editItem(item)" class="edit-btn">编辑</button>   
               <button @click="deleteItem(item)" class="delete-btn">删除</button>
             </td>
           </tr>
@@ -73,12 +74,42 @@
         <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
       </div>
     </div>
+
+    <!-- 到期商品弹窗 -->
+    <div v-if="checkProduct" class="modal-overlay" @click="checkProduct = false">
+      <div class="modal-content" @click.stop>
+        <span class="close-button" @click="checkProduct = false">&times;</span>
+        <h4>供应商品列表</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>商品名称</th>
+              <th>仓库</th>
+              <th>供应商</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(product, index) in paginatedpageList" :key="index">
+              <td>{{ product.productName }}</td>
+              <td>{{ product.stashName }}</td>
+              <td>{{ product.supplierName }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button @click="prevNoTimePage" :disabled="currentCheckPage === 1">上一页</button>
+          <span>第 {{ currentCheckPage }} 页 / 共 {{ noTimeTotalPages }} 页</span>
+          <button @click="nextNoTimePage" :disabled="currentCheckPage === noTimeTotalPages">下一页</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup name="showAllSuppliers">
 import { ref, computed, onMounted } from 'vue';
 import { selectAllSuppliers, deleteSuppliersById } from '@/api/suppliers/suppliers';
+import { selectAllProduct } from '@/api/product/product';
 import { useRouter } from 'vue-router';
 
 interface FormData {
@@ -92,7 +123,25 @@ interface FormData {
   remark: string;
 }
 
+interface Product {
+  productName: string;
+  stashName: string;
+  supplierName: string;
+  daysLeft: number;
+}
+
 const router = useRouter();
+
+const checkProduct = ref(false);
+
+// 查看商品分页
+const currentCheckPage = ref(1);
+const CheckPageSize = ref(5);
+const pageList = ref<Product[]>([]);
+const noTimeTotalPages = computed(() => Math.ceil(pageList.value.length / CheckPageSize.value));
+const paginatedpageList = computed(() =>
+  pageList.value.slice((currentCheckPage.value - 1) * CheckPageSize.value, currentCheckPage.value * CheckPageSize.value)
+);
 
 // 表单数据
 const formData = ref({
@@ -106,11 +155,11 @@ const formData = ref({
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalItems = ref(0); // 初始化为0
-const pageList = ref<FormData[]>([]);
+const suppliersList = ref<FormData[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() => pageList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value));
+const paginatedData = computed(() => suppliersList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value));
 
 // 初始化加载数据
 onMounted(() => {
@@ -127,16 +176,16 @@ const loadData = async () => {
     const response = await selectAllSuppliers(params);
 
     if (response.result && Array.isArray(response.result)) {
-      pageList.value = response.result;
+      suppliersList.value = response.result;
       totalItems.value = response.total || response.result.length; // 确保总条目数至少为0
     } else {
       console.error('无效的数据格式:', response);
-      pageList.value = [];
+      suppliersList.value = [];
       totalItems.value = 0;
     }
   } catch (error) {
     console.error('加载数据失败:', error);
-    pageList.value = [];
+    suppliersList.value = [];
     totalItems.value = 0;
   }
 };
@@ -177,6 +226,32 @@ const deleteItem = async (item: FormData) => {
     alert('未找到供应商ID');
   }
 };
+
+const checkItem = async (item: FormData) => {
+  const params = {
+    supplierName: item.supplierName
+  };
+  try {
+    const response = await selectAllProduct(params);
+    pageList.value = response.result;
+    totalItems.value = response.total || pageList.value.length;
+    checkProduct.value = true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const prevNoTimePage = () => {
+  if (currentCheckPage.value > 1) {
+    currentCheckPage.value--;
+  }
+};
+
+const nextNoTimePage = () => {
+  if (currentCheckPage.value < noTimeTotalPages.value) {
+    currentCheckPage.value++;
+  }
+};
 </script>
 
 
@@ -192,7 +267,8 @@ const deleteItem = async (item: FormData) => {
   max-width: 1200px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
-  background-color: #f9fafb; /* 浅色背景 */
+  background-color: #f9fafb;
+  /* 浅色背景 */
   color: #333;
 }
 
@@ -228,7 +304,8 @@ h1 {
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 8px; /* 减少标签和输入框之间的间距 */
+  gap: 8px;
+  /* 减少标签和输入框之间的间距 */
   flex-basis: calc(33.33% - 16px);
 }
 
@@ -238,8 +315,10 @@ h1 {
   font-weight: 500;
 }
 
-select, input {
-  padding: 10px 16px; /* 缩小输入框的内边距 */
+select,
+input {
+  padding: 10px 16px;
+  /* 缩小输入框的内边距 */
   border: 1px solid #dcdcdc;
   border-radius: 4px;
   width: 100%;
@@ -248,14 +327,17 @@ select, input {
   color: #333;
 }
 
-select:focus, input:focus {
+select:focus,
+input:focus {
   border-color: #409eff;
   outline: none;
   box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
 }
 
-.search-btn, .add-btn {
-  padding: 10px 20px; /* 缩小按钮的内边距 */
+.search-btn,
+.add-btn {
+  padding: 10px 20px;
+  /* 缩小按钮的内边距 */
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -296,8 +378,11 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
-  padding: 12px 16px; /* 缩小单元格的内边距 */
+th,
+td {
+  padding: 12px 16px;
+  /* 缩小单元格的内边距 */
+  ;
   text-align: left;
   border-bottom: 1px solid #ebebeb;
   font-size: 14px;
@@ -305,7 +390,9 @@ th, td {
 }
 
 th {
-  background: #f5f7fa; /* 标识栏背景色与展示框一致 */
+  min-width: 80px;
+  background: #f5f7fa;
+  /* 标识栏背景色与展示框一致 */
   font-weight: 600;
   color: #333;
 }
@@ -320,10 +407,13 @@ tr:hover {
 
 .action-buttons {
   display: flex;
+
   gap: 8px;
 }
 
-.edit-btn, .delete-btn {
+.edit-btn,
+.delete-btn,
+.check-btn {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -351,6 +441,16 @@ tr:hover {
   transform: translateY(-2px);
 }
 
+.check-btn {
+  background: #67c23a
+}
+
+.check-btn:hover {
+  background: #67c23a;
+  transform: translateY(-2px);
+}
+
+
 .pagination {
   padding: 24px;
   display: flex;
@@ -361,7 +461,8 @@ tr:hover {
 }
 
 .pagination button {
-  padding: 10px 20px; /* 缩小分页按钮的内边距 */
+  padding: 10px 20px;
+  /* 缩小分页按钮的内边距 */
   border: 1px solid #ddd;
   background: #ffffff;
   cursor: pointer;
@@ -387,5 +488,55 @@ tr:hover {
   padding: 24px;
   font-size: 14px;
 }
-</style>
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* 设置更高的z-index值 */
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1001;
+  /* 设置更高的z-index值 */
+  width: 80%;
+  max-width: 600px;
+  overflow-y: auto;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.5em;
+}
+
+.modal-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modal-content th,
+.modal-content td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.modal-content th {
+  background-color: #f2f2f2;
+}
+</style>
