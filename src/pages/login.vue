@@ -1,6 +1,6 @@
 <template>
     <div class="gradient-background">
-        <h1>登录商城</h1>
+        <h1>登录仓库管理系统</h1>
         <div class="login-form">
             <div class="close" @click="closeLoginForm"></div>
             <div class="head-info">

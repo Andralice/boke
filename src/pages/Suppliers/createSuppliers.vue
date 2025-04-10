@@ -1,63 +1,63 @@
 <template>
   <div class="addstore-body">
-    <h1>新增供应商</h1>
-
-    <!-- 新增仓库输入框模块 -->
-    <div class="new-stash-container">
-      <h2>新增供应商信息</h2>
-      <div class="stash-input-row">
-        <div class="stash-input-group">
-          <label for="供应商名称">供应商名称</label>
-          <input type="text" id="供应商名称" placeholder="请输入供应商名称" v-model="formData.supplierName">
-        </div>
-        <div class="stash-input-group">
-          <label for="供应商联系人">供应商联系人</label>
-          <input type="text" id="供应商联系人" placeholder="请输入供应商联系人" v-model="formData.contactName">
-        </div>
-        <div class="stash-input-group">
-          <label for="供应商联系人电话">供应商联系人电话</label>
-          <input type="text" id="供应商联系人电话" placeholder="请输入供应商联系人电话" v-model="formData.contactPhone">
-        </div>
-      </div>
-      <div class="stash-input-row">
-        <div class="stash-input-group">
-          <label for="供应商地址">供应商地址</label>
-          <input type="text" id="供应商地址" placeholder="请输入供应商地址" v-model="formData.address">
-        </div>
-        <div class="stash-input-group">
-          <label for="供应商银行卡号">供应商银行卡号</label>
-          <input type="text" id="供应商银行卡号" placeholder="请输入供应商银行卡号" v-model="formData.bankAccount">
-        </div>
-        <div class="stash-input-group">
-          <label for="供应商状态">供应商状态</label>
-          <select id="供应商状态" v-model="formData.cooperationStatus">
-            <option value="">请选择供应商状态</option>
-            <option value="启用">启用</option>
-            <option value="禁用">禁用</option>
-          </select>
-        </div>
-
-      </div>
-      <div class="preview-container">
-        <div v-for="(preview, index) in previews" :key="index" class="preview-item">
-          <img :src="preview" alt="Preview" class="preview-image">
-        </div>
-      </div>
-    </div>
-
-    <!-- 备注 -->
-    <div class="note-container">
-      <div class="header">
-        <h2>添加备注</h2>
-        <button class="note-button" @click="clearNote()">清除备注</button>
-      </div>
-      <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
-    </div>
-
-    <!-- 提交按钮 -->
-    <div class="addstore-button">
-      <button @click="submitForm">提交</button>
-    </div>
+    <el-card shadow="hover" class="main-container">
+      <el-tabs v-model="activeTab" type="card">
+        <!-- 新增供应商表单 -->
+        <el-tab-pane label="新增供应商" name="addSupplier">
+          <el-form :model="formData" label-width="120px" :rules="rules" ref="formRef" class="custom-form">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="供应商名称*" prop="supplierName">
+                  <el-input v-model="formData.supplierName"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系人*" prop="contactName">
+                  <el-input v-model="formData.contactName"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="联系电话*" prop="contactPhone">
+                  <el-input v-model="formData.contactPhone"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="地址*" prop="address">
+                  <el-input v-model="formData.address"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="银行卡号*" prop="bankAccount">
+                  <el-input v-model="formData.bankAccount"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="状态*" prop="cooperationStatus">
+                  <el-select v-model="formData.cooperationStatus" placeholder="请选择状态">
+                    <el-option value="启用">启用</el-option>
+                    <el-option value="禁用">禁用</el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="添加备注">
+                  <el-input type="textarea" v-model="formData.remark" :rows="2" placeholder="在这里输入您的备注..."></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item>
+              <el-button type="success" @click="submitForm">提交</el-button>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
   </div>
 </template>
 
@@ -75,7 +75,7 @@ interface FormData {
   cooperationStatus: string;
   remark: string; // remark
 }
-
+const activeTab = ref('addSupplier');
 const formData = ref<FormData>({
   supplierName: '',
   contactName: '',
@@ -133,190 +133,23 @@ function clearNote() {
 </script>
 
 <style scoped>
-.addstore-body {
-  width: 100%;
-  height: auto;
+.inventory-management {
   padding: 20px;
-  box-sizing: border-box;
-  background-color: #f9f9f9;
-  /* 轻微背景色 */
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
-  font-weight: 600;
-}
-
-.new-stash-container {
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-  margin-bottom: 20px;
-  background-color: white;
-}
-
-.new-stash-container h2 {
-  margin-bottom: 10px;
-  font-size: 20px;
-  color: #333;
-  font-weight: 500;
-}
-
-.new-stash-container:hover {
+.el-card:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
 }
 
-.stash-input-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.stash-input-group {
+.el-form-item {
   display: flex;
   align-items: center;
-  flex: 1;
-  min-width: 250px;
-  margin-bottom: 10px;
 }
 
-.stash-input-group label {
-  font-weight: 500;
-  width: 120px;
-  /* 固定宽度以确保对齐 */
-  margin-right: 10px;
-  color: #555;
-}
-
-.stash-input-group input,
-.stash-input-group select {
-  flex-grow: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: border-color 0.3s ease;
-  font-size: 14px;
-  color: #333;
-}
-
-.stash-input-group input:focus,
-.stash-input-group select:focus {
-  border-color: #007bff;
-}
-
-.preview-container {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.preview-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.preview-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.note-container {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  transition: box-shadow 0.3s ease;
-}
-
-.note-container:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.header h2 {
-  font-size: 18px;
-  color: #333;
-  font-weight: 500;
-}
-
-textarea {
-  width: 98%;
-  height: 140px;
-  resize: vertical;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: border-color 0.3s ease;
-  font-size: 14px;
-  color: #333;
-}
-
-textarea:focus {
-  border-color: #007bff;
-}
-
-.note-button {
-  margin-left: 10px;
-  height: 40px;
-  background-color: #555;
-  /* 更柔和的颜色 */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.note-button:hover {
-  background-color: #333;
-}
-
-.addstore-button {
-  position: fixed;
-  right: 80px;
-  bottom: 80px;
-  /* 向上移动一些 */
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.addstore-button button {
-  width: 200px;
-  /* 减少宽度 */
-  height: 40px;
-  /* 减少高度 */
-  color: white;
-  background-color: #555;
-  /* 更柔和的颜色 */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.addstore-button button:hover {
-  background-color: #333;
+.el-form-item .el-input,
+.el-form-item .el-input-number,
+.el-form-item .el-date-picker {
+  width: 100%;
 }
 </style>

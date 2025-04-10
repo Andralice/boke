@@ -1,72 +1,81 @@
 <template>
-    <div class="addstore-body">
-      <h1>新增用户</h1>
-  
-      <!-- 新增仓库输入框模块 -->
-      <div class="new-stash-container">
-        <h2>新增用户信息</h2>
-        <div class="stash-input-row">
-          <div class="stash-input-group">
-            <label for="用户名称">用户名称</label>
-            <input type="text" id="用户名称" placeholder="请输入用户名称" v-model="formData.username">
-          </div>
-          <div class="stash-input-group">
-            <label for="管理员名称">管理员名称</label>
-            <input type="text" id="管理员名称" placeholder="请输入管理员名称" v-model="formData.adminName">
-          </div>
-          <div class="stash-input-group">
-            <label for="设置密码">设置密码</label>
-            <input type="text" id="设置密码" placeholder="请设置密码" v-model="formData.password">
-          </div>
-          <div class="stash-input-group">
-            <label for="设置职位">设置职位</label>
-            <input type="text" id="设置职位" placeholder="设置职位" v-model="formData.position">
-          </div>
-          <div class="stash-input-group">
-            <label for="设置电话号码">设置电话号码</label>
-            <input type="text" id="设置电话号码" placeholder="设置电话号码" v-model="formData.telephone">
-          </div>
-          <div class="stash-input-group">
-            <label for="权限">权限</label>
-            <select id="权限" v-model="formData.role">
-              <option value="">请选择权限</option>
-              <option value="Admin">管理员</option>
-              <option value="User">用户</option>
-            </select>
-          </div>
-          <div class="stash-input-group">
-            <label for="设置工作地点">设置工作地点</label>
-            <input type="text" id="设置工作地点" placeholder="设置工作地点" v-model="formData.workPlace">
-          </div>
-        </div>
-        <div class="preview-container">
-          <div v-for="(preview, index) in previews" :key="index" class="preview-item">
-            <img :src="preview" alt="Preview" class="preview-image">
-          </div>
-        </div>
-      </div>
-  
-      <!-- 备注 -->
-      <div class="note-container">
-        <div class="header">
-          <h2>添加备注</h2>
-          <button class="note-button" @click="clearNote()">清除备注</button>
-        </div>
-        <textarea id="note-input" placeholder="在这里输入您的备注..." v-model="formData.remark"></textarea>
-      </div>
-  
-      <!-- 提交按钮 -->
-      <div class="addstore-button">
-        <button @click="submitForm">提交</button>
-      </div>
-    </div>
-  </template>
-  
+  <div class="addstore-body">
+    <el-card shadow="hover" class="main-container">
+      <el-tabs v-model="activeTab" type="card">
+        <!-- 新增任务表单 -->
+        <el-tab-pane label="新增用户" name="addUser">
+      <!-- 表单 -->
+      <el-form :model="formData" label-width="120px" class="custom-form">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="用户名称*" prop="username">
+              <el-input v-model="formData.username" placeholder="请输入用户名称"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="管理员名称*" prop="adminName">
+              <el-input v-model="formData.adminName" placeholder="请输入管理员名称"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="设置密码*" prop="password">
+              <el-input type="password" v-model="formData.password" placeholder="请设置密码"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设置职位*" prop="position">
+              <el-input v-model="formData.position" placeholder="设置职位"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="设置电话号码*" prop="telephone">
+              <el-input v-model="formData.telephone" placeholder="设置电话号码"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="权限*" prop="role">
+              <el-select v-model="formData.role" placeholder="请选择权限">
+                <el-option value="">请选择权限</el-option>
+                <el-option value="Admin">管理员</el-option>
+                <el-option value="User">用户</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="设置工作地点*" prop="workPlace">
+              <el-input v-model="formData.workPlace" placeholder="设置工作地点"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="添加备注">
+              <el-input type="textarea" :rows="2" placeholder="在这里输入您的备注..." v-model="formData.remark"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item>
+          <el-button type="success" @click="submitForm">提交</el-button>
+        </el-form-item>
+      </el-form>
+      </el-tab-pane>
+      </el-tabs>
+    </el-card>
+  </div>
+</template>
+
   <script lang="ts" setup name='createStash'>
   import { ref } from 'vue';
   import { createUser } from '@/api/user/user';
   import { useRouter, useRoute } from 'vue-router'; // 新增路由依赖
-  
+  const activeTab = ref('addUser');
   interface FormData {
     username: string;
     adminName?: string;
@@ -76,10 +85,10 @@
     workPlace?: string;
     role?: string;
     remark?: string;
-    createTime?: string; 
-    updateTime?: string; 
+    createTime?: string;
+    updateTime?: string;
   }
-  
+
   // 表单数据
   const formData = ref<FormData>({
     username: "",
@@ -91,10 +100,10 @@
     role: "",
     remark: ""
   });
-  
-  
+
+
   // console.log('66666666FormData:', formData.value);
-  
+
   const router = useRouter();
   const submitForm = async () => {
     try {
@@ -106,10 +115,10 @@
       alert('提交失败，请检查网络或联系管理员');
     }
   };
-  
+
   const previews = ref<string[]>([]);
-  
-  
+
+
   function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.files) {
@@ -126,198 +135,31 @@
       }
     }
   }
-  
+
   function clearNote() {
     formData.value.remark = '';
   }
-  
+
   </script>
-  
+
   <style scoped>
-  .addstore-body {
-    width: 100%;
-    height: auto;
+  .inventory-management {
     padding: 20px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    /* 轻微背景色 */
   }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .new-stash-container {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    margin-bottom: 20px;
-    background-color: white;
-  }
-  
-  .new-stash-container h2 {
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  .new-stash-container:hover {
+
+  .el-card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
   }
-  
-  .stash-input-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .stash-input-group {
+
+  .el-form-item {
     display: flex;
     align-items: center;
-    flex: 1;
-    min-width: 250px;
-    margin-bottom: 10px;
   }
-  
-  .stash-input-group label {
-    font-weight: 500;
-    width: 120px;
-    /* 固定宽度以确保对齐 */
-    margin-right: 10px;
-    color: #555;
-  }
-  
-  .stash-input-group input,
-  .stash-input-group select {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .stash-input-group input:focus,
-  .stash-input-group select:focus {
-    border-color: #007bff;
-  }
-  
-  .preview-container {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .preview-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .preview-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .note-container {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .note-container:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .header h2 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  textarea {
-    width: 98%;
-    height: 140px;
-    resize: vertical;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  textarea:focus {
-    border-color: #007bff;
-  }
-  
-  .note-button {
-    margin-left: 10px;
-    height: 40px;
-    background-color: #555;
-    /* 更柔和的颜色 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .note-button:hover {
-    background-color: #333;
-  }
-  
-  .addstore-button {
-    position: fixed;
-    right: 80px;
-    bottom: 80px;
-    /* 向上移动一些 */
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .addstore-button button {
-    width: 200px;
-    /* 减少宽度 */
-    height: 40px;
-    /* 减少高度 */
-    color: white;
-    background-color: #555;
-    /* 更柔和的颜色 */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .addstore-button button:hover {
-    background-color: #333;
+
+  .el-form-item .el-input,
+  .el-form-item .el-input-number,
+  .el-form-item .el-date-picker {
+    width: 100%;
   }
   </style>

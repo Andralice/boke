@@ -1,70 +1,62 @@
 <template>
-    <div class="addstore-body">
-        <h1>新增任务</h1>
-
-        <!-- 新增仓库输入框模块 -->
-        <div class="new-stash-container">
-            <h2>新增任务信息</h2>
-            <div class="stash-input-row">
-                <div class="stash-input-group">
-                    <label for="任务名称">任务名称</label>
-                    <input type="text" id="任务名称" placeholder="请输入任务名称" v-model="formData.taskName">
-                </div>
-
-                <div class="stash-input-group">
-                    <label for="管理员名称">管理员名称</label>
-                    <input type="text" id="管理员名称" placeholder="请输入管理员名称" v-model="formData.taskAdminName">
-                </div>
-
-                <div class="stash-input-group">
-                    <label for="执行人员">执行人员</label>
-                    <input type="text" id="执行人员" placeholder="请输入执行人员" v-model="formData.taskUserNames">
-                </div>
-            </div>
-            <div class="stash-input-row">
-                <div class="stash-input-group">
-                    <label for="任务类型">任务类型</label>
-                    <select id="任务类型" v-model="formData.taskType">
-                        <option value="">请选择任务类型</option>
-                        <option value="入库搬运">入库搬运</option>
-                        <option value="入库统计">入库统计</option>
-                        <option value="出库搬运">出库搬运</option>
-                        <option value="出库统计">出库统计</option>
-                    </select>
-                </div>
-
-
-
-                <div class="preview-container">
-                    <div v-if="previews.length > 0" class="preview-item">
-                        <img :src="previews[0]" alt="Preview" class="preview-image">
-                    </div>
-                </div>
-            </div>
-        </div>
-                        <!-- 备注 -->
-                        <div class="note-container">
-                    <div class="header">
-                        <h2>任务描述</h2>
-                        <button class="note-button" @click="clearNote()">任务描述</button>
-                    </div>
-                    <textarea id="note-input" placeholder="在这里输入您的任务描述..."
-                        v-model="formData.taskDescription">
-                    </textarea>
-                </div>
-
-        <!-- 提交按钮 -->
-        <div class="addstore-button">
-            <button :disabled="isSubmitting" @click="submitForm">提交</button>
-        </div>
-    </div>
+  <div class="addstore-body">
+    <el-card shadow="hover" class="main-container">
+      <el-tabs v-model="activeTab" type="card">
+        <!-- 新增任务表单 -->
+        <el-tab-pane label="新增任务" name="addTask">
+          <el-form :model="formData" label-width="120px" :rules="rules" ref="formRef" class="custom-form">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="任务名称*" prop="taskName">
+                  <el-input v-model="formData.taskName"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="管理员名称*" prop="taskAdminName">
+                  <el-input v-model="formData.taskAdminName"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="执行人员*" prop="taskUserNames">
+                  <el-input v-model="formData.taskUserNames"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="任务类型*" prop="taskType">
+                  <el-select v-model="formData.taskType" placeholder="请选择任务类型">
+                    <el-option value="">请选择任务类型</el-option>
+                    <el-option value="入库搬运">入库搬运</el-option>
+                    <el-option value="入库统计">入库统计</el-option>
+                    <el-option value="出库搬运">出库搬运</el-option>
+                    <el-option value="出库统计">出库统计</el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="任务描述">
+                  <el-input type="textarea" v-model="formData.taskDescription" :rows="2" placeholder="在这里输入您的任务描述..."></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item>
+              <el-button type="success" @click="submitForm">提交</el-button>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
+  </div>
 </template>
 
 <script lang="ts" setup name='createTask'>
 import { ref } from 'vue';
 import { createTask } from '@/api/Task/task';
 import { useRouter } from 'vue-router'; // 新增路由依赖
-
+const activeTab = ref('addTask');
 interface FormData {
     taskName: string;
     taskDescription: string;
@@ -119,190 +111,23 @@ async function submitForm() {
 
 
 <style scoped>
-.addstore-body {
-    width: 100%;
-    height: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    /* 轻微背景色 */
+.inventory-management {
+  padding: 20px;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-    font-weight: 600;
+.el-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
 }
 
-.new-stash-container {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    margin-bottom: 20px;
-    background-color: white;
+.el-form-item {
+  display: flex;
+  align-items: center;
 }
 
-.new-stash-container h2 {
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #333;
-    font-weight: 500;
-}
-
-.new-stash-container:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.stash-input-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.stash-input-group {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 250px;
-    margin-bottom: 10px;
-}
-
-.stash-input-group label {
-    font-weight: 500;
-    width: 120px;
-    /* 固定宽度以确保对齐 */
-    margin-right: 10px;
-    color: #555;
-}
-
-.stash-input-group input,
-.stash-input-group select {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-}
-
-.stash-input-group input:focus,
-.stash-input-group select:focus {
-    border-color: #007bff;
-}
-
-.preview-container {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.preview-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.preview-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.note-container {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    transition: box-shadow 0.3s ease;
-}
-
-.note-container:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.header h2 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 500;
-}
-
-textarea {
-    width: 98%;
-    height: 140px;
-    resize: vertical;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    font-size: 14px;
-    color: #333;
-}
-
-textarea:focus {
-    border-color: #007bff;
-}
-
-.note-button {
-    margin-left: 10px;
-    height: 40px;
-    background-color: #555;
-    /* 更柔和的颜色 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.note-button:hover {
-    background-color: #333;
-}
-
-.addstore-button {
-    position: fixed;
-    right: 80px;
-    bottom: 80px;
-    /* 向上移动一些 */
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-.addstore-button button {
-    width: 200px;
-    /* 减少宽度 */
-    height: 40px;
-    /* 减少高度 */
-    color: white;
-    background-color: #555;
-    /* 更柔和的颜色 */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.addstore-button button:hover {
-    background-color: #333;
+.el-form-item .el-input,
+.el-form-item .el-input-number,
+.el-form-item .el-date-picker {
+  width: 100%;
 }
 </style>

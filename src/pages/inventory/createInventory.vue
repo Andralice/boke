@@ -64,7 +64,7 @@
 import { ref } from 'vue';
 import { createInventory } from '@/api/inventory/inventory';
 import { useRouter } from 'vue-router'; // 新增路由依赖
-
+const activeTab = ref('addInventory');
 interface FormData {
   productName: string;
   stashName: string;
