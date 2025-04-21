@@ -54,10 +54,10 @@
             <td>{{ item.contactPhone }}</td>
             <td>{{ item.address }}</td>
             <td>{{ item.bankAccount }}</td>
-            <td>{{ item.cooperationStatus ? '启用' : '禁用' }}</td>     
+            <td>{{ item.cooperationStatus ? '启用' : '禁用' }}</td>
             <td class="action-buttons">
               <button @click="checkItem(item)" class="check-btn">查看</button>
-              <button @click="editItem(item)" class="edit-btn">编辑</button>   
+              <button @click="editItem(item)" class="edit-btn">编辑</button>
               <button @click="deleteItem(item)" class="delete-btn">删除</button>
             </td>
           </tr>
@@ -489,54 +489,124 @@ tr:hover {
   font-size: 14px;
 }
 
+.modal-content h4 {
+  font-family: 'Merriweather', serif;
+  /* 使用Merriweather字体作为标题 */
+  font-weight: 700;
+  /* 字体粗细为700，相当于bold */
+  margin-top:0;
+  /* 标题顶部外边距为0 */
+  text-align: center;
+  /* 标题居中 */
+  font-size: 1.5em;
+  /* 添加这一行来设置字体大小 */
+}
+
+/* 背景遮罩层 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(33, 37, 41, 0.6);
+  /* 更深的半透明背景色 */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* 设置更高的z-index值 */
 }
 
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 1001;
-  /* 设置更高的z-index值 */
-  width: 80%;
-  max-width: 600px;
-  overflow-y: auto;
-}
-
+/* 关闭按钮 */
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  right: 15px;
+  top: 15px;
+  font-size: 1.5rem;
+  color: #333;
   cursor: pointer;
-  font-size: 1.5em;
+  background: none;
+  border: none;
 }
 
+/* 弹窗内容 */
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  /* 增大圆角 */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  /* 加强阴影效果 */
+  padding: 30px;
+  max-width: 800px;
+  width: 100%;
+  position: relative;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  /* 确保子元素垂直排列 */
+  align-items: center;
+  /* 子元素水平居中 */
+}
+
+/* 表格样式 */
 .modal-content table {
   width: 100%;
+  /* 确保表格宽度充满其容器 */
+  margin-top: 20px;
   border-collapse: collapse;
+  text-align: center;
+  /* 表格内容居中 */
 }
 
 .modal-content th,
 .modal-content td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
 }
 
 .modal-content th {
-  background-color: #f2f2f2;
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.modal-content tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* 过期商品特殊样式 */
+.modal-content .expired {
+  color: red;
+  font-weight: bold;
+}
+
+/* 分页按钮 */
+.modal-content .pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 60%;
+  margin-top: 20px;
+}
+
+.modal-content .pagination button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  /* 确保按钮文字也使用相同的字体 */
+}
+
+.modal-content .pagination button[disabled] {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.modal-content .pagination button:hover {
+  background-color: #0056b3;
 }
 </style>

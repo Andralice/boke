@@ -132,7 +132,7 @@ function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement;
   if (target.files && target.files.length > 0) {
     const file = target.files[0];
-    
+
     // 使用 FileReader 读取文件
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -147,7 +147,7 @@ function handleFileChange(event: Event) {
         img.onload = () => {
           // 压缩图片并获取压缩后的 Base64 编码字符串
           const compressedBase64 = compressImage(img, 200 * 1024); // 目标大小为 200KB
-          
+
           previews.value = [URL.createObjectURL(file)]; // 更新预览数组
           formData.value.imageUrl = compressedBase64; // 更新 Base64 编码的图片数据
         };
@@ -156,7 +156,7 @@ function handleFileChange(event: Event) {
 
     reader.readAsArrayBuffer(file);
   }
-  
+
 }
 
 function clearNote() {
@@ -176,7 +176,7 @@ async function submitForm() {
 </script>
 
 
-  
+
   <style scoped>
   .addstore-body {
     width: 100%;
@@ -186,7 +186,7 @@ async function submitForm() {
     background-color: #f9f9f9;
     /* 轻微背景色 */
   }
-  
+
   h1 {
     text-align: center;
     margin-bottom: 20px;
@@ -194,7 +194,7 @@ async function submitForm() {
     color: #333;
     font-weight: 600;
   }
-  
+
   .new-stash-container {
     padding: 20px;
     border-radius: 8px;
@@ -203,18 +203,18 @@ async function submitForm() {
     margin-bottom: 20px;
     background-color: white;
   }
-  
+
   .new-stash-container h2 {
     margin-bottom: 10px;
     font-size: 20px;
     color: #333;
     font-weight: 500;
   }
-  
+
   .new-stash-container:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
-  
+
   .stash-input-row {
     display: flex;
     justify-content: space-between;
@@ -222,7 +222,7 @@ async function submitForm() {
     margin-bottom: 20px;
     flex-wrap: wrap;
   }
-  
+
   .stash-input-group {
     display: flex;
     align-items: center;
@@ -230,7 +230,7 @@ async function submitForm() {
     min-width: 250px;
     margin-bottom: 10px;
   }
-  
+
   .stash-input-group label {
     font-weight: 500;
     width: 120px;
@@ -238,7 +238,7 @@ async function submitForm() {
     margin-right: 10px;
     color: #555;
   }
-  
+
   .stash-input-group input,
   .stash-input-group select {
     flex-grow: 1;
@@ -249,25 +249,25 @@ async function submitForm() {
     font-size: 14px;
     color: #333;
   }
-  
+
   .stash-input-group input:focus,
   .stash-input-group select:focus {
     border-color: #007bff;
   }
-  
+
   .preview-container {
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
   }
-  
+
   .preview-item {
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  
+
   .preview-image {
     width: 100px;
     height: 100px;
@@ -275,7 +275,7 @@ async function submitForm() {
     border: 1px solid #ccc;
     border-radius: 4px;
   }
-  
+
   .note-container {
     margin-top: 20px;
     padding: 15px;
@@ -284,24 +284,24 @@ async function submitForm() {
     background-color: white;
     transition: box-shadow 0.3s ease;
   }
-  
+
   .note-container:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-  
+
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
   }
-  
+
   .header h2 {
     font-size: 18px;
     color: #333;
     font-weight: 500;
   }
-  
+
   textarea {
     width: 98%;
     height: 140px;
@@ -313,11 +313,11 @@ async function submitForm() {
     font-size: 14px;
     color: #333;
   }
-  
+
   textarea:focus {
     border-color: #007bff;
   }
-  
+
   .note-button {
     margin-left: 10px;
     height: 40px;
@@ -330,11 +330,11 @@ async function submitForm() {
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-  
+
   .note-button:hover {
     background-color: #333;
   }
-  
+
   .addstore-button {
     position: fixed;
     right: 80px;
@@ -344,7 +344,7 @@ async function submitForm() {
     justify-content: flex-end;
     margin-top: 20px;
   }
-  
+
   .addstore-button button {
     width: 200px;
     /* 减少宽度 */
@@ -360,7 +360,7 @@ async function submitForm() {
     font-size: 16px;
     font-weight: 500;
   }
-  
+
   .addstore-button button:hover {
     background-color: #333;
   }
