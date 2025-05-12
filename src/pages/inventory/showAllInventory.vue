@@ -1,6 +1,6 @@
 <template>
     <div class="showStore-body">
-        <h1>库存管理</h1>
+        <h1>库存列表</h1>
         <!-- 筛选表单 -->
         <div class="filters">
             <div class="filter-row">

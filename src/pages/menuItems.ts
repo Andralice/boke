@@ -41,7 +41,7 @@ export const getMenuData = (role: string) => {
                         { "label": "库存列表", "route": "/showALLInventory" },
                         { "label": "库存记录", "route": "/showAllInventoryLog"},
                         {"label": "库存审核","route": "/showAllExamine"}
-                        
+
                         // { "label": "库存报告", "route": "/inventory-report" }
                     ]
                 },
@@ -97,7 +97,7 @@ export const getMenuData = (role: string) => {
                 {
                     "label": "库存管理",
                     "subItems": [
-                        { "label": "查看库存", "route": "/createInventory" },
+                        { "label": "库存申请", "route": "/createInventory" },
                         { "label": "库存列表", "route": "/showALLInventory" },
                         { "label": "库存记录", "route": "/showAllInventoryLog"}
                         // { "label": "库存报告", "route": "/inventory-report" }
