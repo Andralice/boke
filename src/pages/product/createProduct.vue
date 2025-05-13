@@ -19,11 +19,7 @@
               </el-col>
             </el-row>
             <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="仓库名称*" prop="stashName">
-                  <el-input v-model="inboundForm.stashName"></el-input>
-                </el-form-item>
-              </el-col>
+
               <el-col :span="12">
                 <el-form-item label="存储方式*" prop="storageTemperature">
                   <el-select v-model="inboundForm.storageTemperature" placeholder="请选择存储方式">
@@ -36,8 +32,8 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="生产日期*" prop="productTime">
-                  <el-date-picker v-model="inboundForm.productTime" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
+                <el-form-item label="生产商*" prop="manufacturer">
+                  <el-input v-model="inboundForm.manufacturer"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -47,11 +43,7 @@
               </el-col>
             </el-row>
             <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="供货商*" prop="supplierName">
-                  <el-input v-model="inboundForm.supplierName"></el-input>
-                </el-form-item>
-              </el-col>
+
               <el-col :span="12">
                 <el-form-item label="图片上传*" prop="imageUrl">
                   <el-upload action="#" :auto-upload="false" :on-change="handleFileChange" accept="image/*">
@@ -95,26 +87,22 @@ import { arrayBufferToBase64, compressImage } from '@/util/imageUtils';
 interface FormData {
   productName: string;
   category: string;
-  stashName: string;
   storageTemperature: string;
-  supplierName: string;
   remark: string;
   imageUrl: string;
   shelfLife: number;
-  productTime: string;
+  manufacturer:string;
 }
 
 const formRef = ref();
 const inboundForm = reactive<FormData>({
   productName: '',
   category: '',
-  stashName: '',
   storageTemperature: '',
-  supplierName: '',
   remark: '',
   imageUrl: '',
   shelfLife: 0,
-  productTime: '',
+  manufacturer:'',
 });
 
 const router = useRouter();

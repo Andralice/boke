@@ -36,7 +36,7 @@
     <!-- 缺货商品弹窗 -->
     <div v-if="showNoInventoryModal" class="modal-overlay" @click="showNoInventoryModal = false">
       <div class="modal-content" @click.stop>
-        <span class="close-button" @click="showNoInventoryModal = false">&times;</span>
+        <span class="close-button" @click.stop="showNoInventoryModal = false">&times;</span>
         <h4>缺货商品列表</h4>
         <table>
           <thead>
@@ -65,7 +65,7 @@
     <!-- 到期商品弹窗 -->
     <div v-if="showNoTimeModal" class="modal-overlay" @click="showNoTimeModal = false">
       <div class="modal-content" @click.stop>
-        <span class="close-button" @click="showNoTimeModal = false">&times;</span>
+        <span class="close-button" @click.stop="showNoTimeModal = false">&times;</span>
         <h4>到期商品列表</h4>
         <table>
           <thead>
@@ -123,7 +123,6 @@ function hideBadge(color: string) {
 
 // 定义响应式变量来存储从 API 获取的数据
 const stashNum = ref(0);
-const productNum = ref(0);
 const inventoryNum = ref(0);
 const noInventoryNum = ref(0);
 const noInventoryProducts = ref([]);
@@ -137,7 +136,11 @@ const showNoTimeModal = ref(false);
 // 缺货商品分页
 const currentNoInventoryPage = ref(1);
 const noInventoryPageSize = ref(5);
-const noInventoryTotalPages = computed(() => Math.ceil(noInventoryProducts.value.length / noInventoryPageSize.value));
+const noInventoryTotalPages = computed(() => {
+  const length = noInventoryProducts.value?.length || 0;
+  const size = noInventoryPageSize.value || 1;
+  return Math.max(1, Math.ceil(length / size));
+});
 const paginatedNoInventoryProducts = computed(() =>
   noInventoryProducts.value.slice((currentNoInventoryPage.value - 1) * noInventoryPageSize.value, currentNoInventoryPage.value * noInventoryPageSize.value)
 );
@@ -145,7 +148,7 @@ const paginatedNoInventoryProducts = computed(() =>
 // 到期商品分页
 const currentNoTimePage = ref(1);
 const noTimePageSize = ref(5);
-const noTimeTotalPages = computed(() => Math.ceil(noTimeProducts.value.length / noTimePageSize.value));
+const noTimeTotalPages = computed(() => Math.max(1, Math.ceil(noTimeProducts.value.length / noTimePageSize.value)));
 const paginatedNoTimeProducts = computed(() =>
   noTimeProducts.value.slice((currentNoTimePage.value - 1) * noTimePageSize.value, currentNoTimePage.value * noTimePageSize.value)
 );
@@ -187,7 +190,6 @@ const loadPanelData = async () => {
     console.log(response);
     // 更新响应式变量
     stashNum.value = response.stash.num;
-    productNum.value = response.product.num;
     inventoryNum.value = response.inventory.totalNum;
     noInventoryNum.value = response.noInventoryNum;
     noInventoryProducts.value = response.noInventoryProducts;

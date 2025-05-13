@@ -19,8 +19,8 @@
                     @focus="handleFocus('product')"
                     :loading="productLoading"
                     ref="productSelectRef"
-                    @visible-change="handleVisibleChange('product', $event)"
                     popper-class="custom-dropdown"
+                    @visible-change="handleVisibleChange('product', $event)"
                   >
                     <el-option
                       v-for="item in productOptions"
@@ -49,8 +49,8 @@
                     @focus="handleFocus('stash')"
                     :loading="stashLoading"
                     ref="stashSelectRef"
-                    @visible-change="handleVisibleChange('stash', $event)"
                     popper-class="custom-dropdown"
+                    @visible-change="handleVisibleChange('stash', $event)"
                   >
                     <el-option
                       v-for="item in stashOptions"
@@ -79,8 +79,8 @@
                     @focus="handleFocus('supplier')"
                     :loading="supplierLoading"
                     ref="supplierSelectRef"
-                    @visible-change="handleVisibleChange('supplier', $event)"
                     popper-class="custom-dropdown"
+                    @visible-change="handleVisibleChange('supplier', $event)"
                   >
                     <el-option
                       v-for="item in supplierOptions"
@@ -95,6 +95,14 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="生产日期*" prop="productTime">
+                  <el-date-picker v-model="formData.productionDate" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
+                </el-form-item>
+              </el-col>
+              
             </el-row>
             <el-row :gutter="20">
               <el-col :span="8">
@@ -148,6 +156,7 @@ interface FormData {
   type: string;
   quantity?: number;
   remark: string;
+  productionDate: string;
 }
 
 const formData = ref<FormData>({
@@ -156,7 +165,8 @@ const formData = ref<FormData>({
   supplierName: '',
   type: '',
   quantity: undefined,
-  remark: ''
+  remark: '',
+  productionDate: ''
 });
 
 const router = useRouter();
@@ -191,59 +201,6 @@ const supplierLoading = ref(false);
 // 分页参数
 const pageSize = 20;
 
-// 计算属性：根据表单数据过滤选项
-const filteredProductOptions = computed(() => {
-  return productOptions.value.filter(item =>
-    (!formData1.productName || item.productName.includes(formData1.productName)) &&
-    (!formData1.stashName || item.stashName.includes(formData1.stashName)) &&
-    (!formData1.supplierName || item.supplierName.includes(formData1.supplierName))
-  );
-});
-
-const filteredStashOptions = computed(() => {
-  return stashOptions.value.filter(item =>
-    (!formData1.productName || item.productName.includes(formData1.productName)) &&
-    (!formData1.stashName || item.stashName.includes(formData1.stashName)) &&
-    (!formData1.supplierName || item.supplierName.includes(formData1.supplierName))
-  );
-});
-
-const filteredSupplierOptions = computed(() => {
-  return supplierOptions.value.filter(item =>
-    (!formData1.productName || item.productName.includes(formData1.productName)) &&
-    (!formData1.stashName || item.stashName.includes(formData1.stashName)) &&
-    (!formData1.supplierName || item.supplierName.includes(formData1.supplierName))
-  );
-});
-
-// 是否已经加载过数据
-const isProductLoaded = ref(false);
-const isStashLoaded = ref(false);
-const isSupplierLoaded = ref(false);
-
-// 定时器
-let productTimer: NodeJS.Timeout | null = null;
-let stashTimer: NodeJS.Timeout | null = null;
-let supplierTimer: NodeJS.Timeout | null = null;
-
-// 清除定时器
-const clearTimers = () => {
-  if (productTimer) clearTimeout(productTimer);
-  if (stashTimer) clearTimeout(stashTimer);
-  if (supplierTimer) clearTimeout(supplierTimer);
-  productTimer = null;
-  stashTimer = null;
-  supplierTimer = null;
-};
-
-// 关闭所有下拉菜单
-const closeDropdowns = () => {
-  console.log('closeDropdowns called');
-  visibleDropdowns.value.product = false;
-  visibleDropdowns.value.stash = false;
-  visibleDropdowns.value.supplier = false;
-};
-
 // 控制下拉菜单的可见性
 const visibleDropdowns = ref({
   product: false,
@@ -251,84 +208,41 @@ const visibleDropdowns = ref({
   supplier: false
 });
 
-const handleVisibleChange = (type: 'product' | 'stash' | 'supplier', isVisible: boolean) => {
-  console.log(`handleVisibleChange called with type: ${type}, isVisible: ${isVisible}`);
-  if (isVisible) {
-    setCloseTimer(type);
-  } else {
-    clearTimers(); // 关闭下拉框时清除定时器
+// 防止重复打开标志位
+const openFlags = ref({
+  product: false,
+  stash: false,
+  supplier: false
+});
+
+const handleFocus = (type: 'product' | 'stash' | 'supplier') => {
+  if (!openFlags.value[type]) {
+    openFlags.value[type] = true;
+    setTimeout(() => {
+      openFlags.value[type] = false;
+    }, 3000); // 3秒内不允许再次打开
+
+    // 手动触发一次完整查询
+    switch (type) {
+      case 'product':
+        searchProducts('');
+        break;
+      case 'stash':
+        searchStashes('');
+        break;
+      case 'supplier':
+        searchSuppliers('');
+        break;
+    }
   }
+};
+
+const handleVisibleChange = (type: 'product' | 'stash' | 'supplier', isVisible: boolean) => {
   visibleDropdowns.value[type] = isVisible;
 };
 
-const setCloseTimer = (type: 'product' | 'stash' | 'supplier') => {
-  clearTimers(); // 先清除现有的定时器
-  switch (type) {
-    case 'product':
-      productTimer = setTimeout(() => {
-        visibleDropdowns.value.product = false;
-      }, 30000); // 30秒后关闭下拉框
-      break;
-    case 'stash':
-      stashTimer = setTimeout(() => {
-        visibleDropdowns.value.stash = false;
-      }, 30000); // 30秒后关闭下拉框
-      break;
-    case 'supplier':
-      supplierTimer = setTimeout(() => {
-        visibleDropdowns.value.supplier = false;
-      }, 30000); // 30秒后关闭下拉框
-      break;
-  }
-};
-
-// 引入 refs
-const productSelectRef = ref(null);
-const stashSelectRef = ref(null);
-const supplierSelectRef = ref(null);
-
-// 控制下拉菜单的可见性
-const handleClickOutside = (event: MouseEvent) => {
-  clearTimers(); // 点击外部区域时清除定时器
-  const clickInsideProduct = productSelectRef.value?.$el.contains(event.target);
-  const clickInsideStash = stashSelectRef.value?.$el.contains(event.target);
-  const clickInsideSupplier = supplierSelectRef.value?.$el.contains(event.target);
-
-  if (!clickInsideProduct && !clickInsideStash && !clickInsideSupplier) {
-    console.log('Clicked outside dropdowns, closing them.');
-    closeDropdowns();
-  } else {
-    console.log('Clicked inside dropdowns, not closing them.');
-  }
-};
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  clearTimers(); // 组件卸载时清除定时器
-});
-
-// 处理 focus 事件
-const handleFocus = (type: 'product' | 'stash' | 'supplier') => {
-  switch (type) {
-    case 'product':
-      searchProducts('');
-      break;
-    case 'stash':
-      searchStashes('');
-      break;
-    case 'supplier':
-      searchSuppliers('');
-      break;
-  }
-};
-
 // 搜索商品
-const searchProducts = debounce(async (query) => {
-  clearTimers(); // 用户进行搜索时清除定时器
+const searchProducts = debounce(async (query: string) => {
   productLoading.value = true;
   productOptions.value = []; // 清空当前选项
   try {
@@ -349,8 +263,7 @@ const searchProducts = debounce(async (query) => {
 }, 300);
 
 // 搜索仓库（假设用的是同一个接口，可替换）
-const searchStashes = debounce(async (query) => {
-  clearTimers(); // 用户进行搜索时清除定时器
+const searchStashes = debounce(async (query: string) => {
   stashLoading.value = true;
   stashOptions.value = []; // 清空当前选项
   try {
@@ -371,8 +284,7 @@ const searchStashes = debounce(async (query) => {
 }, 300);
 
 // 搜索供货商（同理，可能调用其他接口）
-const searchSuppliers = debounce(async (query) => {
-  clearTimers(); // 用户进行搜索时清除定时器
+const searchSuppliers = debounce(async (query: string) => {
   supplierLoading.value = true;
   supplierOptions.value = []; // 清空当前选项
   try {
@@ -391,31 +303,6 @@ const searchSuppliers = debounce(async (query) => {
     supplierLoading.value = false;
   }
 }, 300);
-
-// 定义选择产品、仓库、供应商的方法
-const selectProduct = (item) => {
-  formData.value.productName = item.productName;
-  formData.value.stashName = item.stashName;
-  formData.value.supplierName = item.supplierName;
-  closeDropdowns();
-  clearTimers(); // 用户选择项目时清除定时器
-};
-
-const selectStash = (item) => {
-  formData.value.productName = item.productName;
-  formData.value.stashName = item.stashName;
-  formData.value.supplierName = item.supplierName;
-  closeDropdowns();
-  clearTimers(); // 用户选择项目时清除定时器
-};
-
-const selectSupplier = (item) => {
-  formData.value.productName = item.productName;
-  formData.value.stashName = item.stashName;
-  formData.value.supplierName = item.supplierName;
-  closeDropdowns();
-  clearTimers(); // 用户选择项目时清除定时器
-};
 
 // 空消息提示
 const productEmptyMessage = ref('');

@@ -45,9 +45,8 @@
             <th>商品图片</th>
             <th>商品名称</th>
             <th>商品类别</th>
-            <th>仓库名称</th>
             <th>存储方式</th>
-            <th>供应商名称</th>
+            <th>生产商</th>
             <th>可用库存</th>
             <th>创建时间</th>
             <th>更新时间</th>
@@ -61,9 +60,8 @@
             <td><img :src="getImageUrl(item.imageUrl)" alt="商品图片" style="max-width: 50px;"></td>
             <td>{{ item.productName }}</td>
             <td>{{ item.category }}</td>
-            <td>{{ item.stashName }}</td>
             <td>{{ item.storageTemperature }}</td>
-            <td>{{ item.supplierName }}</td>
+            <td>{{ item.manufacturer }}</td>
             <td>{{ item.quantity}}</td>
             <td>{{ formatDate(item.createTime) }}</td>
             <td>{{ formatDate(item.updateTime) }}</td>
@@ -97,10 +95,9 @@ interface FormData {
   productId?: number;
   productName: string;
   category: string;
-  stashName: string;
   quantity: number;
   storageTemperature: string;
-  supplierName: string;
+  manufacturer: string;
   remark: string;
   createTime: string;
   updateTime: string;
@@ -199,7 +196,7 @@ const deleteItem = async (item: FormData) => {
 const getImageUrl = (base64String: string): string => {
   // 如果没有图片数据，使用默认的图片
   if (!base64String) {
-    return 'https://example.com/default-image.jpg';  // 这里替换为你项目中的默认图片 URL
+    return 'https://example.com/default-image.jpg';  //默认图片 URL
   }
 
   // 如果是有效的 Base64 字符串，则返回其本身
