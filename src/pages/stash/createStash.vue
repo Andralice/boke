@@ -19,8 +19,8 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="联系人*" prop="managerName">
-                  <el-input v-model="formData.managerName"></el-input>
+                <el-form-item label="联系人*" prop="adminName">
+                  <el-input v-model="formData.adminName"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -72,7 +72,7 @@ const activeTab = ref('addStash');
 interface FormData {
   stashName: string; // stashName
   stashAddress: string; //stashAddress
-  managerName: string; // managerName
+  adminName: string; // adminName
   stashArea: string; // stashArea
   storageTemperature: string; // storageTemperature
   remark: string; // remark
@@ -81,7 +81,7 @@ interface FormData {
 const formData = ref<FormData>({
   stashName: '',
   stashAddress: '',
-  managerName: '',
+  adminName: '',
   stashArea: '',
   storageTemperature: '',
   remark: ''

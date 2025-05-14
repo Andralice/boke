@@ -1,77 +1,61 @@
 <template>
   <div class="showStore-body">
-      <h1>仓库概览</h1>
-      <!-- 筛选表单 -->
-      <div class="filters">
-          <div class="filter-row">
-              <div class="filter-group">
-                  <label>仓库名称</label>
-                  <input type="text" v-model="formData.stashName" placeholder="请输入仓库名称">
-              </div>
-              <div class="filter-group">
-                  <label>仓库管理员</label>
-                  <input type="text" v-model="formData.managerName" placeholder="请输入管理员名称">
-              </div>
-              <div class="filter-group">
-                  <label>存储温度</label>
-                  <select v-model="formData.storageTemperature">
-                      <option value="">全部</option>
-                      <option value="冷藏">冷藏</option>
-                      <option value="常温">常温</option>
-                  </select>
-              </div>
-          </div>
-          <div class="filter-row">
-              <button class="search-btn" @click="loadData">搜索</button>
-              <button class="add-btn" @click="navigateToAddPage">新增仓库</button>
-          </div>
-      </div>
+    <h1>仓库概览</h1>
+    <!-- 筛选表单 -->
+    <el-form :model="formData" label-width="100px" size="medium" inline>
+      <el-form-item label="仓库名称">
+        <el-input v-model="formData.stashName" placeholder="请输入仓库名称" style="width: 200px;"></el-input>
+      </el-form-item>
+      <el-form-item label="仓库管理员">
+        <el-input v-model="formData.adminName" placeholder="请输入管理员名称" style="width: 200px;"></el-input>
+      </el-form-item>
+      <el-form-item label="存储温度">
+        <el-select v-model="formData.storageTemperature" clearable placeholder="请选择存储温度" style="width: 200px;">
+          <el-option label="冷藏" value="冷藏"></el-option>
+          <el-option label="常温" value="常温"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadData">搜索</el-button>
+        <el-button type="success" @click="navigateToAddPage">新增仓库</el-button>
+      </el-form-item>
+    </el-form>
 
-      <!-- 数据表格 -->
-      <div class="data-table">
-          <table>
-              <thead>
-                  <tr>
-                      <th>序号</th>
-                      <th>仓库名称</th>
-                      <th>仓库地址</th>
-                      <th>存储温度</th>
-                      <th>仓库面积(m²)</th>
-                      <th>管理员</th>
-                      <th>创建时间</th>
-                      <th>操作</th>
-                      <th></th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr v-for="(item, index) in paginatedData" :key="item.stashId">
-                      <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
-                      <td>{{ item.stashName }}</td>
-                      <td>{{ item.stashAddress }}</td>
-                      <td>{{ item.storageTemperature }}</td>
-                      <td>{{ item.stashArea }}</td>
-                      <td>{{ item.managerName }}</td>
-                      <td>{{ formatDate(item.createTime) }}</td>
-                      <td>
-                          <button @click="editItem(item)">编辑</button>
-                      </td>
-                      <td>
-                          <button @click="deleteItem(item)">删除</button>
-                      </td>
-                  </tr>
-                  <tr v-if="paginatedData.length === 0">
-                      <td colspan="9" class="no-data">暂无数据</td>
-                  </tr>
-              </tbody>
-          </table>
-          
-          <!-- 分页控件 -->
-          <div class="pagination">
-              <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
-              <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
-              <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
-          </div>
-      </div>
+    <!-- 数据表格 -->
+    <el-table :data="paginatedData" style="width: 100%" border stripe>
+      <el-table-column prop="index" label="序号" width="60" align="center">
+        <template #default="{ $index }">
+          {{ (currentPage - 1) * pageSize + $index + 1 }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="stashName" label="仓库名称" min-width="150"></el-table-column>
+      <el-table-column prop="stashAddress" label="仓库地址" min-width="200"></el-table-column>
+      <el-table-column prop="storageTemperature" label="存储温度" width="120" align="center"></el-table-column>
+      <el-table-column prop="stashArea" label="仓库面积(m²)" width="120" align="right"></el-table-column>
+      <el-table-column prop="adminName" label="管理员" width="120"></el-table-column>
+      <el-table-column prop="createTime" label="创建时间" width="150" align="center">
+        <template #default="{ row }">
+          {{ formatDate(row.createTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="150" fixed="right" align="center">
+        <template #default="{ row }">
+          <el-button size="mini" type="text" @click="editItem(row)">编辑</el-button>
+          <el-button size="mini" type="text" @click="deleteItem(row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 分页控件 -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :total="totalItems"
+      @current-change="handleCurrentChange"
+      style="margin-top: 20px; display: flex; justify-content: center;"
+    ></el-pagination>
   </div>
 </template>
 
@@ -81,23 +65,23 @@ import { useRouter } from 'vue-router';
 import { selectAllStash, deleteStash } from '@/api/stash/stash';
 
 interface StashItem {
-stashId: number;
-stashName: string;
-stashAddress: string;
-storageTemperature: string;
-stashArea: number;
-managerName: string;
-createTime: string;
-updateTime: string;
+  stashId: number;
+  stashName: string;
+  stashAddress: string;
+  storageTemperature: string;
+  stashArea: number;
+  adminName: string;
+  createTime: string;
+  updateTime: string;
 }
 
 const router = useRouter();
 
 // 表单数据
 const formData = ref({
-stashName: '',
-managerName: '',
-storageTemperature: ''
+  stashName: '',
+  adminName: '',
+  storageTemperature: ''
 });
 
 // 分页相关
@@ -108,88 +92,75 @@ const stashList = ref<StashItem[]>([]);
 
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
-const paginatedData = computed(() => 
-stashList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+const paginatedData = computed(() =>
+  stashList.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
 );
 
 // 初始化加载数据
 onMounted(() => {
-loadData();
+  loadData();
 });
 
 // 加载数据方法
 const loadData = async () => {
-try {
+  try {
     // 过滤掉空值字段
     const params = Object.fromEntries(
       Object.entries(formData.value).filter(([key, value]) => value !== '' && value !== null)
     );
-  
-  const response = await selectAllStash(params);
-  
-  if (response.result && Array.isArray(response.result)) {
-    stashList.value = response.result;
-    totalItems.value = response.total || response.result.length; // 确保总条目数至少为0
-  } else {
-    console.error('无效的数据格式:', response);
+
+    const response = await selectAllStash(params);
+
+    if (response.result && Array.isArray(response.result)) {
+      stashList.value = response.result;
+      totalItems.value = response.total || response.result.length; // 确保总条目数至少为0
+    } else {
+      console.error('无效的数据格式:', response);
+      stashList.value = [];
+      totalItems.value = 0;
+    }
+  } catch (error) {
+    console.error('加载数据失败:', error);
     stashList.value = [];
     totalItems.value = 0;
   }
-} catch (error) {
-  console.error('加载数据失败:', error);
-  stashList.value = [];
-  totalItems.value = 0;
-}
 };
 
 // 分页操作
-const prevPage = () => {
-if (currentPage.value > 1) {
-  currentPage.value--;
+const handleCurrentChange = (newPage: number) => {
+  currentPage.value = newPage;
   loadData();
-}
-};
-
-const nextPage = () => {
-if (currentPage.value < totalPages.value) {
-  currentPage.value++;
-  loadData();
-}
 };
 
 // 工具方法
 const formatDate = (timestamp: string) => {
-return new Date(timestamp).toLocaleDateString();
+  return new Date(timestamp).toLocaleDateString();
 };
 
 // 页面跳转
 const navigateToAddPage = () => {
-router.push('/createStash');
+  router.push('/createStash');
 };
 
 const editItem = (item: StashItem) => {
-router.push(`/updateStash/${item.stashId}`);
+  router.push(`/updateStash/${item.stashId}`);
 };
 
 const deleteItem = async (item: StashItem) => {
-if (item.stashId !== undefined) {
-  try {
-    const response = await deleteStash(item.stashId); // 调用删除接口
-    console.log('删除成功！', response);
-    loadData(); // 刷新列表
-  } catch (error) {
-    console.error('Error deleting stash', error);
-    alert('删除失败，请检查网络或联系管理员');
+  if (item.stashId !== undefined) {
+    try {
+      const response = await deleteStash(item.stashId); // 调用删除接口
+      console.log('删除成功！', response);
+      loadData(); // 刷新列表
+    } catch (error) {
+      console.error('Error deleting stash', error);
+      alert('删除失败，请检查网络或联系管理员');
+    }
+  } else {
+    alert('未找到仓库ID');
   }
-} else {
-  alert('未找到仓库ID');
-}
 };
 </script>
-
-
-
-
 
 <style scoped>
 .showStore-body {
@@ -197,105 +168,16 @@ if (item.stashId !== undefined) {
   max-width: 1200px;
   margin: 0 auto;
 }
-
-.filters {
-  background: #f5f7fa;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+.el-form-item {
+  margin-right: 20px;
 }
-
-.filter-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 15px;
+.el-table {
+  margin-top: 20px;
 }
-
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.filter-group label {
-  min-width: 80px;
-}
-
-select, input {
-  padding: 8px 12px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  width: 200px;
-}
-
-.search-btn, .add-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.search-btn {
-  background: #409eff;
-  color: white;
-}
-
-.add-btn {
-  background: #67c23a;
-  color: white;
-  margin-left: auto;
-}
-
-.data-table {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ebeef5;
-}
-
-th {
-  background: #fafafa;
-  font-weight: 600;
-}
-
-tr:hover {
-  background: #f5f7fa;
-}
-
-.pagination {
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-
-.pagination button {
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  background: white;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.no-data {
-  text-align: center;
-  color: #909399;
-  padding: 20px;
+.el-pagination {
+  margin-top: 20px;
 }
 </style>
+
+
+
