@@ -60,9 +60,15 @@ onMounted(async () => {
 
 async function loadData() {
   try {
-    const response = await PanelAllData(); // 假设这是你的API调用函数
+    const response = await PanelAllData(); // API调用函数
     console.log(response);
-    products.value = response.product.productList.slice(0, 50); // 假设最多展示前50个商品
+    const uniqueProductsMap = new Map<string, any>();
+    response.product.productList.forEach(product => {
+      if (!uniqueProductsMap.has(product.productName)) {
+        uniqueProductsMap.set(product.productName, product);
+      }
+    });
+    products.value = Array.from(uniqueProductsMap.values()).slice(0, 50).sort((a, b) => b.quantity - a.quantity); // 最多展示前50个商品并按库存数量降序排列
   } catch (error) {
     console.error('加载数据失败:', error);
   }
@@ -162,9 +168,9 @@ function updateChart() {
           },
           y: {
             beginAtZero: true,
-            max: 5000,
+            max: 50000, // 将最大值调整为50000
             ticks: {
-              stepSize: 500,
+              stepSize: 5000,
               font: {
                 size: 12,
                 family: 'Arial',
@@ -193,28 +199,6 @@ function updateChart() {
               color: '#333'
             }
           },
-          // tooltip: {
-          //   enabled: true,
-          //   callbacks: {
-          //     label: function(context) {
-          //       return `${context.dataset.label}: ${context.raw}`;
-          //     }
-          //   },
-          //   bodyFont: {
-          //     size: 14,
-          //     family: 'Arial',
-          //   },
-          //   titleFont: {
-          //     size: 14,
-          //     family: 'Arial',
-          //   },
-          //   displayColors: false,
-          //   backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          //   borderColor: '#ddd',
-          //   borderWidth: 1,
-          //   cornerRadius: 4,
-          //   padding: 10
-          // }
         }
       }
     });

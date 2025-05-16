@@ -34,69 +34,51 @@
     </div>
 
     <!-- 缺货商品弹窗 -->
-    <div v-if="showNoInventoryModal" class="modal-overlay" @click="showNoInventoryModal = false">
-      <div class="modal-content" @click.stop>
-        <span class="close-button" @click.stop="showNoInventoryModal = false">&times;</span>
-        <h4>缺货商品列表</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>商品名称</th>
-              <th>仓库</th>
-              <th>供应商</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(product, index) in paginatedNoInventoryProducts" :key="index">
-              <td>{{ product.productName }}</td>
-              <td>{{ product.stashName }}</td>
-              <td>{{ product.supplierName }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination">
-          <button @click="prevNoInventoryPage" :disabled="currentNoInventoryPage === 1">上一页</button>
-          <span>第 {{ currentNoInventoryPage }} 页 / 共 {{ noInventoryTotalPages }} 页</span>
-          <button @click="nextNoInventoryPage" :disabled="currentNoInventoryPage === noInventoryTotalPages">下一页</button>
-        </div>
+    <el-dialog v-model="showNoInventoryModal" title="缺货商品列表" width="60%" center>
+      <el-table :data="paginatedNoInventoryProducts" style="width: 100%">
+        <el-table-column prop="productName" label="商品名称" />
+        <el-table-column prop="stashName" label="仓库" />
+        <el-table-column prop="supplierName" label="供应商" />
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="noInventoryTotalPages * noInventoryPageSize"
+          :page-size="noInventoryPageSize"
+          v-model:current-page="currentNoInventoryPage"
+        />
       </div>
-    </div>
+    </el-dialog>
 
     <!-- 到期商品弹窗 -->
-    <div v-if="showNoTimeModal" class="modal-overlay" @click="showNoTimeModal = false">
-      <div class="modal-content" @click.stop>
-        <span class="close-button" @click.stop="showNoTimeModal = false">&times;</span>
-        <h4>到期商品列表</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>商品名称</th>
-              <th>仓库</th>
-              <th>供应商</th>
-              <th>剩余时间(天)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(product, index) in paginatedNoTimeProducts" :key="index">
-              <td>{{ product.productName }}</td>
-              <td>{{ product.stashName }}</td>
-              <td>{{ product.supplierName }}</td>
-              <td :class="{ 'expired': product.daysLeft < 0 }">{{ product.daysLeft < 0 ? '过期' : product.daysLeft }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination">
-          <button @click="prevNoTimePage" :disabled="currentNoTimePage === 1">上一页</button>
-          <span>第 {{ currentNoTimePage }} 页 / 共 {{ noTimeTotalPages }} 页</span>
-          <button @click="nextNoTimePage" :disabled="currentNoTimePage === noTimeTotalPages">下一页</button>
-        </div>
+    <el-dialog v-model="showNoTimeModal" title="到期商品列表" width="60%" center>
+      <el-table :data="paginatedNoTimeProducts" style="width: 100%">
+        <el-table-column prop="productName" label="商品名称" />
+        <el-table-column prop="stashName" label="仓库" />
+        <el-table-column prop="supplierName" label="供应商" />
+        <el-table-column prop="daysLeft" label="剩余时间(天)">
+          <template #default="scope">
+            <span :class="{ 'expired': scope.row.daysLeft <= 0 }">{{ scope.row.daysLeft <= 0 ? '已过期' : scope.row.daysLeft }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="noTimeTotalPages * noTimePageSize"
+          :page-size="noTimePageSize"
+          v-model:current-page="currentNoTimePage"
+        />
       </div>
-    </div>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
+import { ElDialog, ElTable, ElTableColumn, ElPagination } from 'element-plus';
 import { PanelAllData } from '@/api/Data/allData';
 
 const badgeTexts = ref({
@@ -136,11 +118,7 @@ const showNoTimeModal = ref(false);
 // 缺货商品分页
 const currentNoInventoryPage = ref(1);
 const noInventoryPageSize = ref(5);
-const noInventoryTotalPages = computed(() => {
-  const length = noInventoryProducts.value?.length || 0;
-  const size = noInventoryPageSize.value || 1;
-  return Math.max(1, Math.ceil(length / size));
-});
+const noInventoryTotalPages = computed(() => Math.max(1, Math.ceil(noInventoryProducts.value.length / noInventoryPageSize.value)));
 const paginatedNoInventoryProducts = computed(() =>
   noInventoryProducts.value.slice((currentNoInventoryPage.value - 1) * noInventoryPageSize.value, currentNoInventoryPage.value * noInventoryPageSize.value)
 );
@@ -152,31 +130,6 @@ const noTimeTotalPages = computed(() => Math.max(1, Math.ceil(noTimeProducts.val
 const paginatedNoTimeProducts = computed(() =>
   noTimeProducts.value.slice((currentNoTimePage.value - 1) * noTimePageSize.value, currentNoTimePage.value * noTimePageSize.value)
 );
-
-// 分页操作
-const prevNoInventoryPage = () => {
-  if (currentNoInventoryPage.value > 1) {
-    currentNoInventoryPage.value--;
-  }
-};
-
-const nextNoInventoryPage = () => {
-  if (currentNoInventoryPage.value < noInventoryTotalPages.value) {
-    currentNoInventoryPage.value++;
-  }
-};
-
-const prevNoTimePage = () => {
-  if (currentNoTimePage.value > 1) {
-    currentNoTimePage.value--;
-  }
-};
-
-const nextNoTimePage = () => {
-  if (currentNoTimePage.value < noTimeTotalPages.value) {
-    currentNoTimePage.value++;
-  }
-};
 
 // 初始化加载数据
 onMounted(() => {
@@ -201,16 +154,11 @@ const loadPanelData = async () => {
 };
 </script>
 
-
-
-
-
 <style scoped>
 .region.region1 {
   width: 100%;
   margin: auto;
   background-color: #ffffff;
-  /* border-radius: 16px; */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   padding: 20px;
@@ -219,7 +167,6 @@ const loadPanelData = async () => {
 .region.region1 .header {
   display: flex;
   align-items: center;
-  /* padding-bottom: 15px; */
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -240,7 +187,6 @@ const loadPanelData = async () => {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  /* padding-top: 20px; */
 }
 
 .region.region1 .data-box {
@@ -310,130 +256,18 @@ const loadPanelData = async () => {
   color: rgba(255, 255, 255, 0.7);
 }
 
-body {
-  font-family: 'Roboto', sans-serif;
-  /* 设置默认字体为整个应用 */
-}
-
-/* 弹窗标题样式 */
-.modal-content h4 {
-  font-family: 'Merriweather', serif;
-  /* 使用Merriweather字体作为标题 */
-  font-weight: 700;
-  /* 字体粗细为700，相当于bold */
-  margin-top:0;
-  /* 标题顶部外边距为0 */
-  text-align: center;
-  /* 标题居中 */
-  font-size: 1.5em;
-  /* 添加这一行来设置字体大小 */
-}
-
-/* 背景遮罩层 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(33, 37, 41, 0.6);
-  /* 更深的半透明背景色 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-/* 关闭按钮 */
-.close-button {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  font-size: 1.5rem;
-  color: #333;
-  cursor: pointer;
-  background: none;
-  border: none;
-}
-
-/* 弹窗内容 */
-.modal-content {
-  background-color: #ffffff;
-  border-radius: 12px;
-  /* 增大圆角 */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  /* 加强阴影效果 */
-  padding: 30px;
-  max-width: 800px;
-  width: 90%;
-  position: relative;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  /* 确保子元素垂直排列 */
-  align-items: center;
-  /* 子元素水平居中 */
-}
-
-/* 表格样式 */
-.modal-content table {
-  width: 100%;
-  /* 确保表格宽度充满其容器 */
-  margin-top: 20px;
-  border-collapse: collapse;
-  text-align: center;
-  /* 表格内容居中 */
-}
-
-.modal-content th,
-.modal-content td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
-.modal-content th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-}
-
-.modal-content tr:hover {
-  background-color: #f1f1f1;
-}
-
 /* 过期商品特殊样式 */
-.modal-content .expired {
+.expired {
   color: red;
   font-weight: bold;
 }
 
-/* 分页按钮 */
-.modal-content .pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+.pagination {
   margin-top: 20px;
-}
-
-.modal-content .pagination button {
-  background-color: #007bff;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  margin: 0 5px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-family: 'Roboto', sans-serif;
-  /* 确保按钮文字也使用相同的字体 */
-}
-
-.modal-content .pagination button[disabled] {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.modal-content .pagination button:hover {
-  background-color: #0056b3;
+  display: flex;
+  justify-content: center;
 }
 </style>
+
+
+

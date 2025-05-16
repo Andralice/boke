@@ -1,6 +1,6 @@
 <template>
     <div class="showStore-body">
-        <h1>库存审核</h1>
+        <h1 class="inventory-audit-title">库存审核</h1>
         <!-- 筛选表单 -->
         <el-form :model="formData" label-width="100px" size="medium" inline>
             <el-form-item label="审核名称">
@@ -206,6 +206,15 @@ const getStatusTag = (status: string) => {
 .form-input {
     width: 200px;
     height: 36px;
+}
+.inventory-audit-title {
+    font-family: '微软雅黑 Light', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 28px; /* 或者更大一些如28px */
+    color: #050505; /* 深灰色调 */
+    font-weight: 500; /* 中等粗细 */
+    letter-spacing: 1.5px; /* 字间距 */
+    text-align: center; /* 文本居中 */
+    margin-bottom: 20px; /* 下方留白 */
 }
 </style>
 
